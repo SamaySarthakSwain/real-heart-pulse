@@ -21,19 +21,19 @@ export interface RawLogEntry {
   receivedAt: number;
   raw: string;
   format: string;
-  packet?: SensorPacket;
+  packet?: SensorPacket | undefined;
   valid: boolean;
   errors: string[];
 }
 
 export interface SessionRow {
   t: number;
-  ecg?: number;
-  ppgIR?: number;
-  ppgRed?: number;
-  bpm?: number;
-  spo2?: number;
-  signalQuality?: number;
+  ecg?: number | undefined;
+  ppgIR?: number | undefined;
+  ppgRed?: number | undefined;
+  bpm?: number | undefined;
+  spo2?: number | undefined;
+  signalQuality?: number | undefined;
 }
 
 export interface Settings {
