@@ -139,12 +139,12 @@ function RootComponent() {
               <h1 className="text-base font-semibold">ESP32 Real-Time Health Monitor</h1>
             </div>
             <nav aria-label="Main" className="flex flex-wrap gap-1 text-sm">
-              {[
+              {([
                 ["/", "Dashboard"],
                 ["/hardware", "Hardware setup"],
                 ["/diagnostics", "Diagnostics"],
                 ["/settings", "Settings"],
-              ].map(([to, label]) => (
+              ] as const).map(([to, label]) => (
                 <Link
                   key={to}
                   to={to}
