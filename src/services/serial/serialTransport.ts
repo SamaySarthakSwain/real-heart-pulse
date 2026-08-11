@@ -77,7 +77,7 @@ export class SerialTransport implements Transport {
     this.connected = true;
     this.closing = false;
     this.buffer = "";
-    const info = this.port.getInfo?.();
+    const info = this.port?.getInfo?.();
     this.name = info?.usbVendorId
       ? `USB device ${info.usbVendorId.toString(16)}:${(info.usbProductId ?? 0).toString(16)}`
       : "Serial device";
@@ -113,7 +113,7 @@ export class SerialTransport implements Transport {
         break;
       } finally {
         try {
-          this.reader.releaseLock();
+          this.reader?.releaseLock();
         } catch {
           /* already released */
         }
