@@ -78,10 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      {
+        name: "description",
+        content: "Real-time ESP32 ECG, PPG, BPM and SpO₂ monitoring over Web Serial.",
+      },
+      { name: "author", content: "AikyaNova Labs" },
+      { property: "og:title", content: "ESP32 Health Monitor" },
+      {
+        property: "og:description",
+        content: "Hardware-only biomedical monitoring dashboard for ESP32 sensor streams.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -92,6 +98,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -119,8 +131,38 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen bg-background text-foreground">
+        <header className="border-b border-border bg-card/60 backdrop-blur">
+          <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <div>
+              <p className="font-mono text-xs tracking-widest text-primary uppercase">AikyaNova Labs</p>
+              <h1 className="text-base font-semibold">ESP32 Real-Time Health Monitor</h1>
+            </div>
+            <nav aria-label="Main" className="flex flex-wrap gap-1 text-sm">
+              {([
+                ["/", "Dashboard"],
+                ["/hardware", "Hardware setup"],
+                ["/diagnostics", "Diagnostics"],
+                ["/settings", "Settings"],
+              ] as const).map(([to, label]) => (
+                <Link
+                  key={to}
+                  to={to}
+                  activeOptions={{ exact: to === "/" }}
+                  activeProps={{ className: "bg-primary/15 text-primary" }}
+                  className="rounded-md px-3 py-1.5 transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </header>
+        <main className="mx-auto max-w-[1600px] px-4 py-4">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+      </div>
     </QueryClientProvider>
   );
 }
