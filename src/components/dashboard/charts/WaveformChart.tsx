@@ -9,6 +9,7 @@ interface Props {
   height?: number;
   paused?: boolean;
   emptyMessage: string;
+  hasData: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export function WaveformChart({
   height = 180,
   paused = false,
   emptyMessage,
+  hasData,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef<number>(0);
@@ -106,7 +108,7 @@ export function WaveformChart({
         aria-label={`${label} waveform from the ESP32`}
         style={{ width: "100%", height }}
       />
-      {buffer.size === 0 && (
+      {!hasData && (
         <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
           {emptyMessage}
         </p>
