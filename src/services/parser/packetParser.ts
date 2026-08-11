@@ -138,7 +138,7 @@ export function parseLine(
       const match = token.match(/^\s*([A-Za-z_0-9 \-]+)\s*[:=]\s*(-?[0-9.eE+]+)\s*$/);
       if (!match) continue;
       pairs += 1;
-      if (assign(packet, match[1], match[2], options)) recognized += 1;
+      if (assign(packet, match[1] ?? "", match[2] ?? "", options)) recognized += 1;
     }
     if (pairs === 0) return fail(raw, "unknown", "Status text, not a data packet");
     if (recognized === 0) return fail(raw, "labeled", "No recognized sensor fields");
@@ -156,7 +156,7 @@ export function parseLine(
       );
     }
     const packet: SensorPacket = {};
-    parts.forEach((value, index) => assign(packet, options.csvColumns[index], value, options));
+    parts.forEach((value, index) => assign(packet, options.csvColumns[index] ?? "", value, options));
     if (!hasData(packet)) return fail(raw, "csv", "No recognized sensor fields");
     return { raw, format: "csv", packet };
   }
