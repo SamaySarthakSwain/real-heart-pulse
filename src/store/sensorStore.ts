@@ -229,6 +229,10 @@ export const useSensorStore = create<SensorState>((set, get) => ({
             ppgIRCurrent: null,
             ppgRedCurrent: null,
             signalQuality: null,
+            temperature: null,
+            accel: null,
+            gyro: null,
+            motionMagnitude: null,
             packetsPerSecond: 0,
             ecgSampleRate: 0,
             ppgSampleRate: 0,
@@ -346,6 +350,33 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     }
     if (packet.signalQuality !== undefined) patch.signalQuality = packet.signalQuality;
 
+    if (packet.temperature !== undefined) {
+      buffers.temperature.push(packet.temperature, now);
+      patch.temperature = packet.temperature;
+      patch.temperatureUpdates = state.temperatureUpdates + 1;
+      patch.lastTemperatureTime = now;
+    }
+
+    if (packet.accelX !== undefined || packet.accelY !== undefined || packet.accelZ !== undefined) {
+      const x = packet.accelX ?? state.accel?.x ?? 0;
+      const y = packet.accelY ?? state.accel?.y ?? 0;
+      const z = packet.accelZ ?? state.accel?.z ?? 0;
+      const magnitude = Math.sqrt(x * x + y * y + z * z);
+      buffers.motion.push(magnitude, now);
+      patch.accel = { x, y, z };
+      patch.motionMagnitude = magnitude;
+      patch.imuUpdates = state.imuUpdates + 1;
+      patch.lastImuTime = now;
+    }
+    if (packet.gyroX !== undefined || packet.gyroY !== undefined || packet.gyroZ !== undefined) {
+      patch.gyro = {
+        x: packet.gyroX ?? state.gyro?.x ?? 0,
+        y: packet.gyroY ?? state.gyro?.y ?? 0,
+        z: packet.gyroZ ?? state.gyro?.z ?? 0,
+      };
+      patch.lastImuTime = now;
+    }
+
     if (state.recording && sessionRows.length < MAX_SESSION_ROWS) {
       sessionRows.push({
         t: packet.timestamp ?? now,
@@ -355,6 +386,13 @@ export const useSensorStore = create<SensorState>((set, get) => ({
         bpm: packet.bpm,
         spo2: packet.spo2,
         signalQuality: packet.signalQuality,
+        temperature: packet.temperature,
+        accelX: packet.accelX,
+        accelY: packet.accelY,
+        accelZ: packet.accelZ,
+        gyroX: packet.gyroX,
+        gyroY: packet.gyroY,
+        gyroZ: packet.gyroZ,
       });
       patch.recordedRows = sessionRows.length;
     }
@@ -373,6 +411,8 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     if (patch.vitalsBufferSize) {
       buffers.bpm.resize(patch.vitalsBufferSize);
       buffers.spo2.resize(patch.vitalsBufferSize);
+      buffers.temperature.resize(patch.vitalsBufferSize);
+      buffers.motion.resize(patch.vitalsBufferSize);
     }
     set({ settings });
   },
