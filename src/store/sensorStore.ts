@@ -34,6 +34,13 @@ export interface SessionRow {
   bpm?: number | undefined;
   spo2?: number | undefined;
   signalQuality?: number | undefined;
+  temperature?: number | undefined;
+  accelX?: number | undefined;
+  accelY?: number | undefined;
+  accelZ?: number | undefined;
+  gyroX?: number | undefined;
+  gyroY?: number | undefined;
+  gyroZ?: number | undefined;
 }
 
 export interface Settings {
@@ -68,6 +75,8 @@ export const buffers = {
   ppgWave: new RingBuffer(DEFAULT_SETTINGS.ppgBufferSize),
   bpm: new RingBuffer(DEFAULT_SETTINGS.vitalsBufferSize),
   spo2: new RingBuffer(DEFAULT_SETTINGS.vitalsBufferSize),
+  temperature: new RingBuffer(DEFAULT_SETTINGS.vitalsBufferSize),
+  motion: new RingBuffer(DEFAULT_SETTINGS.vitalsBufferSize),
 };
 
 export const sessionRows: SessionRow[] = [];
@@ -83,6 +92,8 @@ interface Counters {
   ppgSamples: number;
   bpmUpdates: number;
   spo2Updates: number;
+  temperatureUpdates: number;
+  imuUpdates: number;
 }
 
 export interface SensorState extends Counters {
@@ -105,10 +116,16 @@ export interface SensorState extends Counters {
   ppgIRCurrent: number | null;
   ppgRedCurrent: number | null;
   signalQuality: number | null;
+  temperature: number | null;
+  accel: { x: number; y: number; z: number } | null;
+  gyro: { x: number; y: number; z: number } | null;
+  motionMagnitude: number | null;
   lastEcgTime: number | null;
   lastPpgTime: number | null;
   lastBpmTime: number | null;
   lastSpo2Time: number | null;
+  lastTemperatureTime: number | null;
+  lastImuTime: number | null;
   rawLog: RawLogEntry[];
   paused: boolean;
   recording: boolean;
@@ -138,6 +155,8 @@ const emptyCounters: Counters = {
   ppgSamples: 0,
   bpmUpdates: 0,
   spo2Updates: 0,
+  temperatureUpdates: 0,
+  imuUpdates: 0,
 };
 
 let transport: Transport | null = null;
@@ -172,10 +191,16 @@ export const useSensorStore = create<SensorState>((set, get) => ({
   ppgIRCurrent: null,
   ppgRedCurrent: null,
   signalQuality: null,
+  temperature: null,
+  accel: null,
+  gyro: null,
+  motionMagnitude: null,
   lastEcgTime: null,
   lastPpgTime: null,
   lastBpmTime: null,
   lastSpo2Time: null,
+  lastTemperatureTime: null,
+  lastImuTime: null,
   rawLog: [],
   paused: false,
   recording: false,
