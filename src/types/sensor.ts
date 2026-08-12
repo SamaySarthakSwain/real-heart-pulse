@@ -15,6 +15,16 @@ export interface SensorPacket {
   signalQuality?: number;
   beat?: boolean;
   threshold?: number;
+  /** LM35 body/skin temperature in degrees Celsius. */
+  temperature?: number;
+  /** BMI323 accelerometer, g. */
+  accelX?: number;
+  accelY?: number;
+  accelZ?: number;
+  /** BMI323 gyroscope, degrees per second. */
+  gyroX?: number;
+  gyroY?: number;
+  gyroZ?: number;
 }
 
 export type PacketFormat = "json" | "csv" | "labeled" | "keyvalue" | "unknown";
