@@ -1,6 +1,21 @@
 import type { SessionRow } from "@/store/sensorStore";
 
-const COLUMNS = ["timestamp", "ecg", "ppgIR", "ppgRed", "bpm", "spo2", "signalQuality"] as const;
+const COLUMNS = [
+  "timestamp",
+  "ecg",
+  "ppgIR",
+  "ppgRed",
+  "bpm",
+  "spo2",
+  "signalQuality",
+  "temperature",
+  "accelX",
+  "accelY",
+  "accelZ",
+  "gyroX",
+  "gyroY",
+  "gyroZ",
+] as const;
 
 const cell = (value: number | undefined) => (value === undefined ? "" : String(value));
 
@@ -17,6 +32,13 @@ export function toCSV(rows: SessionRow[]): string {
         cell(row.bpm),
         cell(row.spo2),
         cell(row.signalQuality),
+        cell(row.temperature),
+        cell(row.accelX),
+        cell(row.accelY),
+        cell(row.accelZ),
+        cell(row.gyroX),
+        cell(row.gyroY),
+        cell(row.gyroZ),
       ].join(","),
     );
   }
@@ -37,6 +59,13 @@ export function toJSON(rows: SessionRow[]): string {
         bpm: row.bpm ?? null,
         spo2: row.spo2 ?? null,
         signalQuality: row.signalQuality ?? null,
+        temperature: row.temperature ?? null,
+        accelX: row.accelX ?? null,
+        accelY: row.accelY ?? null,
+        accelZ: row.accelZ ?? null,
+        gyroX: row.gyroX ?? null,
+        gyroY: row.gyroY ?? null,
+        gyroZ: row.gyroZ ?? null,
       })),
     },
     null,
