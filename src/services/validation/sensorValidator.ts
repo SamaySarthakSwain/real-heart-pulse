@@ -9,6 +9,13 @@ export const RANGES = {
   bpm: { min: 20, max: 250 },
   spo2: { min: 50, max: 100 },
   signalQuality: { min: 0, max: 100 },
+  temperature: { min: 10, max: 60 }, // LM35 skin/body temperature, °C
+  accelX: { min: -16, max: 16 }, // BMI323 accelerometer, g
+  accelY: { min: -16, max: 16 },
+  accelZ: { min: -16, max: 16 },
+  gyroX: { min: -2000, max: 2000 }, // BMI323 gyroscope, °/s
+  gyroY: { min: -2000, max: 2000 },
+  gyroZ: { min: -2000, max: 2000 },
 } as const;
 
 type RangedField = keyof typeof RANGES;
