@@ -14,6 +14,8 @@ export function HardwareTest() {
     ["PPG RED", s.ppgRedCurrent !== null, false],
     ["BPM", s.bpmUpdates > 0, false],
     ["SpO2", s.spo2Updates > 0, false],
+    ["LM35 temp", s.temperatureUpdates > 0, false],
+    ["BMI323 IMU", s.imuUpdates > 0, false],
   ];
 
   return (
