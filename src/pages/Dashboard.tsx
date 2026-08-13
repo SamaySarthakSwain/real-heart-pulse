@@ -82,6 +82,56 @@ export function Dashboard() {
         </section>
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="Body temperature (LM35)"
+          value={tempFresh ? s.temperature : null}
+          unit="°C"
+          decimals={1}
+          waitingText={live ? "Waiting for LM35 data" : "ESP32 disconnected"}
+          statusText={tempFresh ? "LIVE" : live ? "WAITING" : "NO DATA"}
+          tone={signalTone(tempFresh)}
+          accentClass="text-signal-red"
+          footnote="Analog LM35 read by the ESP32 ADC"
+        />
+        <MetricCard
+          label="Motion magnitude (BMI323)"
+          value={imuFresh ? s.motionMagnitude : null}
+          unit="g"
+          decimals={2}
+          waitingText={live ? "Waiting for BMI323 accelerometer data" : "ESP32 disconnected"}
+          statusText={imuFresh ? "LIVE" : live ? "WAITING" : "NO DATA"}
+          tone={signalTone(imuFresh)}
+          footnote="Used to detect rest vs movement artefacts"
+        />
+        <section className="rounded-xl border border-border bg-card p-4">
+          <header className="flex items-start justify-between gap-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Accelerometer (g)</h3>
+            <StatusPill tone={signalTone(imuFresh)}>{signalText(imuFresh)}</StatusPill>
+          </header>
+          <p className="mt-3 font-mono text-lg tabular-nums">
+            X {imuFresh && s.accel ? s.accel.x.toFixed(2) : "--"} · Y{" "}
+            {imuFresh && s.accel ? s.accel.y.toFixed(2) : "--"} · Z{" "}
+            {imuFresh && s.accel ? s.accel.z.toFixed(2) : "--"}
+          </p>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">
+            {s.imuUpdates.toLocaleString()} IMU samples
+          </p>
+        </section>
+        <section className="rounded-xl border border-border bg-card p-4">
+          <header className="flex items-start justify-between gap-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Gyroscope (°/s)</h3>
+            <StatusPill tone={signalTone(imuFresh)}>{signalText(imuFresh)}</StatusPill>
+          </header>
+          <p className="mt-3 font-mono text-lg tabular-nums">
+            X {imuFresh && s.gyro ? s.gyro.x.toFixed(1) : "--"} · Y{" "}
+            {imuFresh && s.gyro ? s.gyro.y.toFixed(1) : "--"} · Z{" "}
+            {imuFresh && s.gyro ? s.gyro.z.toFixed(1) : "--"}
+          </p>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">6-DoF BMI323 over I²C</p>
+        </section>
+      </div>
+
       <section className="rounded-xl border border-border bg-card p-4">
         <header className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold">ECG waveform — {s.settings.timeWindowSeconds}s window</h2>
