@@ -25,6 +25,8 @@ export function Dashboard() {
   const ppgLive = useFreshness(s.lastPpgTime) && live;
   const bpmFresh = useFreshness(s.lastBpmTime, 8000) && live;
   const spo2Fresh = useFreshness(s.lastSpo2Time, 8000) && live;
+  const tempFresh = useFreshness(s.lastTemperatureTime, 8000) && live;
+  const imuFresh = useFreshness(s.lastImuTime, 4000) && live;
 
   const signalTone = (fresh: boolean): PillTone => (fresh ? "ok" : live ? "warn" : "idle");
   const signalText = (fresh: boolean) => (fresh ? "LIVE" : live ? "WAITING" : "NO SIGNAL");
