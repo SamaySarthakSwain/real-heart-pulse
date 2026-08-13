@@ -159,4 +159,9 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* Hide the Lovable badge popup */
+  #lovable-badge {
+    display: none !important;
+  }
 }
