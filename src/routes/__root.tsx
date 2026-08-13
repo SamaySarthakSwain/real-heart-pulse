@@ -141,6 +141,8 @@ function RootComponent() {
             <nav aria-label="Main" className="flex flex-wrap gap-1 text-sm">
               {([
                 ["/", "Dashboard"],
+                ["/analysis", "Risk analysis"],
+                ["/firmware", "Firmware"],
                 ["/hardware", "Hardware setup"],
                 ["/diagnostics", "Diagnostics"],
                 ["/settings", "Settings"],

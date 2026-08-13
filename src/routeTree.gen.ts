@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
+import { Route as FirmwareRouteImport } from './routes/firmware'
 import { Route as HardwareRouteImport } from './routes/hardware'
 import { Route as SettingsRouteImport } from './routes/settings'
 
@@ -19,9 +21,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalysisRoute = AnalysisRouteImport.update({
+  id: '/analysis',
+  path: '/analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiagnosticsRoute = DiagnosticsRouteImport.update({
   id: '/diagnostics',
   path: '/diagnostics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FirmwareRoute = FirmwareRouteImport.update({
+  id: '/firmware',
+  path: '/firmware',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HardwareRoute = HardwareRouteImport.update({
@@ -37,34 +49,51 @@ const SettingsRoute = SettingsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analysis': typeof AnalysisRoute
   '/diagnostics': typeof DiagnosticsRoute
+  '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analysis': typeof AnalysisRoute
   '/diagnostics': typeof DiagnosticsRoute
+  '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analysis': typeof AnalysisRoute
   '/diagnostics': typeof DiagnosticsRoute
+  '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/diagnostics' | '/hardware' | '/settings'
+  fullPaths:
+    '/' | '/analysis' | '/diagnostics' | '/firmware' | '/hardware' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/diagnostics' | '/hardware' | '/settings'
-  id: '__root__' | '/' | '/diagnostics' | '/hardware' | '/settings'
+  to:
+    '/' | '/analysis' | '/diagnostics' | '/firmware' | '/hardware' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/analysis'
+    | '/diagnostics'
+    | '/firmware'
+    | '/hardware'
+    | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalysisRoute: typeof AnalysisRoute
   DiagnosticsRoute: typeof DiagnosticsRoute
+  FirmwareRoute: typeof FirmwareRoute
   HardwareRoute: typeof HardwareRoute
   SettingsRoute: typeof SettingsRoute
 }
@@ -78,11 +107,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analysis': {
+      id: '/analysis'
+      path: '/analysis'
+      fullPath: '/analysis'
+      preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/diagnostics': {
       id: '/diagnostics'
       path: '/diagnostics'
       fullPath: '/diagnostics'
       preLoaderRoute: typeof DiagnosticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/firmware': {
+      id: '/firmware'
+      path: '/firmware'
+      fullPath: '/firmware'
+      preLoaderRoute: typeof FirmwareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hardware': {
@@ -104,7 +147,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalysisRoute: AnalysisRoute,
   DiagnosticsRoute: DiagnosticsRoute,
+  FirmwareRoute: FirmwareRoute,
   HardwareRoute: HardwareRoute,
   SettingsRoute: SettingsRoute,
 }

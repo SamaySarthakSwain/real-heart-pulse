@@ -85,9 +85,9 @@ describe("export", () => {
 
   it("writes empty cells for missing measurements", () => {
     expect(toCSV(rows).split("\n")).toEqual([
-      "timestamp,ecg,ppgIR,ppgRed,bpm,spo2,signalQuality",
-      "1,2048,,,76,,",
-      "2,,52341,,,,",
+      "timestamp,ecg,ppgIR,ppgRed,bpm,spo2,signalQuality,temperature,accelX,accelY,accelZ,gyroX,gyroY,gyroZ",
+      "1,2048,,,76,,,,,,,,,",
+      "2,,52341,,,,,,,,,,,",
     ]);
   });
 
