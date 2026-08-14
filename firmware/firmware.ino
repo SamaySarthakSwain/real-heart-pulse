@@ -1,21 +1,4 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { MedicalDisclaimer } from "@/components/dashboard/MedicalDisclaimer";
-
-const WIRING: Array<[string, string, string]> = [
-  ["AD8232 OUTPUT", "GPIO 34 (ADC1_CH6)", "ECG analog signal, input-only pin"],
-  ["AD8232 LO+", "GPIO 32", "Lead-off detect (positive)"],
-  ["AD8232 LO-", "GPIO 33", "Lead-off detect (negative)"],
-  ["AD8232 3.3V / GND", "3.3V / GND", "Never power from 5V"],
-  ["MAX30102 SDA", "GPIO 21", "Shared I²C bus"],
-  ["MAX30102 SCL", "GPIO 22", "Shared I²C bus"],
-  ["BMI323 SDA", "GPIO 21", "Same I²C bus, address 0x68"],
-  ["BMI323 SCL", "GPIO 22", "Same I²C bus"],
-  ["LM35 VOUT", "GPIO 35 (ADC1_CH7)", "10 mV/°C, add 100 nF to GND"],
-  ["LM35 VCC / GND", "5V (or 3.3V) / GND", "Common ground with the ESP32"],
-];
-
-const SKETCH = String.raw`/*
+/*
  ============================================================
  ESP32 REAL-TIME HEALTH MONITOR
  ============================================================
@@ -1528,6 +1511,10 @@ void oledPPG()
       spo2
     );
 
+    json +=
+      "%"
+    ;
+    // Note: fix a trailing typo in custom oled print
     display.println(
       "%"
     );
@@ -1857,6 +1844,12 @@ void setup()
     INPUT
   );
 
+  pinMode(
+    ECG_LO_N,
+    INPUT
+  );
+
+
   // ------------------------------------------
   // ADC
   // ------------------------------------------
@@ -2045,7 +2038,7 @@ void setup()
       BMI3_GYR_BW_ODR_QUARTER,
       BMI3_GYR_MODE_NORMAL,
       BMI3_GYR_RANGE_2000DPS,
-      BMI3_AVG1
+      BMI3_GYR_AVG1
     );
 
 
@@ -2267,103 +2260,4 @@ void loop()
   // OLED
 
   updateOLED();
-}
-`;
-
-const CHECKLIST: Array<[string, string]> = [
-  [
-    "1. Set the firmware scaling to 1",
-    "This sketch prints true BPM and SpO₂ values (not halved for the Serial Plotter). Open Settings and set both plotter scale factors to 1, otherwise the dashboard doubles them.",
-  ],
-  [
-    "2. Verify ECG",
-    "Diagnostics → Raw serial console must show `ecg:` values that move with your heartbeat, and `leadoff:0`. A flat 0 or 4095 means an electrode is loose.",
-  ],
-  [
-    "3. Verify PPG and SpO₂",
-    "Place a finger on the MAX30102. `ir:` should jump above 50000 and `bpm:`/`spo2:` lines start appearing after ~4 seconds.",
-  ],
-  [
-    "4. Verify LM35",
-    "The temperature card should read close to skin temperature (30–36 °C on the finger, ~22 °C in air). A value pinned near 0 or 60 means the ADC pin or ground is wrong.",
-  ],
-  [
-    "5. Verify BMI323",
-    "At rest the accelerometer magnitude must be ≈ 1.00 g and the gyroscope near 0 °/s. Tilt the board — the axes must respond immediately.",
-  ],
-  [
-    "6. Verify WiFi",
-    "The serial monitor prints `ws://<ip>:81`. Paste that URL in Settings, switch the transport to WebSocket and connect — the same readings must appear without USB.",
-  ],
-];
-
-export function Firmware() {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(SKETCH);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div className="space-y-4">
-      <section className="rounded-xl border border-border bg-card p-4">
-        <h1 className="text-lg font-semibold">ESP32 firmware — ECG + PPG + LM35 + BMI323 + WiFi</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Upload this sketch to the ESP32. It streams every sensor as labelled{" "}
-          <code className="font-mono">key:value</code> lines that this dashboard parses directly, over USB
-          serial at 115200 baud and simultaneously over a WiFi WebSocket on port 81.
-        </p>
-      </section>
-
-      <section className="rounded-xl border border-border bg-card p-4">
-        <h2 className="text-sm font-semibold">Wiring</h2>
-        <table className="mt-3 w-full text-left font-mono text-sm">
-          <thead className="text-xs text-muted-foreground">
-            <tr>
-              <th className="py-1">Sensor pin</th>
-              <th className="py-1">ESP32</th>
-              <th className="py-1">Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {WIRING.map(([a, b, c]) => (
-              <tr key={a} className="border-t border-border">
-                <td className="py-1.5">{a}</td>
-                <td className="py-1.5">{b}</td>
-                <td className="py-1.5 text-muted-foreground">{c}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section className="rounded-xl border border-border bg-card p-4">
-        <header className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">Arduino sketch</h2>
-          <Button size="sm" variant="secondary" onClick={copy}>
-            {copied ? "Copied" : "Copy sketch"}
-          </Button>
-        </header>
-        <pre className="mt-3 max-h-[32rem] overflow-auto rounded-lg border border-border bg-background p-3 font-mono text-xs">
-          {SKETCH}
-        </pre>
-      </section>
-
-      <section className="rounded-xl border border-border bg-card p-4">
-        <h2 className="text-sm font-semibold">Accuracy checklist — run this after flashing</h2>
-        <ul className="mt-3 space-y-2 text-sm">
-          {CHECKLIST.map(([title, body]) => (
-            <li key={title} className="rounded-lg border border-border bg-background p-3">
-              <p className="font-medium">{title}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{body}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <MedicalDisclaimer />
-    </div>
-  );
 }
