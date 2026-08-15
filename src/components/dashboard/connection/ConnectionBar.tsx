@@ -118,7 +118,17 @@ export function ConnectionBar() {
         </div>
 
         {/* Connect / Disconnect button */}
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
+          {!connected && (
+            <select
+              className="h-10 rounded-xl border border-input bg-background px-3 text-sm transition-colors hover:border-ring focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+              value={state.settings.transportType}
+              onChange={(e) => state.setSettings({ transportType: e.target.value as "serial" | "websocket" })}
+            >
+              <option value="serial">USB Serial</option>
+              <option value="websocket">Wi-Fi WS</option>
+            </select>
+          )}
           {connected ? (
             <Button
               variant="destructive"

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export function ConnectionWizard() {
   const s = useSensorStore();
   const steps: Array<[string, boolean]> = [
-    ["Choose USB Serial", s.settings.transportType === "serial"],
+    [s.settings.transportType === "serial" ? "Choose USB Serial" : "Choose Wi-Fi WebSocket", true],
     ["Connect ESP32", s.connectionState === "CONNECTED"],
     ["Detect incoming data", s.packetsReceived > 0],
     ["Validate packets", s.packetsProcessed > 0],

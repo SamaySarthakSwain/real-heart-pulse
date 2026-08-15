@@ -1009,7 +1009,7 @@ void sendVitals()
 
   if (currentBpm > 0)
   {
-    // Important: React defaults to `plotterScaleBpm: 2` (scales up by 2 to fit Arduino Plotter screens)
+    // Important: React defaults to 'plotterScaleBpm: 2' (scales up by 2 to fit Arduino Plotter screens)
     // We divide by 2 so when the dashboard multiplies by 2, it receives the exact accurate value.
     json += ",\"bpm\":" + String(currentBpm / 2.0f, 1);
   }
