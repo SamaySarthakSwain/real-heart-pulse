@@ -76,6 +76,8 @@ function AutoPlayVideoOnScroll({ src, playbackRate }: { src: string; playbackRat
       className="w-full rounded-[2rem] aspect-video object-cover"
       controls
       loop
+      muted
+      playsInline
       onCanPlay={(e) => {
         e.currentTarget.playbackRate = playbackRate;
       }}
