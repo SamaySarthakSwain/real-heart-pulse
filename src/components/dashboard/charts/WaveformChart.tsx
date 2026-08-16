@@ -10,6 +10,7 @@ interface Props {
   paused?: boolean;
   emptyMessage: string;
   hasData: boolean;
+  fillWidth?: boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ export function WaveformChart({
   paused = false,
   emptyMessage,
   hasData,
+  fillWidth = false,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef<number>(0);
@@ -80,11 +82,16 @@ export function WaveformChart({
         }
         if (points.length > 1 && Number.isFinite(min) && Number.isFinite(max)) {
           const span = max - min || 1;
+          const timeMin = points[0][0];
+          const timeSpanMs = fillWidth ? Math.max(now - timeMin, 1) : windowMs;
+
           ctx.strokeStyle = strokeColor;
           ctx.lineWidth = 1.6;
           ctx.beginPath();
           points.forEach(([t, v], index) => {
-            const x = width - ((now - t) / windowMs) * width;
+            const x = fillWidth
+              ? ((t - timeMin) / timeSpanMs) * width
+              : width - ((now - t) / timeSpanMs) * width;
             const y = height - 8 - ((v - min) / span) * (height - 16);
             if (index === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);

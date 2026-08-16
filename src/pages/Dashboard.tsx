@@ -332,6 +332,7 @@ export function Dashboard() {
               windowSeconds={120}
               height={140}
               emptyMessage="Waiting for BPM data"
+              fillWidth={true}
             />
           </section>
           <section className="rounded-2xl border bg-card p-5 transition-all duration-300 hover:shadow-lg">
@@ -345,6 +346,7 @@ export function Dashboard() {
               windowSeconds={120}
               height={140}
               emptyMessage="Waiting for SpO₂ data"
+              fillWidth={true}
             />
           </section>
         </div>
