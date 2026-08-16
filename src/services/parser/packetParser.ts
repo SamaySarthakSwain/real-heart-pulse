@@ -66,12 +66,18 @@ const FIELD_ALIASES: Record<string, keyof SensorPacket> = {
   az: "accelZ",
   accelz: "accelZ",
   accz: "accelZ",
+  bmi_ax: "accelX",
+  bmi_ay: "accelY",
+  bmi_az: "accelZ",
   gx: "gyroX",
   gyrox: "gyroX",
   gy: "gyroY",
   gyroy: "gyroY",
   gz: "gyroZ",
   gyroz: "gyroZ",
+  bmi_gx: "gyroX",
+  bmi_gy: "gyroY",
+  bmi_gz: "gyroZ",
 };
 
 const normalizeKey = (key: string) =>
