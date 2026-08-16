@@ -57,6 +57,7 @@ const FIELD_ALIASES: Record<string, keyof SensorPacket> = {
   tempc: "temperature",
   lm35: "temperature",
   bodytemp: "temperature",
+  bmi_temp: "temperature",
   ax: "accelX",
   accelx: "accelX",
   accx: "accelX",

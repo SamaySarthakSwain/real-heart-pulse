@@ -170,11 +170,11 @@ export function Dashboard() {
               value={tempFresh ? s.temperature : null}
               unit="°C"
               decimals={1}
-              waitingText={live ? "Waiting for LM35 data" : "ESP32 disconnected"}
+              waitingText={live ? "Waiting for Temperature data" : "ESP32 disconnected"}
               statusText={tempFresh ? "LIVE" : live ? "WAITING" : "NO DATA"}
               tone={signalTone(tempFresh)}
               accentClass="text-signal-red"
-              footnote="Analog LM35 read by the ESP32 ADC"
+              footnote="Internal/Body temperature"
               icon="🌡️"
             />
           </div>
