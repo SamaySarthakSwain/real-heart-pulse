@@ -13,8 +13,8 @@ export interface ParserOptions {
 }
 
 export const DEFAULT_PARSER_OPTIONS: ParserOptions = {
-  plotterScaleBpm: 2,
-  plotterScaleSpo2: 2,
+  plotterScaleBpm: 1,
+  plotterScaleSpo2: 1,
   csvColumns: ["timestamp", "ecg", "ppgIR", "ppgRed", "bpm", "spo2"],
 };
 
