@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-
 /**
  * ScrollReveal component wrapper that applies the slide-in-up animation
  * only when the element scrolls into view.
@@ -47,6 +46,43 @@ function ScrollReveal({
     >
       {children}
     </div>
+  );
+}
+
+function AutoPlayVideoOnScroll({ src, playbackRate }: { src: string; playbackRate: number }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoRef.current?.play().catch(console.error);
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (videoRef.current) {
+      observer.observe(videoRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      className="w-full rounded-[2rem] aspect-video object-cover"
+      controls
+      loop
+      onCanPlay={(e) => {
+        e.currentTarget.playbackRate = playbackRate;
+      }}
+    >
+      <source src={src} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
   );
 }
 
@@ -218,6 +254,24 @@ export function LandingPage() {
 
           </div>
         </div>
+      </section>
+
+      {/* ── VIDEO PROCESS SECTION ────────────────────────────────────────────────── */}
+      <section className="container px-4 md:px-6 relative pb-10">
+        <ScrollReveal>
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">See The Process In Action</h2>
+            <p className="text-muted-foreground text-lg">
+              Watch how the real-time health monitor captures, processes, and analyzes data seamlessly.
+            </p>
+          </div>
+        </ScrollReveal>
+        
+        <ScrollReveal delay={200}>
+          <div className="relative max-w-5xl mx-auto rounded-[2.5rem] overflow-hidden border-border/50 shadow-2xl glass-card p-2 md:p-4 bg-accent/10">
+            <AutoPlayVideoOnScroll src="/videos/process-video.mp4" playbackRate={0.5} />
+          </div>
+        </ScrollReveal>
       </section>
 
     </div>

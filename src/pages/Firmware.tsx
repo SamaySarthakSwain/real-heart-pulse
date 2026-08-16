@@ -2045,7 +2045,7 @@ void setup()
       BMI3_GYR_BW_ODR_QUARTER,
       BMI3_GYR_MODE_NORMAL,
       BMI3_GYR_RANGE_2000DPS,
-      BMI3_AVG1
+      BMI3_GYR_AVG1
     );
 
 

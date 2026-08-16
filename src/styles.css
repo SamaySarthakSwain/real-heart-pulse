@@ -373,3 +373,9 @@
     display: none !important;
   }
 }
+
+@layer base {
+  html, body {
+    overflow-x: hidden;
+  }
+}
