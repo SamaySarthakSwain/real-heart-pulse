@@ -1,7 +1,7 @@
 /*
  * ================================================================
  * ESP32 MULTI-SENSOR HEALTH MONITOR
- * ACCURACY-FOCUSED VERSION
+ * ACCURACY-FOCUSED VERSION + WIFI & WEBSOCKET SUPPORT
  * ================================================================
  *
  * MAX30102 -> Heart Rate + SpO2
@@ -9,6 +9,7 @@
  * BMI323   -> Accelerometer + Gyroscope + Temperature
  * LM35     -> Temperature
  * SSD1306  -> OLED
+ * WIFI/WS  -> WebSocket Server on Port 81
  *
  * I2C:
  * SDA -> GPIO 21
@@ -43,7 +44,10 @@
  * ================================================================
  */
 
+#include <Arduino.h>
 #include <Wire.h>
+#include <WiFi.h>
+#include <WebSocketsServer.h>
 
 #include "MAX30105.h"
 #include "spo2_algorithm.h"
@@ -54,6 +58,36 @@
 #include "7Semi_BMI323.h"
 
 #include <math.h>
+
+// ================================================================
+// WIFI & WEBSOCKET CONFIGURATION
+// ================================================================
+
+const char* WIFI_SSID     = "Samay_S24";
+const char* WIFI_PASSWORD = "8327780375";
+
+const bool ENABLE_WIFI = true;
+
+WebSocketsServer webSocket(81);
+
+void webSocketEvent(
+  uint8_t client,
+  WStype_t type,
+  uint8_t* payload,
+  size_t length
+)
+{
+  if (type == WStype_CONNECTED)
+  {
+    Serial.print("WebSocket client connected: #");
+    Serial.println(client);
+  }
+  else if (type == WStype_DISCONNECTED)
+  {
+    Serial.print("WebSocket client disconnected: #");
+    Serial.println(client);
+  }
+}
 
 // ================================================================
 // PIN DEFINITIONS
@@ -1695,7 +1729,7 @@ void updateDisplay()
 }
 
 // ================================================================
-// SERIAL DASHBOARD PACKET
+// SERIAL & WEBSOCKET DASHBOARD PACKET
 // ================================================================
 
 void sendDashboardPacket()
@@ -1712,308 +1746,155 @@ void sendDashboardPacket()
   lastSerialSend =
     millis();
 
+  String packet = "";
+  packet.reserve(256);
+
   // ------------------------------------------------
   // ECG
   // ------------------------------------------------
-
-  Serial.print(
-    "ECG:"
-  );
-
-  Serial.print(
-    ecgValue
-  );
+  packet += "ECG:";
+  packet += String(ecgValue);
 
   // ------------------------------------------------
   // PPG IR
   // ------------------------------------------------
-
-  Serial.print(
-    ", IR_Signal:"
-  );
-
-  if (
-    bufferIndex > 0
-  )
+  packet += ", IR_Signal:";
+  if (bufferIndex > 0)
   {
-    Serial.print(
-      irBuffer[
-        bufferIndex - 1
-      ]
-    );
+    packet += String(irBuffer[bufferIndex - 1]);
   }
   else
   {
-    Serial.print(
-      0
-    );
+    packet += "0";
   }
 
   // ------------------------------------------------
   // PPG RED
   // ------------------------------------------------
-
-  Serial.print(
-    ", Red_Signal:"
-  );
-
-  if (
-    bufferIndex > 0
-  )
+  packet += ", Red_Signal:";
+  if (bufferIndex > 0)
   {
-    Serial.print(
-      redBuffer[
-        bufferIndex - 1
-      ]
-    );
+    packet += String(redBuffer[bufferIndex - 1]);
   }
   else
   {
-    Serial.print(
-      0
-    );
+    packet += "0";
   }
 
   // ------------------------------------------------
   // FINGER
   // ------------------------------------------------
-
-  Serial.print(
-    ", Finger:"
-  );
-
-  Serial.print(
-    fingerPresent ?
-    1 :
-    0
-  );
+  packet += ", Finger:";
+  packet += (fingerPresent ? "1" : "0");
 
   // ------------------------------------------------
   // RAW HR FROM MAXIM
   // ------------------------------------------------
-
-  Serial.print(
-    ", HR_Raw:"
-  );
-
-  Serial.print(
-    algorithmHR
-  );
+  packet += ", HR_Raw:";
+  packet += String(algorithmHR);
 
   // ------------------------------------------------
   // HR VALID
   // ------------------------------------------------
-
-  Serial.print(
-    ", HR_Valid:"
-  );
-
-  Serial.print(
-    algorithmHRValid
-  );
+  packet += ", HR_Valid:";
+  packet += String(algorithmHRValid);
 
   // ------------------------------------------------
   // FILTERED BPM
   // ------------------------------------------------
-
-  Serial.print(
-    ", BPM:"
-  );
-
-  if (
-    fingerPresent &&
-    bpm >= MIN_VALID_BPM &&
-    bpm <= MAX_VALID_BPM
-  )
+  packet += ", BPM:";
+  if (fingerPresent && bpm >= MIN_VALID_BPM && bpm <= MAX_VALID_BPM)
   {
-    Serial.print(
-      bpm,
-      1
-    );
+    packet += String(bpm, 1);
   }
   else
   {
-    Serial.print(
-      0
-    );
+    packet += "0";
   }
 
   // ------------------------------------------------
   // RAW SPO2
   // ------------------------------------------------
-
-  Serial.print(
-    ", SpO2_Raw:"
-  );
-
-  Serial.print(
-    algorithmSpO2
-  );
+  packet += ", SpO2_Raw:";
+  packet += String(algorithmSpO2);
 
   // ------------------------------------------------
   // SPO2 VALID
   // ------------------------------------------------
-
-  Serial.print(
-    ", SpO2_Valid:"
-  );
-
-  Serial.print(
-    algorithmSpO2Valid
-  );
+  packet += ", SpO2_Valid:";
+  packet += String(algorithmSpO2Valid);
 
   // ------------------------------------------------
   // FILTERED SPO2
   // ------------------------------------------------
-
-  Serial.print(
-    ", SpO2:"
-  );
-
-  if (
-    fingerPresent &&
-    spo2 >= 70 &&
-    spo2 <= 100
-  )
+  packet += ", SpO2:";
+  if (fingerPresent && spo2 >= 70 && spo2 <= 100)
   {
-    Serial.print(
-      spo2,
-      1
-    );
+    packet += String(spo2, 1);
   }
   else
   {
-    Serial.print(
-      0
-    );
+    packet += "0";
   }
 
   // ------------------------------------------------
   // BMI ACCELEROMETER
   // ------------------------------------------------
-
-  Serial.print(
-    ", BMI_AX:"
-  );
-
-  Serial.print(
-    accelX,
-    2
-  );
-
-  Serial.print(
-    ", BMI_AY:"
-  );
-
-  Serial.print(
-    accelY,
-    2
-  );
-
-  Serial.print(
-    ", BMI_AZ:"
-  );
-
-  Serial.print(
-    accelZ,
-    2
-  );
+  packet += ", BMI_AX:";
+  packet += String(accelX, 2);
+  packet += ", BMI_AY:";
+  packet += String(accelY, 2);
+  packet += ", BMI_AZ:";
+  packet += String(accelZ, 2);
 
   // ------------------------------------------------
   // BMI GYROSCOPE
   // ------------------------------------------------
-
-  Serial.print(
-    ", BMI_GX:"
-  );
-
-  Serial.print(
-    gyroX,
-    1
-  );
-
-  Serial.print(
-    ", BMI_GY:"
-  );
-
-  Serial.print(
-    gyroY,
-    1
-  );
-
-  Serial.print(
-    ", BMI_GZ:"
-  );
-
-  Serial.print(
-    gyroZ,
-    1
-  );
+  packet += ", BMI_GX:";
+  packet += String(gyroX, 1);
+  packet += ", BMI_GY:";
+  packet += String(gyroY, 1);
+  packet += ", BMI_GZ:";
+  packet += String(gyroZ, 1);
 
   // ------------------------------------------------
   // ACCEL MAGNITUDE
   // ------------------------------------------------
-
-  Serial.print(
-    ", AccMag:"
-  );
-
-  Serial.print(
-    accelMagnitude,
-    2
-  );
+  packet += ", AccMag:";
+  packet += String(accelMagnitude, 2);
 
   // ------------------------------------------------
   // LM35
   // ------------------------------------------------
-
-  Serial.print(
-    ", LM35:"
-  );
-
-  Serial.print(
-    temperatureC,
-    1
-  );
+  packet += ", LM35:";
+  packet += String(temperatureC, 1);
 
   // ------------------------------------------------
   // BMI TEMPERATURE
   // ------------------------------------------------
-
-  Serial.print(
-    ", BMI_Temp:"
-  );
-
-  Serial.print(
-    bmiTemperature,
-    1
-  );
+  packet += ", BMI_Temp:";
+  packet += String(bmiTemperature, 1);
 
   // ------------------------------------------------
   // MOTION
   // ------------------------------------------------
-
-  Serial.print(
-    ", Motion:"
-  );
-
-  Serial.print(
-    motionState
-  );
+  packet += ", Motion:";
+  packet += motionState;
 
   // ------------------------------------------------
   // ECG LEADS
   // ------------------------------------------------
+  packet += ", LeadsOff:";
+  packet += (ecgLeadsOff ? "1" : "0");
 
-  Serial.print(
-    ", LeadsOff:"
-  );
+  // Output to Serial Monitor / Web Serial
+  Serial.println(packet);
 
-  Serial.println(
-    ecgLeadsOff ?
-    1 :
-    0
-  );
+  // Broadcast over WebSocket if WiFi is connected
+  if (ENABLE_WIFI && WiFi.status() == WL_CONNECTED)
+  {
+    webSocket.broadcastTXT(packet);
+  }
 }
 
 // ================================================================
@@ -2342,6 +2223,46 @@ void setup()
     false;
 
   // ------------------------------------------------
+  // WIFI & WEBSOCKET SETUP
+  // ------------------------------------------------
+
+  if (ENABLE_WIFI)
+  {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+    Serial.println();
+    Serial.print("WiFi connecting to: ");
+    Serial.println(WIFI_SSID);
+
+    unsigned long start = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - start < 10000)
+    {
+      delay(300);
+      Serial.print(".");
+    }
+    Serial.println();
+
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.print("WiFi Connected! IP: ");
+      Serial.println(WiFi.localIP());
+
+      Serial.print("WebSocket: ws://");
+      Serial.print(WiFi.localIP());
+      Serial.println(":81");
+
+      webSocket.begin();
+      webSocket.onEvent(webSocketEvent);
+    }
+    else
+    {
+      Serial.println("WiFi connection FAILED / TIMED OUT");
+      Serial.println("Running USB Serial only.");
+    }
+  }
+
+  // ------------------------------------------------
   // TIMERS
   // ------------------------------------------------
 
@@ -2396,6 +2317,19 @@ void setup()
 
 void loop()
 {
+  // ------------------------------------------------
+  // WEBSOCKET SERVICE
+  // ------------------------------------------------
+
+  if (
+    ENABLE_WIFI &&
+    WiFi.status() ==
+    WL_CONNECTED
+  )
+  {
+    webSocket.loop();
+  }
+
   /*
    * IMPORTANT:
    *

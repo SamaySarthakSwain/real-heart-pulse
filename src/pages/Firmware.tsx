@@ -58,8 +58,8 @@ const SKETCH = String.raw`/*
 // WIFI
 // ============================================================
 
-const char* WIFI_SSID     = "YOUR_WIFI_SSID";
-const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
+const char* WIFI_SSID     = "Samay_S24";
+const char* WIFI_PASSWORD = "8327780375";
 
 const bool ENABLE_WIFI = true;
 
