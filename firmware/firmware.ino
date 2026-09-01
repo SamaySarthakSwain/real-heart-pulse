@@ -1,12 +1,14 @@
 /*
  * ================================================================
  * ESP32 MULTI-SENSOR HEALTH MONITOR
+ * ACCURACY-FOCUSED VERSION
  * ================================================================
  *
- * MAX30102  -> Heart Rate + SpO2
- * AD8232    -> ECG
- * BMI323    -> Accelerometer + Gyroscope + Temperature
- * SSD1306   -> OLED Display
+ * MAX30102 -> Heart Rate + SpO2
+ * AD8232   -> ECG
+ * BMI323   -> Accelerometer + Gyroscope + Temperature
+ * LM35     -> Temperature
+ * SSD1306  -> OLED
  *
  * I2C:
  * SDA -> GPIO 21
@@ -17,53 +19,57 @@
  * LO+    -> GPIO 32
  * LO-    -> GPIO 33
  *
- * BMI323:
- * VCC -> 3.3V
- * GND -> GND
- * SDA -> GPIO 21
- * SCL -> GPIO 22
+ * LM35:
+ * VOUT -> GPIO 35
  *
- * OLED:
- * VCC -> 3.3V
- * GND -> GND
- * SDA -> GPIO 21
- * SCL -> GPIO 22
+ * ================================================================
+ *
+ * IMPORTANT:
+ *
+ * MAX30102 uses SparkFun/Maxim HR + SpO2 algorithm.
+ *
+ * Configuration:
+ *
+ * LED brightness = 60
+ * Sample average = 4
+ * LED mode       = RED + IR
+ * Sample rate     = 100 Hz
+ * Pulse width     = 411 us
+ * ADC range       = 4096
+ *
+ * Effective sample rate for Maxim algorithm:
+ * approximately 25 samples/sec.
  *
  * ================================================================
  */
 
 #include <Wire.h>
+
 #include "MAX30105.h"
+#include "spo2_algorithm.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
 #include "7Semi_BMI323.h"
 
+#include <math.h>
 
-// ========================================================================
-// AD8232 ECG SETTINGS
-// ========================================================================
+// ================================================================
+// PIN DEFINITIONS
+// ================================================================
+
+// ---------------- ECG ----------------
 
 #define ECG_OUTPUT_PIN 34
 #define ECG_LO_PLUS    32
 #define ECG_LO_MINUS   33
 
-// ========================================================================
-// LM35 TEMPERATURE SENSOR
-// ========================================================================
-// LM35 OUT -> GPIO 35
-// LM35 VCC -> 3.3V
-// LM35 GND -> GND
-// LM35 output = 10 mV per degree Celsius
+// ---------------- LM35 ----------------
+
 #define LM35_PIN 35
 
-float temperatureC = 0.0;
-
-
-// ========================================================================
-// I2C SETTINGS
-// ========================================================================
+// ---------------- I2C ----------------
 
 #define I2C_SDA 21
 #define I2C_SCL 22
@@ -71,14 +77,14 @@ float temperatureC = 0.0;
 #define BMI323_ADDRESS_68 0x68
 #define BMI323_ADDRESS_69 0x69
 
+// ================================================================
+// OLED
+// ================================================================
 
-// ========================================================================
-// OLED SETTINGS
-// ========================================================================
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
 
-#define SCREEN_WIDTH   128
-#define SCREEN_HEIGHT  64
-#define OLED_RESET     -1
+#define OLED_RESET -1
 #define SCREEN_ADDRESS 0x3C
 
 Adafruit_SSD1306 display(
@@ -88,78 +94,169 @@ Adafruit_SSD1306 display(
   OLED_RESET
 );
 
-
-// ========================================================================
+// ================================================================
 // MAX30102
-// ========================================================================
+// ================================================================
 
 MAX30105 sensor;
 
-byte irPower  = 40;
-byte redPower = 40;
+bool max30102Ready = false;
 
-unsigned long lastAdjustTime = 0;
+bool fingerPresent = false;
 
-int32_t dcIR  = 0;
-int32_t dcRED = 0;
+// ------------------------------------------------
+// MAX30102 configuration
+// ------------------------------------------------
 
-const int SHIFT_DC = 4;
+const byte LED_BRIGHTNESS = 60;
 
-int32_t prev = 0;
-int32_t prev2 = 0;
+const byte SAMPLE_AVERAGE = 4;
 
-uint32_t lastBeatMs = 0;
-uint8_t beatCount = 0;
+const byte LED_MODE = 2;
 
-float bpm = 0;
-float env = 0;
+const int SAMPLE_RATE = 100;
 
-const float envAlpha = 0.95f;
+const int PULSE_WIDTH = 411;
 
-const uint32_t REFRACTORY_MS = 400;
+const int ADC_RANGE = 4096;
 
-uint32_t lastBeatDetectedMs = 0;
+// Finger detection threshold
+const uint32_t FINGER_THRESHOLD = 20000;
 
-const uint32_t BPM_TIMEOUT_MS = 3000;
+// ================================================================
+// MAXIM HR + SPO2 BUFFER
+// ================================================================
 
-const float MIN_SIGNAL_QUALITY = 8.0f;
+#define BUFFER_SIZE 100
 
+uint32_t irBuffer[BUFFER_SIZE];
 
-// ========================================================================
-// MAX30102 SpO2
-// ========================================================================
+uint32_t redBuffer[BUFFER_SIZE];
 
-bool warmupDone = false;
+uint16_t bufferIndex = 0;
 
-uint32_t warmupStart = 0;
+// ================================================================
+// MAXIM ALGORITHM OUTPUT
+// ================================================================
 
-const uint32_t WARMUP_MS = 500;
+int32_t algorithmHR = 0;
 
-float spo2 = 0;
+int8_t algorithmHRValid = 0;
 
-float Rratio = 0;
+int32_t algorithmSpO2 = 0;
 
-int32_t irMax = INT32_MIN;
-int32_t irMin = INT32_MAX;
+int8_t algorithmSpO2Valid = 0;
 
-int32_t redMax = INT32_MIN;
-int32_t redMin = INT32_MAX;
+// ================================================================
+// STABLE BPM
+// ================================================================
 
-uint32_t lastSpo2DetectedMs = 0;
+float bpm = 0.0;
 
-const uint32_t SPO2_TIMEOUT_MS = 10000;
+float bpmHistory[5] = {
+  0,
+  0,
+  0,
+  0,
+  0
+};
 
+uint8_t bpmHistoryIndex = 0;
 
-// ========================================================================
-// HEART ANIMATION
-// ========================================================================
+uint8_t bpmHistoryCount = 0;
 
-uint32_t heartBeatTimer = 0;
+// ------------------------------------------------
+// BPM safety limits
+// ------------------------------------------------
 
+const float MIN_VALID_BPM = 45.0;
 
-// ========================================================================
+const float MAX_VALID_BPM = 110.0;
+
+// Maximum allowed sudden jump between
+// consecutive valid algorithm results.
+
+const float MAX_BPM_CHANGE = 25.0;
+
+// ================================================================
+// STABLE SPO2
+// ================================================================
+
+float spo2 = 0.0;
+
+float spo2History[5] = {
+  0,
+  0,
+  0,
+  0,
+  0
+};
+
+uint8_t spo2HistoryIndex = 0;
+
+uint8_t spo2HistoryCount = 0;
+
+// ================================================================
+// SENSOR TIMERS
+// ================================================================
+
+unsigned long lastECGRead = 0;
+
+unsigned long lastBMIRead = 0;
+
+unsigned long lastLM35Read = 0;
+
+unsigned long lastSerialSend = 0;
+
+unsigned long lastDisplayUpdate = 0;
+
+unsigned long lastPageChange = 0;
+
+// ================================================================
+// SENSOR INTERVALS
+// ================================================================
+
+// ECG target ~500 Hz
+
+const unsigned long ECG_INTERVAL_US = 2000;
+
+// BMI323 = 20 Hz
+
+const unsigned long BMI_INTERVAL_MS = 50;
+
+// LM35 = 4 Hz
+
+const unsigned long LM35_INTERVAL_MS = 250;
+
+// Dashboard = 10 packets/sec
+
+const unsigned long SERIAL_INTERVAL_MS = 100;
+
+// OLED = 10 FPS
+
+const unsigned long DISPLAY_INTERVAL_MS = 100;
+
+// OLED page change
+
+const unsigned long PAGE_INTERVAL_MS = 4000;
+
+// ================================================================
+// ECG
+// ================================================================
+
+int ecgValue = 0;
+
+bool ecgLeadsOff = true;
+
+// ================================================================
+// LM35
+// ================================================================
+
+float temperatureC = 0.0;
+
+// ================================================================
 // BMI323
-// ========================================================================
+// ================================================================
 
 BMI323_7Semi imu;
 
@@ -167,102 +264,1045 @@ bool bmiReady = false;
 
 uint8_t bmiAddress = BMI323_ADDRESS_68;
 
+// Raw accelerometer
 
-// Accelerometer
 float accelX = 0.0;
+
 float accelY = 0.0;
+
 float accelZ = 0.0;
 
-// Gyroscope
+// Raw gyroscope
+
 float gyroX = 0.0;
+
 float gyroY = 0.0;
+
 float gyroZ = 0.0;
 
-// BMI323 internal temperature
+// BMI temperature
+
 float bmiTemperature = 0.0;
 
 // Calculated values
+
 float accelMagnitude = 0.0;
+
 float gyroMagnitude = 0.0;
 
 float pitchDeg = 0.0;
+
 float rollDeg = 0.0;
 
+// ================================================================
+// MOTION ANALYSIS
+// ================================================================
 
-// BMI323 timing
-unsigned long lastBMIRead = 0;
+#define MOTION_HISTORY_SIZE 20
 
-const unsigned long BMI_READ_INTERVAL = 50;
-
-
-// Motion detection
-#define MOTION_HISTORY_SIZE 10
-
-float accelHistory[MOTION_HISTORY_SIZE];
+float accelHistory[
+  MOTION_HISTORY_SIZE
+];
 
 uint8_t accelHistoryIndex = 0;
 
-float accelVariance = 0;
+bool motionHistoryReady = false;
+
+float accelVariance = 0.0;
 
 bool motionDetected = false;
 
 String motionState = "STABLE";
 
-
-// ========================================================================
-// OLED PAGE SYSTEM
-// ========================================================================
+// ================================================================
+// OLED PAGES
+// ================================================================
 
 uint8_t currentPage = 0;
 
 const uint8_t PAGE_HEART = 0;
-const uint8_t PAGE_BMI   = 1;
+
+const uint8_t PAGE_BMI = 1;
 
 const uint8_t TOTAL_PAGES = 2;
 
-unsigned long lastPageChange = 0;
+// ================================================================
+// HEART ANIMATION
+// ================================================================
 
-const unsigned long PAGE_INTERVAL = 4000;
+unsigned long heartBeatTimer = 0;
 
+// ================================================================
+// HELPER FUNCTIONS
+// ================================================================
 
-// ========================================================================
-// UTILITY
-// ========================================================================
-
-float clampf(float v, float lo, float hi)
+float clampFloat(
+  float value,
+  float minimum,
+  float maximum
+)
 {
-  if (v < lo)
-    return lo;
+  if (value < minimum)
+    return minimum;
 
-  if (v > hi)
-    return hi;
+  if (value > maximum)
+    return maximum;
 
-  return v;
+  return value;
 }
 
+// ================================================================
+// MEDIAN BPM
+// ================================================================
 
-// ========================================================================
-// HEART ICON
-// ========================================================================
+float getMedianBPM()
+{
+  float values[5];
+
+  uint8_t count = 0;
+
+  for (uint8_t i = 0; i < 5; i++)
+  {
+    if (bpmHistory[i] > 0)
+    {
+      values[count] =
+        bpmHistory[i];
+
+      count++;
+    }
+  }
+
+  if (count == 0)
+    return 0;
+
+  // Sort
+
+  for (uint8_t i = 0; i < count - 1; i++)
+  {
+    for (uint8_t j = i + 1; j < count; j++)
+    {
+      if (
+        values[j] <
+        values[i]
+      )
+      {
+        float temp =
+          values[i];
+
+        values[i] =
+          values[j];
+
+        values[j] =
+          temp;
+      }
+    }
+  }
+
+  return values[
+    count / 2
+  ];
+}
+
+// ================================================================
+// MEDIAN SPO2
+// ================================================================
+
+float getMedianSpO2()
+{
+  float values[5];
+
+  uint8_t count = 0;
+
+  for (uint8_t i = 0; i < 5; i++)
+  {
+    if (
+      spo2History[i] >= 70 &&
+      spo2History[i] <= 100
+    )
+    {
+      values[count] =
+        spo2History[i];
+
+      count++;
+    }
+  }
+
+  if (count == 0)
+    return 0;
+
+  // Sort
+
+  for (uint8_t i = 0; i < count - 1; i++)
+  {
+    for (uint8_t j = i + 1; j < count; j++)
+    {
+      if (
+        values[j] <
+        values[i]
+      )
+      {
+        float temp =
+          values[i];
+
+        values[i] =
+          values[j];
+
+        values[j] =
+          temp;
+      }
+    }
+  }
+
+  return values[
+    count / 2
+  ];
+}
+
+// ================================================================
+// RESET MAX30102 STATE
+// ================================================================
+
+void resetMAXState()
+{
+  fingerPresent = false;
+
+  bufferIndex = 0;
+
+  algorithmHR = 0;
+
+  algorithmHRValid = 0;
+
+  algorithmSpO2 = 0;
+
+  algorithmSpO2Valid = 0;
+
+  bpm = 0;
+
+  spo2 = 0;
+
+  bpmHistoryIndex = 0;
+
+  bpmHistoryCount = 0;
+
+  spo2HistoryIndex = 0;
+
+  spo2HistoryCount = 0;
+
+  for (uint8_t i = 0; i < 5; i++)
+  {
+    bpmHistory[i] = 0;
+
+    spo2History[i] = 0;
+  }
+
+  for (uint16_t i = 0; i < BUFFER_SIZE; i++)
+  {
+    irBuffer[i] = 0;
+
+    redBuffer[i] = 0;
+  }
+}
+
+// ================================================================
+// INITIALIZE MAX30102
+// ================================================================
+
+bool initializeMAX30102()
+{
+  Serial.println();
+
+  Serial.println(
+    "Initializing MAX30102..."
+  );
+
+  if (
+    !sensor.begin(
+      Wire,
+      I2C_SPEED_FAST
+    )
+  )
+  {
+    Serial.println(
+      "MAX30102 NOT FOUND!"
+    );
+
+    return false;
+  }
+
+  Serial.println(
+    "MAX30102 FOUND."
+  );
+
+  // ------------------------------------------------
+  // Reference configuration
+  // ------------------------------------------------
+
+  sensor.setup(
+    LED_BRIGHTNESS,
+    SAMPLE_AVERAGE,
+    LED_MODE,
+    SAMPLE_RATE,
+    PULSE_WIDTH,
+    ADC_RANGE
+  );
+
+  sensor.setPulseAmplitudeIR(
+    LED_BRIGHTNESS
+  );
+
+  sensor.setPulseAmplitudeRed(
+    LED_BRIGHTNESS
+  );
+
+  sensor.setPulseAmplitudeGreen(
+    0
+  );
+
+  sensor.clearFIFO();
+
+  resetMAXState();
+
+  Serial.println(
+    "MAX30102 configuration:"
+  );
+
+  Serial.print(
+    "LED brightness: "
+  );
+
+  Serial.println(
+    LED_BRIGHTNESS
+  );
+
+  Serial.print(
+    "Sample average: "
+  );
+
+  Serial.println(
+    SAMPLE_AVERAGE
+  );
+
+  Serial.print(
+    "Sample rate: "
+  );
+
+  Serial.println(
+    SAMPLE_RATE
+  );
+
+  Serial.println(
+    "Effective rate: ~25 samples/sec"
+  );
+
+  return true;
+}
+
+// ================================================================
+// PROCESS MAXIM HR + SPO2
+// ================================================================
+
+void processMAXAlgorithm()
+{
+  if (!fingerPresent)
+    return;
+
+  if (bufferIndex < BUFFER_SIZE)
+    return;
+
+  // ------------------------------------------------
+  // Run Maxim algorithm
+  // ------------------------------------------------
+
+  maxim_heart_rate_and_oxygen_saturation(
+    irBuffer,
+    BUFFER_SIZE,
+    redBuffer,
+    &algorithmSpO2,
+    &algorithmSpO2Valid,
+    &algorithmHR,
+    &algorithmHRValid
+  );
+
+  // ==============================================================
+  // HEART RATE
+  // ==============================================================
+
+  if (
+    algorithmHRValid &&
+    algorithmHR >= MIN_VALID_BPM &&
+    algorithmHR <= MAX_VALID_BPM
+  )
+  {
+    float newHR =
+      (float)algorithmHR;
+
+    // ------------------------------------------------
+    // Reject sudden impossible jump
+    // ------------------------------------------------
+
+    if (
+      bpm > 0 &&
+      fabs(
+        newHR - bpm
+      ) > MAX_BPM_CHANGE
+    )
+    {
+      Serial.print(
+        "Rejected HR spike: "
+      );
+
+      Serial.println(
+        newHR
+      );
+    }
+    else
+    {
+      // ------------------------------------------------
+      // Store valid HR
+      // ------------------------------------------------
+
+      bpmHistory[
+        bpmHistoryIndex
+      ] =
+        newHR;
+
+      bpmHistoryIndex++;
+
+      if (
+        bpmHistoryIndex >= 5
+      )
+      {
+        bpmHistoryIndex = 0;
+      }
+
+      if (
+        bpmHistoryCount < 5
+      )
+      {
+        bpmHistoryCount++;
+      }
+
+      // ------------------------------------------------
+      // Median filtering
+      // ------------------------------------------------
+
+      float medianHR =
+        getMedianBPM();
+
+      if (
+        medianHR > 0
+      )
+      {
+        if (
+          bpm == 0
+        )
+        {
+          bpm =
+            medianHR;
+        }
+        else
+        {
+          /*
+           * Slow smoothing.
+           *
+           * Prevents:
+           *
+           * 75 -> 126 -> 75
+           *
+           * from appearing on dashboard.
+           */
+
+          bpm =
+            0.75f * bpm +
+            0.25f * medianHR;
+        }
+
+        // Final safety limit
+
+        bpm =
+          clampFloat(
+            bpm,
+            MIN_VALID_BPM,
+            MAX_VALID_BPM
+          );
+      }
+    }
+  }
+
+  // ==============================================================
+  // SpO2
+  // ==============================================================
+
+  if (
+    algorithmSpO2Valid &&
+    algorithmSpO2 >= 70 &&
+    algorithmSpO2 <= 100
+  )
+  {
+    float newSpO2 =
+      (float)algorithmSpO2;
+
+    // Store
+
+    spo2History[
+      spo2HistoryIndex
+    ] =
+      newSpO2;
+
+    spo2HistoryIndex++;
+
+    if (
+      spo2HistoryIndex >= 5
+    )
+    {
+      spo2HistoryIndex = 0;
+    }
+
+    if (
+      spo2HistoryCount < 5
+    )
+    {
+      spo2HistoryCount++;
+    }
+
+    // Median
+
+    float medianSpO2 =
+      getMedianSpO2();
+
+    if (
+      medianSpO2 > 0
+    )
+    {
+      if (
+        spo2 == 0
+      )
+      {
+        spo2 =
+          medianSpO2;
+      }
+      else
+      {
+        /*
+         * SpO2 normally changes
+         * slowly, so strong smoothing
+         * is appropriate.
+         */
+
+        spo2 =
+          0.85f * spo2 +
+          0.15f * medianSpO2;
+      }
+
+      spo2 =
+        clampFloat(
+          spo2,
+          70,
+          100
+        );
+    }
+  }
+}
+
+// ================================================================
+// UPDATE MAX30102
+// ================================================================
+
+void updateMAX30102()
+{
+  if (!max30102Ready)
+    return;
+
+  /*
+   * Check for new FIFO samples.
+   *
+   * IMPORTANT:
+   * We do NOT return from the main loop
+   * when there is no MAX30102 sample.
+   */
+
+  sensor.check();
+
+  while (
+    sensor.available()
+  )
+  {
+    // ------------------------------------------------
+    // CORRECT CHANNEL ASSIGNMENT
+    // ------------------------------------------------
+
+    uint32_t ir =
+      sensor.getFIFOIR();
+
+    uint32_t red =
+      sensor.getFIFORed();
+
+    // ------------------------------------------------
+    // FINGER DETECTION
+    // ------------------------------------------------
+
+    if (
+      ir < FINGER_THRESHOLD
+    )
+    {
+      if (
+        fingerPresent
+      )
+      {
+        Serial.println(
+          "Finger removed."
+        );
+      }
+
+      resetMAXState();
+
+      sensor.nextSample();
+
+      continue;
+    }
+
+    // ------------------------------------------------
+    // FINGER PRESENT
+    // ------------------------------------------------
+
+    if (
+      !fingerPresent
+    )
+    {
+      fingerPresent = true;
+
+      Serial.println();
+
+      Serial.println(
+        "Finger detected."
+      );
+
+      Serial.println(
+        "Collecting PPG samples..."
+      );
+
+      resetMAXState();
+
+      fingerPresent = true;
+    }
+
+    // ------------------------------------------------
+    // STORE SAMPLE
+    // ------------------------------------------------
+
+    if (
+      bufferIndex < BUFFER_SIZE
+    )
+    {
+      irBuffer[
+        bufferIndex
+      ] =
+        ir;
+
+      redBuffer[
+        bufferIndex
+      ] =
+        red;
+
+      bufferIndex++;
+    }
+
+    // ------------------------------------------------
+    // FULL BUFFER
+    // ------------------------------------------------
+
+    if (
+      bufferIndex >= BUFFER_SIZE
+    )
+    {
+      processMAXAlgorithm();
+
+      /*
+       * Official algorithm uses:
+       *
+       * 75 old samples
+       * +
+       * 25 new samples
+       *
+       * giving approximately
+       * one new calculation/sec.
+       */
+
+      for (
+        uint16_t i = 25;
+        i < BUFFER_SIZE;
+        i++
+      )
+      {
+        irBuffer[
+          i - 25
+        ] =
+          irBuffer[i];
+
+        redBuffer[
+          i - 25
+        ] =
+          redBuffer[i];
+      }
+
+      bufferIndex = 75;
+    }
+
+    sensor.nextSample();
+  }
+}
+
+// ================================================================
+// ECG
+// ================================================================
+
+void updateECG()
+{
+  unsigned long now =
+    micros();
+
+  if (
+    now -
+    lastECGRead <
+    ECG_INTERVAL_US
+  )
+  {
+    return;
+  }
+
+  lastECGRead =
+    now;
+
+  bool loPlus =
+    digitalRead(
+      ECG_LO_PLUS
+    );
+
+  bool loMinus =
+    digitalRead(
+      ECG_LO_MINUS
+    );
+
+  if (
+    loPlus ||
+    loMinus
+  )
+  {
+    ecgLeadsOff = true;
+
+    ecgValue = 0;
+
+    return;
+  }
+
+  ecgLeadsOff = false;
+
+  ecgValue =
+    analogRead(
+      ECG_OUTPUT_PIN
+    );
+}
+
+// ================================================================
+// LM35
+// ================================================================
+
+void updateLM35()
+{
+  if (
+    millis() -
+    lastLM35Read <
+    LM35_INTERVAL_MS
+  )
+  {
+    return;
+  }
+
+  lastLM35Read =
+    millis();
+
+  /*
+   * Average multiple ADC measurements
+   * to reduce noise.
+   */
+
+  const uint8_t SAMPLE_COUNT = 16;
+
+  uint32_t totalmV = 0;
+
+  for (
+    uint8_t i = 0;
+    i < SAMPLE_COUNT;
+    i++
+  )
+  {
+    totalmV +=
+      analogReadMilliVolts(
+        LM35_PIN
+      );
+  }
+
+  float averageVoltage =
+    (float)totalmV /
+    SAMPLE_COUNT;
+
+  /*
+   * LM35:
+   *
+   * 10 mV = 1°C
+   */
+
+  temperatureC =
+    averageVoltage /
+    10.0f;
+
+  // Safety range
+
+  if (
+    temperatureC < -55 ||
+    temperatureC > 150
+  )
+  {
+    temperatureC = 0;
+  }
+}
+
+// ================================================================
+// BMI323
+// ================================================================
+
+void updateBMI323()
+{
+  if (!bmiReady)
+    return;
+
+  if (
+    millis() -
+    lastBMIRead <
+    BMI_INTERVAL_MS
+  )
+  {
+    return;
+  }
+
+  lastBMIRead =
+    millis();
+
+  bool accelOK =
+    imu.readAccel(
+      accelX,
+      accelY,
+      accelZ
+    );
+
+  bool gyroOK =
+    imu.readGyro(
+      gyroX,
+      gyroY,
+      gyroZ
+    );
+
+  if (
+    !accelOK ||
+    !gyroOK
+  )
+  {
+    return;
+  }
+
+  // ------------------------------------------------
+  // ACCELERATION MAGNITUDE
+  // ------------------------------------------------
+
+  accelMagnitude =
+    sqrt(
+      accelX * accelX +
+      accelY * accelY +
+      accelZ * accelZ
+    );
+
+  // ------------------------------------------------
+  // GYROSCOPE MAGNITUDE
+  // ------------------------------------------------
+
+  gyroMagnitude =
+    sqrt(
+      gyroX * gyroX +
+      gyroY * gyroY +
+      gyroZ * gyroZ
+    );
+
+  // ------------------------------------------------
+  // PITCH
+  // ------------------------------------------------
+
+  pitchDeg =
+    atan2(
+      accelX,
+      sqrt(
+        accelY * accelY +
+        accelZ * accelZ
+      )
+    )
+    * 180.0 /
+    PI;
+
+  // ------------------------------------------------
+  // ROLL
+  // ------------------------------------------------
+
+  rollDeg =
+    atan2(
+      accelY,
+      sqrt(
+        accelX * accelX +
+        accelZ * accelZ
+      )
+    )
+    * 180.0 /
+    PI;
+
+  // ------------------------------------------------
+  // BMI TEMPERATURE
+  // ------------------------------------------------
+
+  float temp;
+
+  if (
+    imu.getTemperature(temp)
+  )
+  {
+    bmiTemperature =
+      temp;
+  }
+
+  // ------------------------------------------------
+  // MOTION HISTORY
+  // ------------------------------------------------
+
+  accelHistory[
+    accelHistoryIndex
+  ] =
+    accelMagnitude;
+
+  accelHistoryIndex++;
+
+  if (
+    accelHistoryIndex >=
+    MOTION_HISTORY_SIZE
+  )
+  {
+    accelHistoryIndex = 0;
+
+    motionHistoryReady = true;
+  }
+
+  if (
+    !motionHistoryReady
+  )
+  {
+    return;
+  }
+
+  // ------------------------------------------------
+  // MEAN
+  // ------------------------------------------------
+
+  float mean = 0;
+
+  for (
+    uint8_t i = 0;
+    i < MOTION_HISTORY_SIZE;
+    i++
+  )
+  {
+    mean +=
+      accelHistory[i];
+  }
+
+  mean /=
+    MOTION_HISTORY_SIZE;
+
+  // ------------------------------------------------
+  // VARIANCE
+  // ------------------------------------------------
+
+  accelVariance = 0;
+
+  for (
+    uint8_t i = 0;
+    i < MOTION_HISTORY_SIZE;
+    i++
+  )
+  {
+    float diff =
+      accelHistory[i] -
+      mean;
+
+    accelVariance +=
+      diff * diff;
+  }
+
+  accelVariance /=
+    MOTION_HISTORY_SIZE;
+
+  motionDetected =
+    accelVariance > 0.02;
+
+  // ------------------------------------------------
+  // MOTION STATE
+  // ------------------------------------------------
+
+  float gravityDeviation =
+    fabs(
+      accelMagnitude -
+      1.0
+    );
+
+  if (
+    gravityDeviation < 0.05 &&
+    gyroMagnitude < 5.0
+  )
+  {
+    motionState =
+      "STABLE";
+  }
+  else if (
+    gravityDeviation < 0.20 &&
+    gyroMagnitude < 30.0
+  )
+  {
+    motionState =
+      "LIGHT";
+  }
+  else
+  {
+    motionState =
+      "ACTIVE";
+  }
+}
+
+// ================================================================
+// DRAW HEART
+// ================================================================
 
 void drawHeart(
   int16_t x,
-  int16_t y,
-  uint16_t color
+  int16_t y
 )
 {
   display.fillCircle(
     x + 3,
     y + 3,
     3,
-    color
+    SSD1306_WHITE
   );
 
   display.fillCircle(
     x + 9,
     y + 3,
     3,
-    color
+    SSD1306_WHITE
   );
 
   display.fillTriangle(
@@ -271,150 +1311,719 @@ void drawHeart(
     x + 12,
     y + 4,
     x + 6,
-    y + 10,
-    color
+    y + 11,
+    SSD1306_WHITE
   );
 }
 
+// ================================================================
+// OLED HEART PAGE
+// ================================================================
 
-// ========================================================================
-// SCROLL TEXT
-// ========================================================================
-
-bool scrollText(
-  const char* text,
-  int numPasses,
-  bool drainSensor = false
-)
+void renderHeartPage()
 {
-  int charPxWidth = 6 * 2;
+  display.clearDisplay();
 
-  int textPxWidth =
-    strlen(text) * charPxWidth;
+  display.setTextColor(
+    SSD1306_WHITE
+  );
 
-  int yPos =
-    (SCREEN_HEIGHT - 16) / 2;
+  display.setTextWrap(false);
 
+  // ------------------------------------------------
+  // TITLE
+  // ------------------------------------------------
 
-  for (int pass = 0; pass < numPasses; pass++)
+  display.setTextSize(1);
+
+  display.setCursor(
+    0,
+    0
+  );
+
+  display.print(
+    "HEART MONITOR"
+  );
+
+  display.setCursor(
+    105,
+    0
+  );
+
+  display.print(
+    "1/2"
+  );
+
+  // ------------------------------------------------
+  // LABELS
+  // ------------------------------------------------
+
+  display.setTextSize(2);
+
+  display.setCursor(
+    0,
+    12
+  );
+
+  display.print(
+    "BPM"
+  );
+
+  display.setCursor(
+    72,
+    12
+  );
+
+  display.print(
+    "SpO2"
+  );
+
+  // ------------------------------------------------
+  // BPM
+  // ------------------------------------------------
+
+  display.setTextSize(3);
+
+  display.setCursor(
+    0,
+    32
+  );
+
+  if (
+    fingerPresent &&
+    bpm >= MIN_VALID_BPM &&
+    bpm <= MAX_VALID_BPM
+  )
   {
-    for (
-      int x = SCREEN_WIDTH;
-      x > -textPxWidth;
-      x -= 3
+    display.print(
+      (int)round(bpm)
+    );
+  }
+  else
+  {
+    display.print(
+      "--"
+    );
+  }
+
+  // ------------------------------------------------
+  // SPO2
+  // ------------------------------------------------
+
+  display.setCursor(
+    72,
+    32
+  );
+
+  if (
+    fingerPresent &&
+    spo2 >= 70 &&
+    spo2 <= 100
+  )
+  {
+    display.print(
+      (int)round(spo2)
+    );
+
+    display.setTextSize(1);
+
+    display.setCursor(
+      116,
+      35
+    );
+
+    display.print(
+      "%"
+    );
+  }
+  else
+  {
+    display.print(
+      "--"
+    );
+  }
+
+  // ------------------------------------------------
+  // HEART ANIMATION
+  // ------------------------------------------------
+
+  if (
+    millis() <
+    heartBeatTimer
+  )
+  {
+    drawHeart(
+      48,
+      52
+    );
+  }
+
+  display.display();
+}
+
+// ================================================================
+// OLED BMI PAGE
+// ================================================================
+
+void renderBMIPage()
+{
+  display.clearDisplay();
+
+  display.setTextColor(
+    SSD1306_WHITE
+  );
+
+  display.setTextWrap(false);
+
+  display.setTextSize(1);
+
+  // ------------------------------------------------
+  // TITLE
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    0
+  );
+
+  display.print(
+    "BMI323 MOTION"
+  );
+
+  display.setCursor(
+    105,
+    0
+  );
+
+  display.print(
+    "2/2"
+  );
+
+  display.drawLine(
+    0,
+    9,
+    127,
+    9,
+    SSD1306_WHITE
+  );
+
+  // ------------------------------------------------
+  // ACCELEROMETER
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    13
+  );
+
+  display.print(
+    "A:"
+  );
+
+  display.print(
+    accelX,
+    1
+  );
+
+  display.print(
+    ","
+  );
+
+  display.print(
+    accelY,
+    1
+  );
+
+  display.print(
+    ","
+  );
+
+  display.print(
+    accelZ,
+    1
+  );
+
+  // ------------------------------------------------
+  // GYROSCOPE
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    23
+  );
+
+  display.print(
+    "G:"
+  );
+
+  display.print(
+    gyroX,
+    0
+  );
+
+  display.print(
+    ","
+  );
+
+  display.print(
+    gyroY,
+    0
+  );
+
+  display.print(
+    ","
+  );
+
+  display.print(
+    gyroZ,
+    0
+  );
+
+  // ------------------------------------------------
+  // ACCEL MAGNITUDE
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    33
+  );
+
+  display.print(
+    "Accel:"
+  );
+
+  display.print(
+    accelMagnitude,
+    2
+  );
+
+  display.print(
+    "g"
+  );
+
+  // ------------------------------------------------
+  // GYRO MAGNITUDE
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    43
+  );
+
+  display.print(
+    "Gyro:"
+  );
+
+  display.print(
+    gyroMagnitude,
+    1
+  );
+
+  display.print(
+    "dps"
+  );
+
+  // ------------------------------------------------
+  // MOTION
+  // ------------------------------------------------
+
+  display.setCursor(
+    0,
+    53
+  );
+
+  display.print(
+    "Motion:"
+  );
+
+  display.print(
+    motionState
+  );
+
+  display.display();
+}
+
+// ================================================================
+// OLED UPDATE
+// ================================================================
+
+void updateDisplay()
+{
+  if (
+    millis() -
+    lastPageChange >=
+    PAGE_INTERVAL_MS
+  )
+  {
+    currentPage++;
+
+    if (
+      currentPage >=
+      TOTAL_PAGES
     )
     {
-      display.clearDisplay();
-
-      display.setTextWrap(false);
-
-      display.setTextSize(2);
-
-      display.setTextColor(
-        SSD1306_WHITE
-      );
-
-      display.setCursor(
-        x,
-        yPos
-      );
-
-      display.print(text);
-
-      display.display();
-
-
-      if (
-        drainSensor &&
-        sensor.getIR() >= 20000
-      )
-      {
-        return true;
-      }
-
-      delay(8);
+      currentPage = 0;
     }
+
+    lastPageChange =
+      millis();
   }
 
-  return false;
-}
-
-
-// ========================================================================
-// RESET MAX30102 STATE
-// ========================================================================
-
-void resetState()
-{
-  bpm = 0;
-
-  spo2 = 0;
-
-  dcIR = sensor.getIR();
-
-  dcRED = sensor.getRed();
-
-  env = 0;
-
-  irMax = INT32_MIN;
-  irMin = INT32_MAX;
-
-  redMax = INT32_MIN;
-  redMin = INT32_MAX;
-
-  lastBeatMs = millis();
-
-  lastBeatDetectedMs = millis();
-
-  lastSpo2DetectedMs = millis();
-
-  beatCount = 0;
-
-  warmupDone = false;
-
-  warmupStart = 0;
-
-  irPower = 40;
-
-  redPower = 40;
-
-  sensor.setPulseAmplitudeIR(
-    irPower
-  );
-
-  sensor.setPulseAmplitudeRed(
-    redPower
-  );
-}
-
-
-// ========================================================================
-// READ LM35 TEMPERATURE
-// ========================================================================
-
-void readLM35()
-{
-  // Read the calibrated ADC voltage in millivolts.
-  uint32_t voltage_mV = analogReadMilliVolts(LM35_PIN);
-
-  // LM35 produces approximately 10 mV for every 1 degree Celsius.
-  temperatureC = voltage_mV / 10.0f;
-
-  // Basic sanity limit for an LM35 measurement.
-  if (temperatureC < -55.0f || temperatureC > 150.0f)
+  if (
+    millis() -
+    lastDisplayUpdate <
+    DISPLAY_INTERVAL_MS
+  )
   {
-    temperatureC = 0.0f;
+    return;
+  }
+
+  lastDisplayUpdate =
+    millis();
+
+  if (
+    currentPage ==
+    PAGE_HEART
+  )
+  {
+    renderHeartPage();
+  }
+  else
+  {
+    renderBMIPage();
   }
 }
 
+// ================================================================
+// SERIAL DASHBOARD PACKET
+// ================================================================
 
-// ========================================================================
+void sendDashboardPacket()
+{
+  if (
+    millis() -
+    lastSerialSend <
+    SERIAL_INTERVAL_MS
+  )
+  {
+    return;
+  }
+
+  lastSerialSend =
+    millis();
+
+  // ------------------------------------------------
+  // ECG
+  // ------------------------------------------------
+
+  Serial.print(
+    "ECG:"
+  );
+
+  Serial.print(
+    ecgValue
+  );
+
+  // ------------------------------------------------
+  // PPG IR
+  // ------------------------------------------------
+
+  Serial.print(
+    ", IR_Signal:"
+  );
+
+  if (
+    bufferIndex > 0
+  )
+  {
+    Serial.print(
+      irBuffer[
+        bufferIndex - 1
+      ]
+    );
+  }
+  else
+  {
+    Serial.print(
+      0
+    );
+  }
+
+  // ------------------------------------------------
+  // PPG RED
+  // ------------------------------------------------
+
+  Serial.print(
+    ", Red_Signal:"
+  );
+
+  if (
+    bufferIndex > 0
+  )
+  {
+    Serial.print(
+      redBuffer[
+        bufferIndex - 1
+      ]
+    );
+  }
+  else
+  {
+    Serial.print(
+      0
+    );
+  }
+
+  // ------------------------------------------------
+  // FINGER
+  // ------------------------------------------------
+
+  Serial.print(
+    ", Finger:"
+  );
+
+  Serial.print(
+    fingerPresent ?
+    1 :
+    0
+  );
+
+  // ------------------------------------------------
+  // RAW HR FROM MAXIM
+  // ------------------------------------------------
+
+  Serial.print(
+    ", HR_Raw:"
+  );
+
+  Serial.print(
+    algorithmHR
+  );
+
+  // ------------------------------------------------
+  // HR VALID
+  // ------------------------------------------------
+
+  Serial.print(
+    ", HR_Valid:"
+  );
+
+  Serial.print(
+    algorithmHRValid
+  );
+
+  // ------------------------------------------------
+  // FILTERED BPM
+  // ------------------------------------------------
+
+  Serial.print(
+    ", BPM:"
+  );
+
+  if (
+    fingerPresent &&
+    bpm >= MIN_VALID_BPM &&
+    bpm <= MAX_VALID_BPM
+  )
+  {
+    Serial.print(
+      bpm,
+      1
+    );
+  }
+  else
+  {
+    Serial.print(
+      0
+    );
+  }
+
+  // ------------------------------------------------
+  // RAW SPO2
+  // ------------------------------------------------
+
+  Serial.print(
+    ", SpO2_Raw:"
+  );
+
+  Serial.print(
+    algorithmSpO2
+  );
+
+  // ------------------------------------------------
+  // SPO2 VALID
+  // ------------------------------------------------
+
+  Serial.print(
+    ", SpO2_Valid:"
+  );
+
+  Serial.print(
+    algorithmSpO2Valid
+  );
+
+  // ------------------------------------------------
+  // FILTERED SPO2
+  // ------------------------------------------------
+
+  Serial.print(
+    ", SpO2:"
+  );
+
+  if (
+    fingerPresent &&
+    spo2 >= 70 &&
+    spo2 <= 100
+  )
+  {
+    Serial.print(
+      spo2,
+      1
+    );
+  }
+  else
+  {
+    Serial.print(
+      0
+    );
+  }
+
+  // ------------------------------------------------
+  // BMI ACCELEROMETER
+  // ------------------------------------------------
+
+  Serial.print(
+    ", BMI_AX:"
+  );
+
+  Serial.print(
+    accelX,
+    2
+  );
+
+  Serial.print(
+    ", BMI_AY:"
+  );
+
+  Serial.print(
+    accelY,
+    2
+  );
+
+  Serial.print(
+    ", BMI_AZ:"
+  );
+
+  Serial.print(
+    accelZ,
+    2
+  );
+
+  // ------------------------------------------------
+  // BMI GYROSCOPE
+  // ------------------------------------------------
+
+  Serial.print(
+    ", BMI_GX:"
+  );
+
+  Serial.print(
+    gyroX,
+    1
+  );
+
+  Serial.print(
+    ", BMI_GY:"
+  );
+
+  Serial.print(
+    gyroY,
+    1
+  );
+
+  Serial.print(
+    ", BMI_GZ:"
+  );
+
+  Serial.print(
+    gyroZ,
+    1
+  );
+
+  // ------------------------------------------------
+  // ACCEL MAGNITUDE
+  // ------------------------------------------------
+
+  Serial.print(
+    ", AccMag:"
+  );
+
+  Serial.print(
+    accelMagnitude,
+    2
+  );
+
+  // ------------------------------------------------
+  // LM35
+  // ------------------------------------------------
+
+  Serial.print(
+    ", LM35:"
+  );
+
+  Serial.print(
+    temperatureC,
+    1
+  );
+
+  // ------------------------------------------------
+  // BMI TEMPERATURE
+  // ------------------------------------------------
+
+  Serial.print(
+    ", BMI_Temp:"
+  );
+
+  Serial.print(
+    bmiTemperature,
+    1
+  );
+
+  // ------------------------------------------------
+  // MOTION
+  // ------------------------------------------------
+
+  Serial.print(
+    ", Motion:"
+  );
+
+  Serial.print(
+    motionState
+  );
+
+  // ------------------------------------------------
+  // ECG LEADS
+  // ------------------------------------------------
+
+  Serial.print(
+    ", LeadsOff:"
+  );
+
+  Serial.println(
+    ecgLeadsOff ?
+    1 :
+    0
+  );
+}
+
+// ================================================================
 // I2C SCANNER
-// ========================================================================
+// ================================================================
 
 void scanI2C()
 {
   Serial.println();
+
   Serial.println(
     "================ I2C SCANNER ================"
   );
@@ -427,19 +2036,27 @@ void scanI2C()
     address++
   )
   {
-    Wire.beginTransmission(address);
+    Wire.beginTransmission(
+      address
+    );
 
-    uint8_t error =
-      Wire.endTransmission();
-
-    if (error == 0)
+    if (
+      Wire.endTransmission() ==
+      0
+    )
     {
       Serial.print(
         "I2C device found at 0x"
       );
 
-      if (address < 16)
-        Serial.print("0");
+      if (
+        address < 16
+      )
+      {
+        Serial.print(
+          "0"
+        );
+      }
 
       Serial.println(
         address,
@@ -450,7 +2067,9 @@ void scanI2C()
     }
   }
 
-  if (found == 0)
+  if (
+    found == 0
+  )
   {
     Serial.println(
       "No I2C devices found!"
@@ -458,42 +2077,20 @@ void scanI2C()
   }
 
   Serial.println(
-    "Expected:"
-  );
-
-  Serial.println(
-    "MAX30102 -> 0x57"
-  );
-
-  Serial.println(
-    "BMI323  -> 0x68 or 0x69"
-  );
-
-  Serial.println(
-    "OLED    -> 0x3C"
-  );
-
-  Serial.println(
     "=============================================="
   );
 }
 
-
-// ========================================================================
-// BMI323 SETUP
-// ========================================================================
+// ================================================================
+// BMI323 INITIALIZATION
+// ================================================================
 
 void setupBMI323()
 {
   Serial.println();
+
   Serial.println(
     "Initializing BMI323..."
-  );
-
-
-  // First try 0x68
-  Serial.println(
-    "Trying BMI323 at 0x68..."
   );
 
   if (
@@ -514,17 +2111,6 @@ void setupBMI323()
     return;
   }
 
-
-  // If 0x68 fails, try 0x69
-  Serial.println(
-    "0x68 failed."
-  );
-
-  Serial.println(
-    "Trying BMI323 at 0x69..."
-  );
-
-
   if (
     imu.beginI2C(
       BMI323_ADDRESS_69
@@ -543,685 +2129,27 @@ void setupBMI323()
     return;
   }
 
-
   bmiReady = false;
 
   Serial.println(
     "BMI323 NOT FOUND!"
   );
-
-  Serial.println(
-    "Check:"
-  );
-
-  Serial.println(
-    "1. VCC -> 3.3V"
-  );
-
-  Serial.println(
-    "2. GND -> GND"
-  );
-
-  Serial.println(
-    "3. SDA -> GPIO 21"
-  );
-
-  Serial.println(
-    "4. SCL -> GPIO 22"
-  );
-
-  Serial.println(
-    "5. I2C address 0x68/0x69"
-  );
 }
 
-
-// ========================================================================
-// READ BMI323
-// ========================================================================
-
-void readBMI323()
-{
-  if (!bmiReady)
-    return;
-
-
-  if (
-    millis() - lastBMIRead <
-    BMI_READ_INTERVAL
-  )
-  {
-    return;
-  }
-
-  lastBMIRead = millis();
-
-
-  // ------------------------------------------------
-  // ACCELEROMETER
-  // ------------------------------------------------
-
-  bool accelOK =
-    imu.readAccel(
-      accelX,
-      accelY,
-      accelZ
-    );
-
-
-  // ------------------------------------------------
-  // GYROSCOPE
-  // ------------------------------------------------
-
-  bool gyroOK =
-    imu.readGyro(
-      gyroX,
-      gyroY,
-      gyroZ
-    );
-
-
-  if (!accelOK || !gyroOK)
-  {
-    Serial.println(
-      "BMI323 read error!"
-    );
-
-    return;
-  }
-
-
-  // ------------------------------------------------
-  // ACCELERATION MAGNITUDE
-  // ------------------------------------------------
-
-  accelMagnitude =
-    sqrt(
-      accelX * accelX +
-      accelY * accelY +
-      accelZ * accelZ
-    );
-
-
-  // ------------------------------------------------
-  // GYROSCOPE MAGNITUDE
-  // ------------------------------------------------
-
-  gyroMagnitude =
-    sqrt(
-      gyroX * gyroX +
-      gyroY * gyroY +
-      gyroZ * gyroZ
-    );
-
-
-  // ------------------------------------------------
-  // PITCH
-  // ------------------------------------------------
-
-  pitchDeg =
-    atan2(
-      accelX,
-      sqrt(
-        accelY * accelY +
-        accelZ * accelZ
-      )
-    )
-    *
-    180.0 /
-    PI;
-
-
-  // ------------------------------------------------
-  // ROLL
-  // ------------------------------------------------
-
-  rollDeg =
-    atan2(
-      accelY,
-      sqrt(
-        accelX * accelX +
-        accelZ * accelZ
-      )
-    )
-    *
-    180.0 /
-    PI;
-
-
-  // ------------------------------------------------
-  // BMI323 INTERNAL TEMPERATURE
-  // ------------------------------------------------
-
-  float temp;
-
-  if (
-    imu.getTemperature(temp)
-  )
-  {
-    bmiTemperature = temp;
-  }
-
-
-  // ------------------------------------------------
-  // MOTION HISTORY
-  // ------------------------------------------------
-
-  accelHistory[
-    accelHistoryIndex
-  ] = accelMagnitude;
-
-
-  accelHistoryIndex++;
-
-  if (
-    accelHistoryIndex >=
-    MOTION_HISTORY_SIZE
-  )
-  {
-    accelHistoryIndex = 0;
-  }
-
-
-  // ------------------------------------------------
-  // CALCULATE ACCELERATION VARIANCE
-  // ------------------------------------------------
-
-  float mean = 0;
-
-  for (
-    uint8_t i = 0;
-    i < MOTION_HISTORY_SIZE;
-    i++
-  )
-  {
-    mean += accelHistory[i];
-  }
-
-  mean /=
-    MOTION_HISTORY_SIZE;
-
-
-  accelVariance = 0;
-
-
-  for (
-    uint8_t i = 0;
-    i < MOTION_HISTORY_SIZE;
-    i++
-  )
-  {
-    float difference =
-      accelHistory[i] - mean;
-
-    accelVariance +=
-      difference * difference;
-  }
-
-
-  accelVariance /=
-    MOTION_HISTORY_SIZE;
-
-
-  // ------------------------------------------------
-  // MOTION DETECTION
-  // ------------------------------------------------
-
-  motionDetected =
-    accelVariance > 0.05;
-
-
-  float gravityDeviation =
-    fabs(
-      accelMagnitude - 1.0
-    );
-
-
-  if (
-    gravityDeviation < 0.05 &&
-    gyroMagnitude < 5.0
-  )
-  {
-    motionState = "STABLE";
-  }
-  else if (
-    gravityDeviation < 0.20 &&
-    gyroMagnitude < 30.0
-  )
-  {
-    motionState = "LIGHT";
-  }
-  else
-  {
-    motionState = "ACTIVE";
-  }
-}
-
-
-// ========================================================================
-// PRINT BMI323 DATA
-// ========================================================================
-
-void printBMIData()
-{
-  if (!bmiReady)
-  {
-    Serial.println(
-      "BMI323: NOT DETECTED"
-    );
-
-    return;
-  }
-
-
-  Serial.print(
-    "ACCEL_X:"
-  );
-
-  Serial.print(
-    accelX,
-    3
-  );
-
-
-  Serial.print(
-    ", ACCEL_Y:"
-  );
-
-  Serial.print(
-    accelY,
-    3
-  );
-
-
-  Serial.print(
-    ", ACCEL_Z:"
-  );
-
-  Serial.print(
-    accelZ,
-    3
-  );
-
-
-  Serial.print(
-    ", GYRO_X:"
-  );
-
-  Serial.print(
-    gyroX,
-    2
-  );
-
-
-  Serial.print(
-    ", GYRO_Y:"
-  );
-
-  Serial.print(
-    gyroY,
-    2
-  );
-
-
-  Serial.print(
-    ", GYRO_Z:"
-  );
-
-  Serial.print(
-    gyroZ,
-    2
-  );
-
-
-  Serial.print(
-    ", ACC_MAG:"
-  );
-
-  Serial.print(
-    accelMagnitude,
-    3
-  );
-
-
-  Serial.print(
-    ", GYRO_MAG:"
-  );
-
-  Serial.print(
-    gyroMagnitude,
-    2
-  );
-
-
-  Serial.print(
-    ", BMI_TEMP:"
-  );
-
-  Serial.print(
-    bmiTemperature,
-    2
-  );
-
-
-  Serial.print(
-    ", MOTION:"
-  );
-
-  Serial.println(
-    motionState
-  );
-}
-
-
-// ========================================================================
-// OLED HEART PAGE
-// ========================================================================
-
-void renderHeartPage()
-{
-  display.clearDisplay();
-
-  display.setTextWrap(false);
-
-  display.setTextColor(
-    SSD1306_WHITE
-  );
-
-
-  // Header
-  display.setTextSize(1);
-
-  display.setCursor(0, 0);
-
-  display.print(
-    "HEART MONITOR"
-  );
-
-
-  display.setCursor(105, 0);
-
-  display.print("1/2");
-
-
-  // BPM
-  display.setTextSize(2);
-
-  display.setCursor(0, 12);
-
-  display.print("BPM");
-
-
-  // SpO2
-  display.setCursor(72, 12);
-
-  display.print("SpO2");
-
-
-  // BPM value
-  display.setTextSize(3);
-
-  display.setCursor(0, 32);
-
-
-  if (
-    bpm > 20 &&
-    bpm < 250
-  )
-  {
-    display.print(
-      (int)bpm
-    );
-  }
-  else if (
-    env < MIN_SIGNAL_QUALITY
-  )
-  {
-    display.setTextSize(1);
-
-    display.setCursor(0, 35);
-
-    display.print(
-      "LOW SIGNAL"
-    );
-  }
-  else
-  {
-    display.print("--");
-  }
-
-
-  // SpO2 value
-  display.setTextSize(3);
-
-  display.setCursor(72, 32);
-
-
-  if (spo2 > 70)
-  {
-    display.print(
-      (int)spo2
-    );
-
-    display.setTextSize(1);
-
-    display.setCursor(117, 34);
-
-    display.print("%");
-  }
-  else
-  {
-    display.print("--");
-  }
-
-
-  // Heart animation
-  if (
-    millis() < heartBeatTimer
-  )
-  {
-    drawHeart(
-      48,
-      52,
-      SSD1306_WHITE
-    );
-  }
-
-
-  display.display();
-}
-
-
-// ========================================================================
-// OLED BMI PAGE
-// ========================================================================
-
-void renderBMIPage()
-{
-  display.clearDisplay();
-
-  display.setTextColor(
-    SSD1306_WHITE
-  );
-
-  display.setTextWrap(false);
-
-
-  // Header
-  display.setTextSize(1);
-
-  display.setCursor(0, 0);
-
-  display.print(
-    "BMI323 MOTION"
-  );
-
-
-  display.setCursor(105, 0);
-
-  display.print("2/2");
-
-
-  // Separator
-  display.drawLine(
-    0,
-    9,
-    127,
-    9,
-    SSD1306_WHITE
-  );
-
-
-  // Accelerometer
-  display.setCursor(0, 13);
-
-  display.print("A:");
-
-  display.print(
-    accelX,
-    1
-  );
-
-  display.print(",");
-
-  display.print(
-    accelY,
-    1
-  );
-
-  display.print(",");
-
-  display.print(
-    accelZ,
-    1
-  );
-
-
-  // Gyroscope
-  display.setCursor(0, 23);
-
-  display.print("G:");
-
-  display.print(
-    gyroX,
-    0
-  );
-
-  display.print(",");
-
-  display.print(
-    gyroY,
-    0
-  );
-
-  display.print(",");
-
-  display.print(
-    gyroZ,
-    0
-  );
-
-
-  // Acceleration magnitude
-  display.setCursor(0, 33);
-
-  display.print(
-    "Accel:"
-  );
-
-  display.print(
-    accelMagnitude,
-    2
-  );
-
-  display.print(
-    "g"
-  );
-
-
-  // Gyro magnitude
-  display.setCursor(0, 43);
-
-  display.print(
-    "Gyro:"
-  );
-
-  display.print(
-    gyroMagnitude,
-    1
-  );
-
-  display.print(
-    "dps"
-  );
-
-
-  // Motion state
-  display.setCursor(0, 53);
-
-  display.print(
-    "Motion:"
-  );
-
-  display.print(
-    motionState
-  );
-
-
-  display.display();
-}
-
-
-// ========================================================================
-// OLED PAGE MANAGER
-// ========================================================================
-
-void updateDisplay()
-{
-  if (
-    millis() - lastPageChange >
-    PAGE_INTERVAL
-  )
-  {
-    currentPage++;
-
-    if (
-      currentPage >= TOTAL_PAGES
-    )
-    {
-      currentPage = 0;
-    }
-
-    lastPageChange =
-      millis();
-  }
-
-
-  if (
-    currentPage == PAGE_HEART
-  )
-  {
-    renderHeartPage();
-  }
-  else
-  {
-    renderBMIPage();
-  }
-}
-
-
-// ========================================================================
+// ================================================================
 // SETUP
-// ========================================================================
+// ================================================================
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(
+    115200
+  );
 
   delay(300);
 
-
   Serial.println();
+
   Serial.println(
     "=========================================="
   );
@@ -1231,13 +2159,16 @@ void setup()
   );
 
   Serial.println(
-    " MAX30102 + AD8232 + BMI323"
+    " ACCURACY-FOCUSED VERSION"
+  );
+
+  Serial.println(
+    " MAX30102 + AD8232 + BMI323 + LM35"
   );
 
   Serial.println(
     "=========================================="
   );
-
 
   // ------------------------------------------------
   // ECG
@@ -1253,6 +2184,23 @@ void setup()
     INPUT
   );
 
+  pinMode(
+    ECG_OUTPUT_PIN,
+    INPUT
+  );
+
+  // ------------------------------------------------
+  // LM35
+  // ------------------------------------------------
+
+  pinMode(
+    LM35_PIN,
+    INPUT
+  );
+
+  analogReadResolution(
+    12
+  );
 
   // ------------------------------------------------
   // I2C
@@ -1267,17 +2215,19 @@ void setup()
     400000
   );
 
-
   // ------------------------------------------------
   // I2C SCAN
   // ------------------------------------------------
 
   scanI2C();
 
-
   // ------------------------------------------------
   // OLED
   // ------------------------------------------------
+
+  Serial.println(
+    "Initializing OLED..."
+  );
 
   if (
     !display.begin(
@@ -1295,7 +2245,6 @@ void setup()
       delay(10);
     }
   }
-
 
   display.clearDisplay();
 
@@ -1327,39 +2276,26 @@ void setup()
 
   delay(500);
 
-
   // ------------------------------------------------
   // BMI323
   // ------------------------------------------------
 
   setupBMI323();
 
-
   // ------------------------------------------------
   // MAX30102
   // ------------------------------------------------
 
-  Serial.println(
-    "Initializing MAX30102..."
-  );
-
+  max30102Ready =
+    initializeMAX30102();
 
   if (
-    !sensor.begin(
-      Wire,
-      I2C_SPEED_FAST
-    )
+    !max30102Ready
   )
   {
     display.clearDisplay();
 
-    display.setTextWrap(true);
-
     display.setTextSize(2);
-
-    display.setTextColor(
-      SSD1306_WHITE
-    );
 
     display.setCursor(
       0,
@@ -1367,822 +2303,140 @@ void setup()
     );
 
     display.println(
-      "Sensor Error!"
+      "MAX30102"
+    );
+
+    display.println(
+      "ERROR!"
     );
 
     display.display();
 
-    Serial.println(
-      "MAX30102 not found!"
-    );
-
     while (1)
     {
-      delay(10);
+      updateECG();
+
+      updateBMI323();
+
+      updateLM35();
+
+      delay(1);
     }
   }
 
-
   // ------------------------------------------------
-  // MAX30102 CONFIGURATION
-  // ------------------------------------------------
-
-  sensor.setup(
-    0,
-    8,
-    2,
-    400,
-    411,
-    4096
-  );
-
-
-  sensor.setPulseAmplitudeIR(
-    irPower
-  );
-
-  sensor.setPulseAmplitudeRed(
-    redPower
-  );
-
-
-  Serial.println(
-    "MAX30102 initialized."
-  );
-
-
-  // ------------------------------------------------
-  // ECG ADC
+  // INITIALIZE MOTION HISTORY
   // ------------------------------------------------
 
-#if defined(ESP32)
-
-  analogReadResolution(12);
-
-  analogSetPinAttenuation(
-    ECG_OUTPUT_PIN,
-    ADC_11db
-  );
-
-#endif
-
-  // ------------------------------------------------
-  // LM35 TEMPERATURE ADC
-  // ------------------------------------------------
-
-  pinMode(LM35_PIN, INPUT);
-
-#if defined(ESP32)
-  analogSetPinAttenuation(
-    LM35_PIN,
-    ADC_11db
-  );
-#endif
-
-
-  // ------------------------------------------------
-  // START SCREEN
-  // ------------------------------------------------
-
-  scrollText(
-    "Combined Health Monitor",
-    1
-  );
-
-
-  // ------------------------------------------------
-  // WAIT FOR FINGER
-  // ------------------------------------------------
-
-  Serial.println(
-    "Waiting for finger..."
-  );
-
-
-  while (
-    sensor.getIR() < 20000
+  for (
+    uint8_t i = 0;
+    i < MOTION_HISTORY_SIZE;
+    i++
   )
   {
-    if (
-      scrollText(
-        "Place finger on sensor",
-        1,
-        true
-      )
-    )
-    {
-      break;
-    }
+    accelHistory[i] =
+      1.0;
   }
 
+  motionHistoryReady =
+    false;
 
-  delay(200);
+  // ------------------------------------------------
+  // TIMERS
+  // ------------------------------------------------
 
+  lastECGRead =
+    micros();
 
-  resetState();
+  lastBMIRead =
+    millis();
 
+  lastLM35Read =
+    millis();
 
-  Serial.println(
-    "Finger detected."
-  );
+  lastSerialSend =
+    millis();
 
-  Serial.println(
-    "Starting readings..."
-  );
+  lastDisplayUpdate =
+    millis();
 
+  lastPageChange =
+    millis();
 
   Serial.println();
 
   Serial.println(
-    "BMI323 STATUS:"
-  );
-
-  if (bmiReady)
-  {
-    Serial.print(
-      "BMI323 address: 0x"
-    );
-
-    Serial.println(
-      bmiAddress,
-      HEX
-    );
-  }
-  else
-  {
-    Serial.println(
-      "BMI323 NOT AVAILABLE"
-    );
-  }
-
-
-  lastPageChange =
-    millis();
-}
-
-
-// ========================================================================
-// MAIN LOOP
-// ========================================================================
-
-void loop()
-{
-  // ================================================================
-  // MAX30102
-  // ================================================================
-
-  int32_t irRaw =
-    sensor.getIR();
-
-  int32_t redRaw =
-    sensor.getRed();
-
-
-  // ------------------------------------------------
-  // FINGER REMOVED
-  // ------------------------------------------------
-
-  if (
-    irRaw < 20000 &&
-    warmupDone
-  )
-  {
-    resetState();
-
-
-    while (true)
-    {
-      if (
-        scrollText(
-          "Place your finger on sensor",
-          1,
-          true
-        )
-      )
-      {
-        break;
-      }
-
-      if (
-        sensor.getIR() >= 20000
-      )
-      {
-        break;
-      }
-    }
-
-
-    delay(200);
-
-    resetState();
-
-    return;
-  }
-
-
-  // ------------------------------------------------
-  // WARMUP
-  // ------------------------------------------------
-
-  if (!warmupDone)
-  {
-    if (
-      warmupStart == 0
-    )
-    {
-      warmupStart =
-        millis();
-    }
-
-
-    if (
-      millis() - warmupStart >=
-      WARMUP_MS
-    )
-    {
-      warmupDone = true;
-
-      warmupStart = 0;
-    }
-  }
-
-
-  // ------------------------------------------------
-  // AUTO LED POWER ADJUSTMENT
-  // ------------------------------------------------
-
-  if (
-    millis() - lastAdjustTime >
-    50
-  )
-  {
-    bool adjusted = false;
-
-
-    // IR
-    if (
-      irRaw < 60000 &&
-      irPower < 250
-    )
-    {
-      irPower += 2;
-
-      adjusted = true;
-    }
-    else if (
-      irRaw > 220000 &&
-      irPower > 5
-    )
-    {
-      irPower =
-        (irPower > 10)
-        ? irPower - 5
-        : 5;
-
-      adjusted = true;
-    }
-    else if (
-      irRaw > 180000 &&
-      irPower > 5
-    )
-    {
-      irPower -= 2;
-
-      adjusted = true;
-    }
-
-
-    // RED
-    if (
-      redRaw < 60000 &&
-      redPower < 250
-    )
-    {
-      redPower += 2;
-
-      adjusted = true;
-    }
-    else if (
-      redRaw > 220000 &&
-      redPower > 5
-    )
-    {
-      redPower =
-        (redPower > 10)
-        ? redPower - 5
-        : 5;
-
-      adjusted = true;
-    }
-    else if (
-      redRaw > 180000 &&
-      redPower > 5
-    )
-    {
-      redPower -= 2;
-
-      adjusted = true;
-    }
-
-
-    if (adjusted)
-    {
-      sensor.setPulseAmplitudeIR(
-        irPower
-      );
-
-      sensor.setPulseAmplitudeRed(
-        redPower
-      );
-    }
-
-
-    lastAdjustTime =
-      millis();
-  }
-
-
-  // ------------------------------------------------
-  // DC REMOVAL
-  // ------------------------------------------------
-
-  dcIR =
-    dcIR +
-    ((irRaw - dcIR) >> SHIFT_DC);
-
-
-  dcRED =
-    dcRED +
-    ((redRaw - dcRED) >> SHIFT_DC);
-
-
-  int32_t irAC =
-    dcIR - irRaw;
-
-
-  int32_t redAC =
-    dcRED - redRaw;
-
-
-  // ------------------------------------------------
-  // MIN / MAX
-  // ------------------------------------------------
-
-  if (
-    irAC > irMax
-  )
-  {
-    irMax = irAC;
-  }
-
-  if (
-    irAC < irMin
-  )
-  {
-    irMin = irAC;
-  }
-
-  if (
-    redAC > redMax
-  )
-  {
-    redMax = redAC;
-  }
-
-  if (
-    redAC < redMin
-  )
-  {
-    redMin = redAC;
-  }
-
-
-  // ------------------------------------------------
-  // SCALE IR
-  // ------------------------------------------------
-
-  int32_t x =
-    irAC / 8;
-
-
-  // ------------------------------------------------
-  // ENVELOPE
-  // ------------------------------------------------
-
-  float absx =
-    (x >= 0)
-    ? x
-    : -x;
-
-
-  env =
-    envAlpha * env +
-    (1.0f - envAlpha) * absx;
-
-
-  float thresh =
-    0.5f * env;
-
-
-  // ------------------------------------------------
-  // PEAK DETECTION
-  // ------------------------------------------------
-
-  bool isPeak =
-    (prev > prev2) &&
-    (prev > x) &&
-    (prev > thresh) &&
-    (env >= MIN_SIGNAL_QUALITY);
-
-
-  bool beatFired = false;
-
-
-  if (isPeak)
-  {
-    uint32_t now =
-      millis();
-
-
-    uint32_t dt =
-      now - lastBeatMs;
-
-
-    if (
-      dt > REFRACTORY_MS
-    )
-    {
-      beatCount++;
-
-
-      lastBeatMs =
-        now;
-
-
-      lastBeatDetectedMs =
-        now;
-
-
-      beatFired = true;
-
-
-      // ------------------------------------------------
-      // BPM
-      // ------------------------------------------------
-
-      if (
-        beatCount > 1
-      )
-      {
-        float instBpm =
-          60000.0f / dt;
-
-
-        if (
-          bpm == 0
-        )
-        {
-          bpm = instBpm;
-        }
-        else if (
-          instBpm > bpm * 1.4f
-        )
-        {
-          bpm =
-            0.98f * bpm +
-            0.02f * instBpm;
-        }
-        else
-        {
-          bpm =
-            0.70f * bpm +
-            0.30f * instBpm;
-        }
-
-
-        // ------------------------------------------------
-        // SpO2
-        // ------------------------------------------------
-
-        float acIRAmp =
-          (float)(
-            irMax - irMin
-          );
-
-
-        float acREDAmp =
-          (float)(
-            redMax - redMin
-          );
-
-
-        if (
-          acIRAmp > 1 &&
-          acREDAmp > 1 &&
-          dcIR > 1 &&
-          dcRED > 1
-        )
-        {
-          float nir =
-            acIRAmp / dcIR;
-
-
-          float nred =
-            acREDAmp / dcRED;
-
-
-          if (
-            nir > 0.000001f
-          )
-          {
-            Rratio =
-              nred / nir;
-
-
-            float spo2Inst =
-              clampf(
-                110.0f -
-                25.0f * Rratio,
-                70.0f,
-                100.0f
-              );
-
-
-            if (
-              spo2 == 0
-            )
-            {
-              spo2 =
-                spo2Inst;
-            }
-
-
-            spo2 =
-              0.80f * spo2 +
-              0.20f * spo2Inst;
-
-
-            lastSpo2DetectedMs =
-              now;
-          }
-        }
-      }
-
-
-      // Reset waveform window
-      irMax = INT32_MIN;
-      irMin = INT32_MAX;
-
-      redMax = INT32_MIN;
-      redMin = INT32_MAX;
-    }
-  }
-
-
-  // ------------------------------------------------
-  // TIMEOUTS
-  // ------------------------------------------------
-
-  if (
-    bpm > 0 &&
-    millis() -
-    lastBeatDetectedMs >
-    BPM_TIMEOUT_MS
-  )
-  {
-    bpm = 0;
-  }
-
-
-  if (
-    spo2 > 0 &&
-    millis() -
-    lastSpo2DetectedMs >
-    SPO2_TIMEOUT_MS
-  )
-  {
-    spo2 = 0;
-  }
-
-
-  prev2 = prev;
-
-  prev = x;
-
-
-  // ================================================================
-  // AD8232 ECG
-  // ================================================================
-
-  int ecgValue = 0;
-
-
-  if (
-    digitalRead(
-      ECG_LO_PLUS
-    ) == 1 ||
-
-    digitalRead(
-      ECG_LO_MINUS
-    ) == 1
-  )
-  {
-    // Leads OFF
-
-    ecgValue = 0;
-  }
-  else
-  {
-    ecgValue =
-      analogRead(
-        ECG_OUTPUT_PIN
-      );
-  }
-
-
-  // ================================================================
-  // BMI323
-  // ================================================================
-
-  readBMI323();
-
-
-  // ================================================================
-  // LM35 TEMPERATURE
-  // ================================================================
-
-  readLM35();
-
-
-  // ================================================================
-  // SERIAL OUTPUT
-  // ================================================================
-
-  Serial.print(
-    "ECG:"
-  );
-
-  Serial.print(
-    ecgValue
-  );
-
-
-  // MAX30102 PPG signals
-  // IR_Signal = processed IR PPG waveform
-  // Red_Signal = raw Red LED PPG waveform
-  Serial.print(
-    ", IR_Signal:"
-  );
-
-  Serial.print(
-    x
-  );
-
-
-  // IMPORTANT:
-  // The dashboard parser expects the exact key "Red_Signal".
-  Serial.print(
-    ", Red_Signal:"
-  );
-
-  Serial.print(
-    redRaw
-  );
-
-
-  Serial.print(
-    ", Threshold:"
-  );
-
-  Serial.print(
-    thresh
-  );
-
-
-  Serial.print(
-    ", BPM:"
-  );
-
-  Serial.print(
-    bpm
-  );
-
-
-  Serial.print(
-    ", SpO2:"
-  );
-
-  Serial.print(
-    spo2
-  );
-
-
-  Serial.print(
-    ", BMI_AX:"
-  );
-
-  Serial.print(
-    accelX,
-    2
-  );
-
-
-  Serial.print(
-    ", BMI_AY:"
-  );
-
-  Serial.print(
-    accelY,
-    2
-  );
-
-
-  Serial.print(
-    ", BMI_AZ:"
-  );
-
-  Serial.print(
-    accelZ,
-    2
-  );
-
-
-  Serial.print(
-    ", BMI_GX:"
-  );
-
-  Serial.print(
-    gyroX,
-    1
-  );
-
-
-  Serial.print(
-    ", BMI_GY:"
-  );
-
-  Serial.print(
-    gyroY,
-    1
-  );
-
-
-  Serial.print(
-    ", BMI_GZ:"
-  );
-
-  Serial.print(
-    gyroZ,
-    1
-  );
-
-
-  Serial.print(
-    ", AccMag:"
-  );
-
-  Serial.print(
-    accelMagnitude,
-    2
-  );
-
-
-  // IMPORTANT:
-  // The dashboard parser expects the exact format:
-  // LM35:36.5
-  Serial.print(
-    ", LM35:"
-  );
-
-  Serial.print(
-    temperatureC,
-    1
-  );
-
-
-  Serial.print(
-    ", Motion:"
+    "=========================================="
   );
 
   Serial.println(
-    motionState
+    "SYSTEM READY"
   );
 
+  Serial.println(
+    "Place finger on MAX30102."
+  );
 
-  // ================================================================
+  Serial.println(
+    "Keep finger steady."
+  );
+
+  Serial.println(
+    "Initial HR/SpO2 calculation takes ~4 sec."
+  );
+
+  Serial.println(
+    "=========================================="
+  );
+}
+
+// ================================================================
+// MAIN LOOP
+// ================================================================
+
+void loop()
+{
+  /*
+   * IMPORTANT:
+   *
+   * There is NO blocking MAX30102 loop here.
+   *
+   * Every sensor gets CPU time independently.
+   */
+
+  // ------------------------------------------------
+  // ECG
+  // ------------------------------------------------
+
+  updateECG();
+
+  // ------------------------------------------------
+  // MAX30102
+  // ------------------------------------------------
+
+  updateMAX30102();
+
+  // ------------------------------------------------
+  // BMI323
+  // ------------------------------------------------
+
+  updateBMI323();
+
+  // ------------------------------------------------
+  // LM35
+  // ------------------------------------------------
+
+  updateLM35();
+
+  // ------------------------------------------------
   // OLED
-  // ================================================================
+  // ------------------------------------------------
 
   updateDisplay();
 
+  // ------------------------------------------------
+  // DASHBOARD
+  // ------------------------------------------------
 
-  // ================================================================
-  // HEART ANIMATION
-  // ================================================================
-
-  if (beatFired)
-  {
-    heartBeatTimer =
-      millis() + 150;
-  }
+  sendDashboardPacket();
 }
