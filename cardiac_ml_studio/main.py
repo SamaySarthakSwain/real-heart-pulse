@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import List
 import sys
 import os
 
@@ -8,82 +9,46 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from predict import CardiacMLPredictor
 
-app = FastAPI(title="Cardiac ML Studio API", version="1.0")
+app = FastAPI(title="Ear-to-Heart AI API", version="2.0")
 
-# Enable CORS so your Vercel frontend can call this API
+# Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins (change to your Vercel URL in production)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load models globally at startup
+# Load DL model globally at startup
 try:
     predictor = CardiacMLPredictor()
 except Exception as e:
     print(f"Failed to load predictor: {e}")
 
-class IschemiaFeatures(BaseModel):
-    Age: float
-    Sex: int
-    ChestPainType: int
-    RestingBP: float
-    Cholesterol: float
-    FastingBS: int
-    MaxHR: float
-    ExerciseAngina: int
-    ST_Depression: float
-    ST_Slope: int
-    NumVesselsFluoroscopy: int
-
-class AmyloidosisFeatures(BaseModel):
-    Age: float
-    RelativeWallThickness: float
-    ApicalSparingRatio: float
-    LowVoltageMassRatio: float
-    NT_proBNP: float
-    Troponin_T: float
-    E_e_ratio: float
-    LVEF: float
-    MyocardialContractionFraction: float
-
-class FibrosisFeatures(BaseModel):
-    ExtracellularVolume_ECV: float
-    Native_T1: float
-    PostContrast_T1: float
-    LGE_Scar_Percent: float
-    TransmuralExtent: float
-    LVEDVI: float
-    LVMI: float
-    GlobalLongitudinalStrain: float
+class RawWaveformFeatures(BaseModel):
+    # Expects 12 leads, each containing 1000 float data points
+    signals: List[List[float]] = Field(
+        ..., 
+        description="12-lead ECG waveform array. Shape must be strictly (12, 1000)"
+    )
 
 @app.get("/")
 def read_root():
-    return {"message": "Cardiac ML Studio API is running!"}
+    return {"message": "Ear-to-Heart AI Pipeline is Active."}
 
-@app.post("/predict/ischemia")
-def predict_ischemia(features: IschemiaFeatures):
+@app.post("/predict/ecg")
+def predict_raw_ecg(features: RawWaveformFeatures):
     try:
-        result = predictor.predict_ischemia(features.model_dump())
+        if len(features.signals) not in [1, 12]:
+            raise HTTPException(status_code=400, detail="Must provide exactly 1 or 12 leads.")
+        if len(features.signals[0]) != 1000:
+            raise HTTPException(status_code=400, detail="Each lead must contain exactly 1000 samples (10 seconds at 100Hz).")
+            
+        result = predictor.predict_ecg(features.signals)
         return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/predict/amyloidosis")
-def predict_amyloidosis(features: AmyloidosisFeatures):
-    try:
-        result = predictor.predict_amyloidosis(features.model_dump())
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/predict/fibrosis")
-def predict_fibrosis(features: FibrosisFeatures):
-    try:
-        result = predictor.predict_fibrosis(features.model_dump())
-        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

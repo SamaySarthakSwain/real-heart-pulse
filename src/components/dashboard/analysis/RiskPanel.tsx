@@ -25,9 +25,34 @@ export function RiskPanel() {
   const connectionState = useSensorStore((s) => s.connectionState);
   const ecgSamples = useSensorStore((s) => s.ecgSamples);
   const [tick, setTick] = useState(0);
+  const [dlAnalysis, setDlAnalysis] = useState<any>(null);
 
   useEffect(() => {
-    const id = window.setInterval(() => setTick((n) => n + 1), 2000);
+    const id = window.setInterval(async () => {
+      setTick((n) => n + 1);
+      
+      const ecgValues = buffers.ecg.toArray();
+      if (ecgValues.length > 500) {
+          let padded = ecgValues.slice(-1000);
+          if (padded.length < 1000) {
+              padded = [...new Array(1000 - padded.length).fill(0), ...padded];
+          }
+          
+          try {
+             const res = await fetch("http://localhost:8000/predict/ecg", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ signals: [padded] })
+             });
+             if(res.ok) {
+                 const data = await res.json();
+                 setDlAnalysis(data);
+             }
+          } catch(e) {
+             console.error("DL API Error:", e);
+          }
+      }
+    }, 2000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -69,39 +94,76 @@ export function RiskPanel() {
               : "ESP32 disconnected — no physiological data to analyse."}
           </p>
         ) : (
-          <ul className="mt-4 space-y-4">
-            {analysis.conditions.map((c) => (
-              <li key={c.id}>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-medium">{c.name}</span>
-                  <span className="flex items-center gap-2">
-                    <span className="font-mono text-sm tabular-nums">{c.probability.toFixed(1)}%</span>
-                    <StatusPill tone={bandTone[c.band]}>{c.band.toUpperCase()}</StatusPill>
-                  </span>
+          <div className="space-y-6 mt-4">
+            
+            {dlAnalysis && (
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-2 opacity-20">
+                   <span className="text-4xl font-bold">AI</span>
                 </div>
-                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    className={`h-full rounded-full ${barColor[c.band]}`}
-                    style={{ width: `${Math.min(100, c.probability)}%` }}
-                  />
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4">PyTorch 1D-CNN (PTB-XL Model)</h3>
+                
+                <div className="mb-6 flex items-center justify-between bg-background rounded-lg p-3 border border-border">
+                  <span className="font-semibold text-lg">{dlAnalysis.primary_diagnosis}</span>
+                  <StatusPill tone="ok">CONFIDENCE {(dlAnalysis.confidence * 100).toFixed(1)}%</StatusPill>
                 </div>
-                {c.contributions.length > 0 && (
-                  <ul className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
-                    {c.contributions.slice(0, 3).map((f) => (
-                      <li key={f.label}>
-                        {f.direction === "raises" ? "▲" : "▼"} {f.label}: {f.value}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {c.missing.length > 0 && (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
-                    Not measured yet: {c.missing.join(", ")}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
+                
+                <ul className="space-y-3">
+                  {dlAnalysis.detailed_analysis.sort((a: any, b: any) => b.probability - a.probability).map((c: any) => (
+                    <li key={c.class}>
+                      <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="font-medium">{c.description}</span>
+                        <span className="font-mono tabular-nums">{(c.probability * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className={`h-full rounded-full ${c.probability > 0.5 ? 'bg-destructive' : 'bg-primary'}`}
+                          style={{ width: `${Math.min(100, c.probability * 100)}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-border">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Local Heuristic Fallback</h3>
+              <ul className="space-y-4">
+                {analysis.conditions.map((c) => (
+                  <li key={c.id}>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-medium">{c.name}</span>
+                      <span className="flex items-center gap-2">
+                        <span className="font-mono text-sm tabular-nums">{c.probability.toFixed(1)}%</span>
+                        <StatusPill tone={bandTone[c.band]}>{c.band.toUpperCase()}</StatusPill>
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className={`h-full rounded-full ${barColor[c.band]}`}
+                        style={{ width: `${Math.min(100, c.probability)}%` }}
+                      />
+                    </div>
+                    {c.contributions.length > 0 && (
+                      <ul className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
+                        {c.contributions.slice(0, 3).map((f) => (
+                          <li key={f.label}>
+                            {f.direction === "raises" ? "▲" : "▼"} {f.label}: {f.value}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {c.missing.length > 0 && (
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        Not measured yet: {c.missing.join(", ")}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         )}
       </section>
 
