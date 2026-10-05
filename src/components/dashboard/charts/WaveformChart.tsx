@@ -82,7 +82,7 @@ export function WaveformChart({
         }
         if (points.length > 1 && Number.isFinite(min) && Number.isFinite(max)) {
           const span = max - min || 1;
-          const timeMin = points[0][0];
+          const timeMin = points[0]?.[0] ?? now;
           const timeSpanMs = fillWidth ? Math.max(now - timeMin, 1) : windowMs;
 
           ctx.strokeStyle = strokeColor;

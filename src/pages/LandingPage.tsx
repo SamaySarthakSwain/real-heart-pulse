@@ -20,7 +20,7 @@ function ScrollReveal({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setIsVisible(true);
           observer.unobserve(entry.target);
         }
@@ -55,7 +55,7 @@ function AutoPlayVideoOnScroll({ src, playbackRate }: { src: string; playbackRat
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           videoRef.current?.play().catch(console.error);
         } else {
           videoRef.current?.pause();
