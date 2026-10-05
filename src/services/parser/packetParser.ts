@@ -85,7 +85,11 @@ const FIELD_ALIASES: Record<string, keyof SensorPacket> = {
 };
 
 const normalizeKey = (key: string) =>
-  key.trim().toLowerCase().replace(/[\s\-]+/g, "_").replace(/_+$/g, "");
+  key
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_")
+    .replace(/_+$/g, "");
 
 function toNumber(value: unknown): number | undefined {
   if (typeof value === "number") return Number.isFinite(value) ? value : undefined;
@@ -165,7 +169,7 @@ export function parseLine(
     let recognized = 0;
     let pairs = 0;
     for (const token of tokens) {
-      const match = token.match(/^\s*([A-Za-z_0-9 \-]+)\s*[:=]\s*(-?[0-9.eE+]+)\s*$/);
+      const match = token.match(/^\s*([A-Za-z_0-9 -]+)\s*[:=]\s*(-?[0-9.eE+]+)\s*$/);
       if (!match) continue;
       pairs += 1;
       if (assign(packet, match[1] ?? "", match[2] ?? "", options)) recognized += 1;
@@ -186,7 +190,9 @@ export function parseLine(
       );
     }
     const packet: SensorPacket = {};
-    parts.forEach((value, index) => assign(packet, options.csvColumns[index] ?? "", value, options));
+    parts.forEach((value, index) =>
+      assign(packet, options.csvColumns[index] ?? "", value, options),
+    );
     if (!hasData(packet)) return fail(raw, "csv", "No recognized sensor fields");
     return { raw, format: "csv", packet };
   }

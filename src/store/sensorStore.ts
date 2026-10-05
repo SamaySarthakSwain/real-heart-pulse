@@ -401,7 +401,11 @@ export const useSensorStore = create<SensorState>((set, get) => ({
   },
 
   setSettings: (patch) => {
-    const settings = { ...get().settings, ...patch, parser: { ...get().settings.parser, ...(patch.parser ?? {}) } };
+    const settings = {
+      ...get().settings,
+      ...patch,
+      parser: { ...get().settings.parser, ...(patch.parser ?? {}) },
+    };
     if (patch.ecgBufferSize) buffers.ecg.resize(patch.ecgBufferSize);
     if (patch.ppgBufferSize) {
       buffers.ppgIR.resize(patch.ppgBufferSize);

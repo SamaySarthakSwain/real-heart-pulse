@@ -7,20 +7,24 @@ import { MedicalDisclaimer } from "@/components/dashboard/MedicalDisclaimer";
 export function Diagnostics() {
   const s = useSensorStore();
   const stats: Array<[string, string, string]> = [
-    ["Packets received",     s.packetsReceived.toLocaleString(),    "📦"],
-    ["Packets processed",    s.packetsProcessed.toLocaleString(),   "✅"],
-    ["Packets rejected",     s.packetsRejected.toLocaleString(),    "❌"],
-    ["Packets/sec",          String(s.packetsPerSecond),            "⚡"],
-    ["Malformed packets",    s.malformedPacketCount.toLocaleString(),"⚠️"],
-    ["Validation errors",    s.validationErrorCount.toLocaleString(),"🔍"],
-    ["ECG samples",          s.ecgSamples.toLocaleString(),         "📈"],
-    ["PPG samples",          s.ppgSamples.toLocaleString(),         "🔴"],
-    ["BPM updates",          s.bpmUpdates.toLocaleString(),         "💓"],
-    ["SpO₂ updates",         s.spo2Updates.toLocaleString(),        "🩸"],
-    ["ECG sample rate",      `${s.ecgSampleRate} Hz`,               "📡"],
-    ["PPG sample rate",      `${s.ppgSampleRate} Hz`,               "📡"],
+    ["Packets received", s.packetsReceived.toLocaleString(), "📦"],
+    ["Packets processed", s.packetsProcessed.toLocaleString(), "✅"],
+    ["Packets rejected", s.packetsRejected.toLocaleString(), "❌"],
+    ["Packets/sec", String(s.packetsPerSecond), "⚡"],
+    ["Malformed packets", s.malformedPacketCount.toLocaleString(), "⚠️"],
+    ["Validation errors", s.validationErrorCount.toLocaleString(), "🔍"],
+    ["ECG samples", s.ecgSamples.toLocaleString(), "📈"],
+    ["PPG samples", s.ppgSamples.toLocaleString(), "🔴"],
+    ["BPM updates", s.bpmUpdates.toLocaleString(), "💓"],
+    ["SpO₂ updates", s.spo2Updates.toLocaleString(), "🩸"],
+    ["ECG sample rate", `${s.ecgSampleRate} Hz`, "📡"],
+    ["PPG sample rate", `${s.ppgSampleRate} Hz`, "📡"],
     ["Inter-packet latency", s.latencyMs === null ? "——" : `${s.latencyMs} ms`, "⏱"],
-    ["Last packet",          s.lastPacketTime ? new Date(s.lastPacketTime).toLocaleTimeString() : "——", "🕐"],
+    [
+      "Last packet",
+      s.lastPacketTime ? new Date(s.lastPacketTime).toLocaleTimeString() : "——",
+      "🕐",
+    ],
   ];
 
   return (

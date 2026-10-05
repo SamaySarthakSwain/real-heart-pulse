@@ -61,9 +61,13 @@ export class SerialTransport implements Transport {
       this.port = null;
       this.setState("ERROR", message);
       if (/No port selected/i.test(message)) {
-        this.events.onError("No serial port was selected. Click Connect ESP32 and pick the ESP32 COM port.");
+        this.events.onError(
+          "No serial port was selected. Click Connect ESP32 and pick the ESP32 COM port.",
+        );
       } else if (/denied|permission/i.test(message)) {
-        this.events.onError("Serial permission denied. Allow access to the ESP32 port and try again.");
+        this.events.onError(
+          "Serial permission denied. Allow access to the ESP32 port and try again.",
+        );
       } else if (/open|busy|access/i.test(message)) {
         this.events.onError(
           `Could not open the serial port: ${message}. Close the Arduino Serial Monitor or any other program using the port.`,

@@ -53,7 +53,7 @@ function median(values: number[]): number {
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   if (sorted.length % 2 === 1) return sorted[mid] as number;
-  return (((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2);
+  return ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2;
 }
 
 const EMPTY_ECG: EcgFeatures = {
@@ -133,7 +133,8 @@ export function extractEcgFeatures(values: number[], times: number[]): EcgFeatur
       for (let k = Math.max(0, best - span); k <= Math.min(n - 1, best + span); k++) {
         if ((values[k] as number) > (values[apex] as number)) apex = k;
       }
-      if (peaks.length === 0 || apex - (peaks[peaks.length - 1] as number) > refractory) peaks.push(apex);
+      if (peaks.length === 0 || apex - (peaks[peaks.length - 1] as number) > refractory)
+        peaks.push(apex);
       i = j + refractory;
     } else {
       i++;

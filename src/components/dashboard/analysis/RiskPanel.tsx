@@ -21,36 +21,42 @@ function num(value: number | null, digits = 0, unit = "") {
   return value === null || !Number.isFinite(value) ? "--" : `${value.toFixed(digits)}${unit}`;
 }
 
+interface DLAnalysisResult {
+  primary_diagnosis: string;
+  confidence: number;
+  detailed_analysis: { class: string; description: string; probability: number }[];
+}
+
 export function RiskPanel() {
   const connectionState = useSensorStore((s) => s.connectionState);
   const ecgSamples = useSensorStore((s) => s.ecgSamples);
   const [tick, setTick] = useState(0);
-  const [dlAnalysis, setDlAnalysis] = useState<any>(null);
+  const [dlAnalysis, setDlAnalysis] = useState<DLAnalysisResult | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(async () => {
       setTick((n) => n + 1);
-      
+
       const ecgValues = buffers.ecg.toArray();
       if (ecgValues.length > 500) {
-          let padded = ecgValues.slice(-1000);
-          if (padded.length < 1000) {
-              padded = [...new Array(1000 - padded.length).fill(0), ...padded];
+        let padded = ecgValues.slice(-1000);
+        if (padded.length < 1000) {
+          padded = [...new Array(1000 - padded.length).fill(0), ...padded];
+        }
+
+        try {
+          const res = await fetch("http://localhost:8000/predict/ecg", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ signals: [padded] }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setDlAnalysis(data);
           }
-          
-          try {
-             const res = await fetch("http://localhost:8000/predict/ecg", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ signals: [padded] })
-             });
-             if(res.ok) {
-                 const data = await res.json();
-                 setDlAnalysis(data);
-             }
-          } catch(e) {
-             console.error("DL API Error:", e);
-          }
+        } catch (e) {
+          console.error("DL API Error:", e);
+        }
       }
     }, 2000);
     return () => window.clearInterval(id);
@@ -95,47 +101,58 @@ export function RiskPanel() {
           </p>
         ) : (
           <div className="space-y-6 mt-4">
-            
             {dlAnalysis && (
               <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-2 opacity-20">
-                   <span className="text-4xl font-bold">AI</span>
+                  <span className="text-4xl font-bold">AI</span>
                 </div>
-                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4">PyTorch 1D-CNN (PTB-XL Model)</h3>
-                
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4">
+                  PyTorch 1D-CNN (PTB-XL Model)
+                </h3>
+
                 <div className="mb-6 flex items-center justify-between bg-background rounded-lg p-3 border border-border">
                   <span className="font-semibold text-lg">{dlAnalysis.primary_diagnosis}</span>
-                  <StatusPill tone="ok">CONFIDENCE {(dlAnalysis.confidence * 100).toFixed(1)}%</StatusPill>
+                  <StatusPill tone="ok">
+                    CONFIDENCE {(dlAnalysis.confidence * 100).toFixed(1)}%
+                  </StatusPill>
                 </div>
-                
+
                 <ul className="space-y-3">
-                  {dlAnalysis.detailed_analysis.sort((a: any, b: any) => b.probability - a.probability).map((c: any) => (
-                    <li key={c.class}>
-                      <div className="flex items-center justify-between gap-3 text-sm">
-                        <span className="font-medium">{c.description}</span>
-                        <span className="font-mono tabular-nums">{(c.probability * 100).toFixed(1)}%</span>
-                      </div>
-                      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className={`h-full rounded-full ${c.probability > 0.5 ? 'bg-destructive' : 'bg-primary'}`}
-                          style={{ width: `${Math.min(100, c.probability * 100)}%` }}
-                        />
-                      </div>
-                    </li>
-                  ))}
+                  {dlAnalysis.detailed_analysis
+                    .sort((a, b) => b.probability - a.probability)
+                    .map((c) => (
+                      <li key={c.class}>
+                        <div className="flex items-center justify-between gap-3 text-sm">
+                          <span className="font-medium">{c.description}</span>
+                          <span className="font-mono tabular-nums">
+                            {(c.probability * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                          <div
+                            className={`h-full rounded-full ${c.probability > 0.5 ? "bg-destructive" : "bg-primary"}`}
+                            style={{ width: `${Math.min(100, c.probability * 100)}%` }}
+                          />
+                        </div>
+                      </li>
+                    ))}
                 </ul>
               </div>
             )}
 
             <div className="pt-4 border-t border-border">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Local Heuristic Fallback</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">
+                Local Heuristic Fallback
+              </h3>
               <ul className="space-y-4">
                 {analysis.conditions.map((c) => (
                   <li key={c.id}>
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-sm font-medium">{c.name}</span>
                       <span className="flex items-center gap-2">
-                        <span className="font-mono text-sm tabular-nums">{c.probability.toFixed(1)}%</span>
+                        <span className="font-mono text-sm tabular-nums">
+                          {c.probability.toFixed(1)}%
+                        </span>
                         <StatusPill tone={bandTone[c.band]}>{c.band.toUpperCase()}</StatusPill>
                       </span>
                     </div>
@@ -178,7 +195,10 @@ export function RiskPanel() {
             ["SDNN", num(ecg.sdnn, 0, " ms")],
             ["RMSSD", num(ecg.rmssd, 0, " ms")],
             ["pNN50", ecg.pnn50 === null ? "--" : `${(ecg.pnn50 * 100).toFixed(0)} %`],
-            ["RR irregularity", ecg.irregularity === null ? "--" : `${(ecg.irregularity * 100).toFixed(0)} %`],
+            [
+              "RR irregularity",
+              ecg.irregularity === null ? "--" : `${(ecg.irregularity * 100).toFixed(0)} %`,
+            ],
             ["QRS amplitude", num(ecg.qrsAmplitude, 0, " counts")],
             ["QRS duration", num(ecg.qrsDuration, 0, " ms")],
             [
@@ -189,7 +209,10 @@ export function RiskPanel() {
             ["Mean BPM (firmware)", num(analysis.bpm.mean, 0, " bpm")],
             ["Mean temperature", num(analysis.temperature.mean, 1, " °C")],
             ["Motion (|a|)", num(analysis.motion.mean, 2, " g")],
-            ["Subject state", analysis.motion.count === 0 ? "--" : analysis.restingLikely ? "AT REST" : "MOVING"],
+            [
+              "Subject state",
+              analysis.motion.count === 0 ? "--" : analysis.restingLikely ? "AT REST" : "MOVING",
+            ],
           ].map(([label, value]) => (
             <div key={label} className="flex justify-between gap-3 border-b border-border/60 py-1">
               <dt className="text-muted-foreground">{label}</dt>
@@ -207,18 +230,18 @@ export function RiskPanel() {
             integration → adaptive threshold) on the raw AD8232 stream.
           </li>
           <li>
-            Each condition uses an interpretable logistic model over those features. Weights come from
-            published clinical thresholds — ST deviation for ischemia, QRS low voltage for amyloidosis,
-            QRS widening and RR irregularity for fibrosis, resting tachycardia with desaturation for
-            heart failure.
+            Each condition uses an interpretable logistic model over those features. Weights come
+            from published clinical thresholds — ST deviation for ischemia, QRS low voltage for
+            amyloidosis, QRS widening and RR irregularity for fibrosis, resting tachycardia with
+            desaturation for heart failure.
           </li>
           <li>
-            A feature that has not been measured is reported as missing and simply left out of the score —
-            it is never replaced by an assumed value.
+            A feature that has not been measured is reported as missing and simply left out of the
+            score — it is never replaced by an assumed value.
           </li>
           <li>
-            Single-lead ECG plus PPG cannot diagnose these diseases. Treat every percentage as a screening
-            signal for follow-up with a clinician, not a diagnosis.
+            Single-lead ECG plus PPG cannot diagnose these diseases. Treat every percentage as a
+            screening signal for follow-up with a clinician, not a diagnosis.
           </li>
         </ul>
       </section>

@@ -8,14 +8,31 @@ const noScale = { ...DEFAULT_PARSER_OPTIONS, plotterScaleBpm: 1, plotterScaleSpo
 
 describe("packet parser", () => {
   it("parses JSON packets", () => {
-    const result = parseLine('{"timestamp":123456,"ecg":2048,"ppgIR":52341,"ppgRed":48213,"bpm":76,"spo2":98}', noScale);
+    const result = parseLine(
+      '{"timestamp":123456,"ecg":2048,"ppgIR":52341,"ppgRed":48213,"bpm":76,"spo2":98}',
+      noScale,
+    );
     expect(result.format).toBe("json");
-    expect(result.packet).toEqual({ timestamp: 123456, ecg: 2048, ppgIR: 52341, ppgRed: 48213, bpm: 76, spo2: 98 });
+    expect(result.packet).toEqual({
+      timestamp: 123456,
+      ecg: 2048,
+      ppgIR: 52341,
+      ppgRed: 48213,
+      bpm: 76,
+      spo2: 98,
+    });
   });
 
   it("parses CSV packets", () => {
     const result = parseLine("1234,2048,52341,48213,76,98", noScale);
-    expect(result.packet).toEqual({ timestamp: 1234, ecg: 2048, ppgIR: 52341, ppgRed: 48213, bpm: 76, spo2: 98 });
+    expect(result.packet).toEqual({
+      timestamp: 1234,
+      ecg: 2048,
+      ppgIR: 52341,
+      ppgRed: 48213,
+      bpm: 76,
+      spo2: 98,
+    });
   });
 
   it("parses the MAX30102 raw-values firmware line", () => {
@@ -81,7 +98,10 @@ describe("ring buffer", () => {
 });
 
 describe("export", () => {
-  const rows = [{ t: 1, ecg: 2048, bpm: 76 }, { t: 2, ppgIR: 52341 }];
+  const rows = [
+    { t: 1, ecg: 2048, bpm: 76 },
+    { t: 2, ppgIR: 52341 },
+  ];
 
   it("writes empty cells for missing measurements", () => {
     expect(toCSV(rows).split("\n")).toEqual([

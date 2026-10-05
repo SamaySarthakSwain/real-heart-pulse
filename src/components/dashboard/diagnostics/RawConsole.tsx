@@ -6,7 +6,10 @@ export function RawConsole({ limit = 40 }: { limit?: number }) {
   const clearRawLog = useSensorStore((s) => s.clearRawLog);
 
   return (
-    <section aria-label="Raw serial console" className="rounded-xl border border-border bg-card p-4">
+    <section
+      aria-label="Raw serial console"
+      className="rounded-xl border border-border bg-card p-4"
+    >
       <header className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Raw serial console</h2>
         <Button size="sm" variant="secondary" onClick={clearRawLog}>

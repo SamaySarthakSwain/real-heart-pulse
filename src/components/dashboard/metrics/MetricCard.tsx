@@ -49,9 +49,7 @@ export function MetricCard({
       {/* Header row */}
       <header className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          {icon && (
-            <span className="text-xl leading-none">{icon}</span>
-          )}
+          {icon && <span className="text-xl leading-none">{icon}</span>}
           <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             {label}
           </h3>
@@ -70,9 +68,7 @@ export function MetricCard({
       >
         {hasValue ? (value as number).toFixed(decimals) : "——"}
         {hasValue && unit ? (
-          <span className="ml-2 text-base font-medium text-muted-foreground">
-            {unit}
-          </span>
+          <span className="ml-2 text-base font-medium text-muted-foreground">{unit}</span>
         ) : null}
       </p>
 

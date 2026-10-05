@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 
 export function PipelineFlow() {
   const s = useSensorStore();
-  const connected  = s.connectionState === "CONNECTED";
-  const receiving  = connected && s.packetsReceived > 0;
-  const parsing    = s.packetsProcessed > 0;
+  const connected = s.connectionState === "CONNECTED";
+  const receiving = connected && s.packetsReceived > 0;
+  const parsing = s.packetsProcessed > 0;
   const validating = s.packetsProcessed > 0;
-  const stored     = s.lastValidPacket !== null;
+  const stored = s.lastValidPacket !== null;
 
   const stage = (
     label: string,
@@ -23,9 +23,9 @@ export function PipelineFlow() {
   ];
 
   const stages = [
-    stage("ESP32",   "🔧", connected, s.connectionState === "ERROR"),
+    stage("ESP32", "🔧", connected, s.connectionState === "ERROR"),
     stage(s.transportType === "serial" ? "Serial" : "WebSocket", "📡", receiving),
-    stage("Parser",    "🔍", parsing,    s.malformedPacketCount > 0 && !parsing),
+    stage("Parser", "🔍", parsing, s.malformedPacketCount > 0 && !parsing),
     stage("Validator", "✅", validating, s.packetsRejected > 0 && !validating),
     stage("Sensor Store", "💾", stored),
     stage("Dashboard", "📊", stored),
@@ -49,8 +49,8 @@ export function PipelineFlow() {
               tone === "ok"
                 ? "border-status-ok/25 bg-status-ok/5"
                 : tone === "error"
-                ? "border-destructive/25 bg-destructive/5"
-                : "border-border bg-background",
+                  ? "border-destructive/25 bg-destructive/5"
+                  : "border-border bg-background",
             )}
             style={{ animationDelay: `${i * 60}ms` }}
           >

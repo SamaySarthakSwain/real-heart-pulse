@@ -57,19 +57,18 @@ function Divider() {
 export function Dashboard() {
   const s = useSensorStore();
   const live = s.connectionState === "CONNECTED";
-  const ecgLive  = useFreshness(s.lastEcgTime)  && live;
-  const ppgLive  = useFreshness(s.lastPpgTime)  && live;
-  const bpmFresh = useFreshness(s.lastBpmTime, 8000)         && live;
-  const spo2Fresh= useFreshness(s.lastSpo2Time, 8000)        && live;
-  const tempFresh= useFreshness(s.lastTemperatureTime, 8000) && live;
-  const imuFresh = useFreshness(s.lastImuTime, 4000)         && live;
+  const ecgLive = useFreshness(s.lastEcgTime) && live;
+  const ppgLive = useFreshness(s.lastPpgTime) && live;
+  const bpmFresh = useFreshness(s.lastBpmTime, 8000) && live;
+  const spo2Fresh = useFreshness(s.lastSpo2Time, 8000) && live;
+  const tempFresh = useFreshness(s.lastTemperatureTime, 8000) && live;
+  const imuFresh = useFreshness(s.lastImuTime, 4000) && live;
 
   const signalTone = (fresh: boolean): PillTone => (fresh ? "ok" : live ? "warn" : "idle");
   const signalText = (fresh: boolean) => (fresh ? "LIVE" : live ? "WAITING" : "NO SIGNAL");
 
   return (
     <div className="space-y-5">
-
       {/* ── Connection status ──────────────────────────────────────────── */}
       <div className="animate-slide-in-up stagger-1">
         <ConnectionBar />
@@ -116,7 +115,10 @@ export function Dashboard() {
                 "transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5",
               )}
             >
-              <div aria-hidden className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ecg" />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ecg"
+              />
               <header className="flex items-start justify-between gap-2">
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span className="text-base">📈</span> ECG (AD8232)
@@ -140,7 +142,10 @@ export function Dashboard() {
                 "transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5",
               )}
             >
-              <div aria-hidden className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ir" />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ir"
+              />
               <header className="flex items-start justify-between gap-2">
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span className="text-base">🔴</span> PPG (MAX30102)
@@ -195,7 +200,10 @@ export function Dashboard() {
           {/* Accelerometer inline card */}
           <div className="animate-slide-in-up stagger-4">
             <section className="relative rounded-2xl border bg-card p-5 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
-              <div aria-hidden className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-primary" />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-primary"
+              />
               <header className="flex items-start justify-between gap-2">
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span>🔧</span> Accelerometer (g)
@@ -219,7 +227,10 @@ export function Dashboard() {
           {/* Gyroscope inline card */}
           <div className="animate-slide-in-up stagger-5">
             <section className="relative rounded-2xl border bg-card p-5 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
-              <div aria-hidden className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ir" />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-signal-ir"
+              />
               <header className="flex items-start justify-between gap-2">
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span>🌀</span> Gyroscope (°/s)
@@ -234,7 +245,9 @@ export function Dashboard() {
                 <span className="text-muted-foreground text-xs"> Z </span>
                 {imuFresh && s.gyro ? s.gyro.z.toFixed(1) : "——"}
               </p>
-              <p className="mt-3 font-mono text-xs text-muted-foreground/70">6-DoF BMI323 over I²C</p>
+              <p className="mt-3 font-mono text-xs text-muted-foreground/70">
+                6-DoF BMI323 over I²C
+              </p>
             </section>
           </div>
         </div>
@@ -278,9 +291,7 @@ export function Dashboard() {
           windowSeconds={s.settings.timeWindowSeconds}
           height={220}
           emptyMessage={
-            live
-              ? "Waiting for ECG samples from the AD8232"
-              : "ECG: no signal — ESP32 disconnected"
+            live ? "Waiting for ECG samples from the AD8232" : "ECG: no signal — ESP32 disconnected"
           }
         />
       </section>
@@ -377,11 +388,7 @@ export function Dashboard() {
                   ⏹ Stop Session
                 </Button>
               ) : (
-                <Button
-                  size="sm"
-                  className="rounded-xl font-medium"
-                  onClick={s.startSession}
-                >
+                <Button size="sm" className="rounded-xl font-medium" onClick={s.startSession}>
                   ▶ Start Session
                 </Button>
               )}
@@ -391,11 +398,7 @@ export function Dashboard() {
                 className="rounded-xl font-medium"
                 disabled={s.recordedRows === 0}
                 onClick={() =>
-                  downloadFile(
-                    `esp32-session-${Date.now()}.csv`,
-                    toCSV(sessionRows),
-                    "text/csv",
-                  )
+                  downloadFile(`esp32-session-${Date.now()}.csv`, toCSV(sessionRows), "text/csv")
                 }
               >
                 ↓ CSV

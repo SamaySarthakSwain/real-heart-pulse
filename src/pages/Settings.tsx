@@ -7,11 +7,7 @@ import { Switch } from "@/components/ui/switch";
 const BAUD_RATES = [9600, 19200, 38400, 57600, 115200, 230400, 921600];
 
 function SettingGroup({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      {children}
-    </div>
-  );
+  return <div className="space-y-1.5">{children}</div>;
 }
 
 export function SettingsPage() {
@@ -36,9 +32,11 @@ export function SettingsPage() {
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
-
           <SettingGroup>
-            <Label htmlFor="transport" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="transport"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               Communication method
             </Label>
             <select
@@ -56,7 +54,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="baud" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="baud"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               Baud rate
             </Label>
             <select
@@ -75,7 +76,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="ws" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="ws"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               ESP32 WebSocket URL
             </Label>
             <Input
@@ -88,7 +92,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="window" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="window"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               Graph time window (seconds)
             </Label>
             <Input
@@ -105,7 +112,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="ecgbuf" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="ecgbuf"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               ECG buffer size (samples)
             </Label>
             <Input
@@ -122,7 +132,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="ppgbuf" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="ppgbuf"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               PPG buffer size (samples)
             </Label>
             <Input
@@ -139,7 +152,10 @@ export function SettingsPage() {
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="bpmscale" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="bpmscale"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               BPM plotter scale factor
             </Label>
             <Input
@@ -156,12 +172,16 @@ export function SettingsPage() {
               className="rounded-xl"
             />
             <p className="text-xs text-muted-foreground">
-              The reference SpO₂ sketch prints BPM/2 for the Serial Plotter. Use 1 if your firmware prints true BPM.
+              The reference SpO₂ sketch prints BPM/2 for the Serial Plotter. Use 1 if your firmware
+              prints true BPM.
             </p>
           </SettingGroup>
 
           <SettingGroup>
-            <Label htmlFor="spo2scale" className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <Label
+              htmlFor="spo2scale"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground"
+            >
               SpO₂ plotter scale factor
             </Label>
             <Input

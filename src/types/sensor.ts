@@ -42,11 +42,7 @@ export interface ValidationResult {
   errors: string[];
 }
 
-export type ConnectionState =
-  | "DISCONNECTED"
-  | "CONNECTING"
-  | "CONNECTED"
-  | "ERROR";
+export type ConnectionState = "DISCONNECTED" | "CONNECTING" | "CONNECTED" | "ERROR";
 
 export type DataState = "NO_DATA" | "RECEIVING" | "STALE";
 

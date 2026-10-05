@@ -33,7 +33,11 @@ export function validatePacket(packet: SensorPacket | undefined): ValidationResu
   const clean: SensorPacket = {};
 
   if (packet.timestamp !== undefined) {
-    if (typeof packet.timestamp === "number" && Number.isFinite(packet.timestamp) && packet.timestamp >= 0) {
+    if (
+      typeof packet.timestamp === "number" &&
+      Number.isFinite(packet.timestamp) &&
+      packet.timestamp >= 0
+    ) {
       clean.timestamp = packet.timestamp;
     } else {
       errors.push("timestamp is not a finite non-negative number");
@@ -73,7 +77,10 @@ export function validatePacket(packet: SensorPacket | undefined): ValidationResu
 
   const measured = Object.keys(clean).filter((k) => k !== "timestamp");
   if (measured.length === 0) {
-    return { ok: false, errors: errors.length ? errors : ["Packet contained no usable measurements"] };
+    return {
+      ok: false,
+      errors: errors.length ? errors : ["Packet contained no usable measurements"],
+    };
   }
 
   return { ok: true, packet: clean, errors };

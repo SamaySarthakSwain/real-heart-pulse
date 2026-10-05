@@ -15,7 +15,10 @@ export function ConnectionWizard() {
   ];
 
   return (
-    <section aria-label="Device connection wizard" className="rounded-xl border border-border bg-card p-4">
+    <section
+      aria-label="Device connection wizard"
+      className="rounded-xl border border-border bg-card p-4"
+    >
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-sm font-semibold">Device connection wizard</h2>
         {s.connectionState !== "CONNECTED" && (
@@ -28,9 +31,14 @@ export function ConnectionWizard() {
         {steps.map(([label, done], index) => {
           const tone: PillTone = done ? "ok" : "idle";
           return (
-            <li key={label} className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2">
+            <li
+              key={label}
+              className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2"
+            >
               <span className="text-sm">
-                <span className="mr-2 font-mono text-xs text-muted-foreground">STEP {index + 1}</span>
+                <span className="mr-2 font-mono text-xs text-muted-foreground">
+                  STEP {index + 1}
+                </span>
                 {label}
               </span>
               <StatusPill tone={tone}>{done ? "DONE" : "WAITING"}</StatusPill>

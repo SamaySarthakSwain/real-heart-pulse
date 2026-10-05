@@ -2312,8 +2312,8 @@ export function Firmware() {
         <h1 className="text-lg font-semibold">ESP32 firmware — ECG + PPG + LM35 + BMI323 + WiFi</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Upload this sketch to the ESP32. It streams every sensor as labelled{" "}
-          <code className="font-mono">key:value</code> lines that this dashboard parses directly, over USB
-          serial at 115200 baud and simultaneously over a WiFi WebSocket on port 81.
+          <code className="font-mono">key:value</code> lines that this dashboard parses directly,
+          over USB serial at 115200 baud and simultaneously over a WiFi WebSocket on port 81.
         </p>
       </section>
 

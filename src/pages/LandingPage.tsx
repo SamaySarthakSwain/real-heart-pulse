@@ -25,7 +25,7 @@ function ScrollReveal({
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     if (ref.current) {
@@ -40,7 +40,7 @@ function ScrollReveal({
       className={cn(
         "transition-all duration-700 ease-out",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
-        className
+        className,
       )}
       style={{ transitionDelay: `${delay}ms` }}
     >
@@ -61,7 +61,7 @@ function AutoPlayVideoOnScroll({ src, playbackRate }: { src: string; playbackRat
           videoRef.current?.pause();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     if (videoRef.current) {
@@ -91,7 +91,6 @@ function AutoPlayVideoOnScroll({ src, playbackRate }: { src: string; playbackRat
 export function LandingPage() {
   return (
     <div className="flex flex-col gap-24 pb-20 overflow-x-hidden">
-      
       {/* ── HERO SECTION ──────────────────────────────────────────────────────── */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-10">
         {/* Background ambient glows */}
@@ -108,16 +107,17 @@ export function LandingPage() {
                 </span>
                 Web Serial API Powered
               </div>
-              
+
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
-                Real-Time <br/>
+                Real-Time <br />
                 <span className="gradient-text-primary">Heart Monitoring</span>
               </h1>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground max-w-[600px] mx-auto lg:mx-0 leading-relaxed">
-                Stream biomedical signals directly from your ESP32 hardware to the browser. Zero cloud dependencies. Complete privacy.
+                Stream biomedical signals directly from your ESP32 hardware to the browser. Zero
+                cloud dependencies. Complete privacy.
               </p>
-              
+
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
                 <Link
                   to="/dashboard"
@@ -125,8 +125,18 @@ export function LandingPage() {
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                   <span className="relative">Launch Dashboard</span>
-                  <svg className="w-5 h-5 relative group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg
+                    className="w-5 h-5 relative group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </svg>
                 </Link>
                 <Link
@@ -141,9 +151,9 @@ export function LandingPage() {
 
           <ScrollReveal delay={200} className="relative mx-auto w-full max-w-[500px] aspect-square">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl" />
-            <img 
-              src="/images/hero-heart-3d.png" 
-              alt="3D High-Tech Heart" 
+            <img
+              src="/images/hero-heart-3d.png"
+              alt="3D High-Tech Heart"
               className="relative z-10 w-full h-full object-cover animate-slide-in-up drop-shadow-2xl hover:scale-105 transition-transform duration-700 ease-out"
             />
           </ScrollReveal>
@@ -156,42 +166,55 @@ export function LandingPage() {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How it Works</h2>
             <p className="text-muted-foreground text-lg">
-              Seamlessly bridge the gap between physical sensors and digital analysis using standard Web protocols.
+              Seamlessly bridge the gap between physical sensors and digital analysis using standard
+              Web protocols.
             </p>
           </div>
         </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-8 relative z-10">
-          <ScrollReveal delay={100} className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group">
+          <ScrollReveal
+            delay={100}
+            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+          >
             <div className="absolute top-0 right-0 w-32 h-32 bg-chart-1/10 rounded-bl-full blur-2xl group-hover:bg-chart-1/20 transition-colors" />
             <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
               🔌
             </div>
             <h3 className="text-xl font-semibold mb-3">1. Hardware Capture</h3>
             <p className="text-muted-foreground leading-relaxed">
-              MAX30102 and AD8232 sensors capture raw photoplethysmogram (PPG) and electrocardiogram (ECG) data.
+              MAX30102 and AD8232 sensors capture raw photoplethysmogram (PPG) and electrocardiogram
+              (ECG) data.
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={200} className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group">
+          <ScrollReveal
+            delay={200}
+            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+          >
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full blur-2xl group-hover:bg-primary/20 transition-colors" />
             <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
               ⚡
             </div>
             <h3 className="text-xl font-semibold mb-3">2. ESP32 Processing</h3>
             <p className="text-muted-foreground leading-relaxed">
-              The microcontroller performs initial noise filtering, peak detection, and formats the data for serial transmission.
+              The microcontroller performs initial noise filtering, peak detection, and formats the
+              data for serial transmission.
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={300} className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group">
+          <ScrollReveal
+            delay={300}
+            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+          >
             <div className="absolute top-0 right-0 w-32 h-32 bg-chart-2/10 rounded-bl-full blur-2xl group-hover:bg-chart-2/20 transition-colors" />
             <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
               💻
             </div>
             <h3 className="text-xl font-semibold mb-3">3. Web Serial UI</h3>
             <p className="text-muted-foreground leading-relaxed">
-              The browser securely connects to the USB port, parsing the stream at 115200 baud to render live 60fps charts.
+              The browser securely connects to the USB port, parsing the stream at 115200 baud to
+              render live 60fps charts.
             </p>
           </ScrollReveal>
         </div>
@@ -201,7 +224,6 @@ export function LandingPage() {
       <section className="container px-4 md:px-6">
         <div className="glass-card rounded-[2.5rem] overflow-hidden border-border/50 bg-accent/20">
           <div className="grid lg:grid-cols-2 items-stretch">
-            
             <ScrollReveal className="p-10 md:p-16 flex flex-col justify-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-chart-5/10 border border-chart-5/20 text-chart-5 text-sm font-semibold tracking-wide w-fit">
                 AI & Analysis
@@ -210,50 +232,81 @@ export function LandingPage() {
                 Heart Disease Prediction
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Our system goes beyond raw data visualization. By analyzing patterns in your Blood Oxygen (SpO₂) and Heart Rate Variability (HRV), the dashboard calculates real-time risk scores.
+                Our system goes beyond raw data visualization. By analyzing patterns in your Blood
+                Oxygen (SpO₂) and Heart Rate Variability (HRV), the dashboard calculates real-time
+                risk scores.
               </p>
-              
+
               <ul className="space-y-5 mb-8">
                 <li className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-status-ok/10 flex items-center justify-center text-status-ok border border-status-ok/20">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">Good Range (0-30%)</h4>
-                    <p className="text-sm text-muted-foreground mt-1">Normal sinus rhythm, healthy oxygen saturation (&gt;95%), and steady variability.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Normal sinus rhythm, healthy oxygen saturation (&gt;95%), and steady
+                      variability.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center text-destructive border border-destructive/20">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">Elevated Risk (&gt;70%)</h4>
-                    <p className="text-sm text-muted-foreground mt-1">Detects prolonged hypoxia, extreme bradycardia/tachycardia, or erratic inter-beat intervals.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Detects prolonged hypoxia, extreme bradycardia/tachycardia, or erratic
+                      inter-beat intervals.
+                    </p>
                   </div>
                 </li>
               </ul>
-              
+
               <Link
                 to="/analysis"
                 className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
               >
                 View Risk Analysis Module
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
               </Link>
             </ScrollReveal>
-            
-            <ScrollReveal delay={200} className="relative min-h-[400px] h-full lg:h-auto overflow-hidden bg-black/10">
-              <img 
-                src="/images/data-stream-3d.png" 
-                alt="3D Medical Data Stream" 
+
+            <ScrollReveal
+              delay={200}
+              className="relative min-h-[400px] h-full lg:h-auto overflow-hidden bg-black/10"
+            >
+              <img
+                src="/images/data-stream-3d.png"
+                alt="3D Medical Data Stream"
                 className="absolute inset-0 w-full h-full object-cover opacity-90 mix-blend-screen"
               />
               {/* Overlay gradient to blend edge */}
               <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent lg:hidden" />
               <div className="absolute inset-0 bg-gradient-to-r from-accent/20 via-transparent to-transparent hidden lg:block" />
             </ScrollReveal>
-
           </div>
         </div>
       </section>
@@ -264,18 +317,18 @@ export function LandingPage() {
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">See The Process In Action</h2>
             <p className="text-muted-foreground text-lg">
-              Watch how the real-time health monitor captures, processes, and analyzes data seamlessly.
+              Watch how the real-time health monitor captures, processes, and analyzes data
+              seamlessly.
             </p>
           </div>
         </ScrollReveal>
-        
+
         <ScrollReveal delay={200}>
           <div className="relative max-w-5xl mx-auto rounded-[2.5rem] overflow-hidden border-border/50 shadow-2xl glass-card p-2 md:p-4 bg-accent/10">
             <AutoPlayVideoOnScroll src="/videos/process-video.mp4" playbackRate={0.5} />
           </div>
         </ScrollReveal>
       </section>
-
     </div>
   );
 }

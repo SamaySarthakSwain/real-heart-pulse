@@ -3,8 +3,8 @@ import { HardwareTest } from "@/components/dashboard/diagnostics/HardwareTest";
 import { MedicalDisclaimer } from "@/components/dashboard/MedicalDisclaimer";
 
 const MAX_PINS: Array<[string, string, string]> = [
-  ["VIN", "3.3V",    "Power supply"],
-  ["GND", "GND",     "Ground"],
+  ["VIN", "3.3V", "Power supply"],
+  ["GND", "GND", "Ground"],
   ["SDA", "GPIO 21", "I²C data"],
   ["SCL", "GPIO 22", "I²C clock"],
 ];
@@ -12,7 +12,6 @@ const MAX_PINS: Array<[string, string, string]> = [
 export function HardwareSetup() {
   return (
     <div className="space-y-5 animate-fade-in">
-
       {/* Overview */}
       <section className="rounded-2xl border bg-card p-5">
         <div className="flex items-start gap-3 mb-4">
@@ -36,7 +35,7 @@ export function HardwareSetup() {
           </div>
         </div>
         <pre className="overflow-auto rounded-xl border border-border bg-background p-4 font-mono text-xs text-muted-foreground leading-relaxed">
-{`PHYSICAL SENSOR (AD8232 / MAX30102)
+          {`PHYSICAL SENSOR (AD8232 / MAX30102)
    → ESP32 (acquisition + BPM/SpO₂ processing)
    → USB Serial @ 115200 baud
    → Browser (Web Serial API)
@@ -54,7 +53,10 @@ export function HardwareSetup() {
             <thead className="bg-muted/60">
               <tr>
                 {["MAX30102", "ESP32", "Notes"].map((h) => (
-                  <th key={h} className="px-4 py-2.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  <th
+                    key={h}
+                    className="px-4 py-2.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                  >
                     {h}
                   </th>
                 ))}
@@ -72,7 +74,8 @@ export function HardwareSetup() {
           </table>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          I²C runs at 400 kHz (I2C_SPEED_FAST) in the reference sketches. Raw values stream at roughly 50 Hz.
+          I²C runs at 400 kHz (I2C_SPEED_FAST) in the reference sketches. Raw values stream at
+          roughly 50 Hz.
         </p>
       </section>
 
@@ -82,9 +85,10 @@ export function HardwareSetup() {
           <span className="text-base">📈</span> AD8232 ECG → ESP32
         </h2>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-          The reference repository currently documents the MAX30102 wiring only; it does not publish an AD8232 pinout.
-          Pin assignments are therefore not shown here to avoid inventing them — use the analog output pin and lead-off
-          pins defined in your own AD8232 sketch, and make the firmware print the sample as{" "}
+          The reference repository currently documents the MAX30102 wiring only; it does not publish
+          an AD8232 pinout. Pin assignments are therefore not shown here to avoid inventing them —
+          use the analog output pin and lead-off pins defined in your own AD8232 sketch, and make
+          the firmware print the sample as{" "}
           <code className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">
             ECG:&lt;value&gt;
           </code>{" "}
@@ -98,7 +102,7 @@ export function HardwareSetup() {
           <span className="text-base">📡</span> Serial Formats Supported
         </h2>
         <pre className="mt-4 overflow-auto rounded-xl border border-border bg-background p-4 font-mono text-xs leading-relaxed">
-{`Max3010x_Raw_Values.ino   IR=52341\tRED=48213
+          {`Max3010x_Raw_Values.ino   IR=52341\tRED=48213
 Max3010x_BPM.ino          Signal:120, Threshold:80, BeatMarker:0
 Max3010x_SpO2.ino         IR_Signal:120, Threshold:80, Beat:0, BPM:38, SpO2:49
 JSON                      {"timestamp":123456,"ecg":2048,"ppgIR":52341,"ppgRed":48213,"bpm":76,"spo2":98}
@@ -107,9 +111,9 @@ CSV                       123456,2048,52341,48213,76,98`}
         <p className="mt-3 text-xs text-muted-foreground">
           The SpO₂ sketch prints{" "}
           <code className="rounded bg-muted px-1 font-mono text-xs">BPM</code> and{" "}
-          <code className="rounded bg-muted px-1 font-mono text-xs">SpO₂</code>{" "}
-          divided by 2 for the Arduino Serial Plotter. The parser multiplies them back by 2; adjust in Settings if
-          your firmware prints true values.
+          <code className="rounded bg-muted px-1 font-mono text-xs">SpO₂</code> divided by 2 for the
+          Arduino Serial Plotter. The parser multiplies them back by 2; adjust in Settings if your
+          firmware prints true values.
         </p>
       </section>
 

@@ -19,7 +19,10 @@ export function HardwareTest() {
   ];
 
   return (
-    <section aria-label="Hardware connection test" className="rounded-xl border border-border bg-card p-4">
+    <section
+      aria-label="Hardware connection test"
+      className="rounded-xl border border-border bg-card p-4"
+    >
       <h2 className="text-sm font-semibold">Test hardware connection</h2>
       <p className="mt-1 text-xs text-muted-foreground">
         A check only passes once real data of that kind has actually arrived from the ESP32.

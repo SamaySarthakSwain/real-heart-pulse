@@ -24,11 +24,7 @@ function SignalBars({ active }: { active: boolean }) {
           style={{ height: `${h * 2}px`, transitionDelay: `${i * 60}ms` }}
           className={cn(
             "w-1.5 rounded-sm transition-all duration-500",
-            active
-              ? "bg-status-ok"
-              : i === 0
-              ? "bg-muted-foreground/40"
-              : "bg-muted-foreground/15",
+            active ? "bg-status-ok" : i === 0 ? "bg-muted-foreground/40" : "bg-muted-foreground/15",
           )}
         />
       ))}
@@ -44,21 +40,16 @@ export function ConnectionBar() {
   useEffect(() => setSupported(isWebSerialSupported()), []);
 
   const connected = state.connectionState === "CONNECTED";
-  const receiving =
-    connected && state.dataState === "RECEIVING" && (age ?? 9999) < 2000;
+  const receiving = connected && state.dataState === "RECEIVING" && (age ?? 9999) < 2000;
 
   const linkTone: PillTone =
     state.connectionState === "CONNECTED"
       ? "ok"
       : state.connectionState === "ERROR"
-      ? "error"
-      : "idle";
+        ? "error"
+        : "idle";
 
-  const dataTone: PillTone = receiving
-    ? "ok"
-    : connected
-    ? "warn"
-    : "idle";
+  const dataTone: PillTone = receiving ? "ok" : connected ? "warn" : "idle";
 
   return (
     <section
@@ -72,10 +63,8 @@ export function ConnectionBar() {
     >
       {/* Top row: status + connect button */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-
         {/* Left: signal bars + status pills + connection metadata */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-
           {/* Signal indicator */}
           <div className="flex items-center gap-3">
             <SignalBars active={receiving} />
@@ -96,8 +85,8 @@ export function ConnectionBar() {
               {state.connectionState !== "CONNECTED"
                 ? "NOT RECEIVING"
                 : receiving
-                ? "RECEIVING DATA"
-                : "NO DATA"}
+                  ? "RECEIVING DATA"
+                  : "NO DATA"}
             </StatusPill>
           </div>
 
@@ -123,7 +112,9 @@ export function ConnectionBar() {
             <select
               className="h-10 rounded-xl border border-input bg-background px-3 text-sm transition-colors hover:border-ring focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
               value={state.settings.transportType}
-              onChange={(e) => state.setSettings({ transportType: e.target.value as "serial" | "websocket" })}
+              onChange={(e) =>
+                state.setSettings({ transportType: e.target.value as "serial" | "websocket" })
+              }
             >
               <option value="serial">USB Serial</option>
               <option value="websocket">Wi-Fi WS</option>
@@ -135,8 +126,18 @@ export function ConnectionBar() {
               className="rounded-xl font-semibold shadow-sm hover:shadow-md transition-all"
               onClick={() => void state.disconnect()}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2 h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="mr-2 h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+                />
               </svg>
               Disconnect
             </Button>
@@ -148,15 +149,31 @@ export function ConnectionBar() {
             >
               {state.connectionState === "CONNECTING" ? (
                 <>
-                  <svg className="mr-2 h-4 w-4 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="mr-2 h-4 w-4 animate-spin-slow"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path strokeLinecap="round" d="M12 3a9 9 0 1 0 9 9" />
                   </svg>
                   Connecting…
                 </>
               ) : (
                 <>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2 h-4 w-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="mr-2 h-4 w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                    />
                   </svg>
                   Connect ESP32
                 </>
@@ -168,18 +185,44 @@ export function ConnectionBar() {
 
       {/* Alert banners */}
       {!supported && state.settings.transportType === "serial" && (
-        <div role="alert" className="mt-4 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/8 p-3.5 text-sm text-destructive">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 h-4 w-4 flex-shrink-0">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        <div
+          role="alert"
+          className="mt-4 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/8 p-3.5 text-sm text-destructive"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="mt-0.5 h-4 w-4 flex-shrink-0"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+            />
           </svg>
           Web Serial is not supported by this browser. Please use Chrome or Edge on desktop.
         </div>
       )}
 
       {state.lastError && (
-        <div role="alert" className="mt-4 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/8 p-3.5 font-mono text-xs text-destructive">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 h-4 w-4 flex-shrink-0">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+        <div
+          role="alert"
+          className="mt-4 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/8 p-3.5 font-mono text-xs text-destructive"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="mt-0.5 h-4 w-4 flex-shrink-0"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+            />
           </svg>
           {state.lastError}
         </div>
@@ -187,10 +230,21 @@ export function ConnectionBar() {
 
       {connected && state.packetsReceived === 0 && (
         <div className="mt-4 flex items-start gap-3 rounded-xl border border-status-warn/30 bg-status-warn/8 p-3.5 text-sm text-status-warn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 h-4 w-4 flex-shrink-0">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="mt-0.5 h-4 w-4 flex-shrink-0"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+            />
           </svg>
-          ESP32 connected, but no valid sensor packets received. Check baud rate and firmware output.
+          ESP32 connected, but no valid sensor packets received. Check baud rate and firmware
+          output.
         </div>
       )}
     </section>

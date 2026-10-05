@@ -110,7 +110,8 @@ export function analyseRisk(input: AnalysisInput): RiskAnalysis {
 
   const windowSeconds =
     input.ecgTimes.length > 1
-      ? ((input.ecgTimes[input.ecgTimes.length - 1] as number) - (input.ecgTimes[0] as number)) / 1000
+      ? ((input.ecgTimes[input.ecgTimes.length - 1] as number) - (input.ecgTimes[0] as number)) /
+        1000
       : 0;
 
   // Rest detection from the BMI323: little movement variance around 1 g.
