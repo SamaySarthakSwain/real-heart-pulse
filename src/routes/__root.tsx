@@ -12,6 +12,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider, useTheme, themeInitScript } from "../lib/theme";
+import { PatientHeaderButton } from "@/components/patient/PatientHeaderButton";
 
 /* ── 404 ─────────────────────────────────────────────────────────────────── */
 function NotFoundComponent() {
@@ -229,6 +230,7 @@ const NAV_LINKS = [
   { to: "/", label: "Home", icon: "🏠" },
   { to: "/dashboard", label: "Dashboard", icon: "📊" },
   { to: "/analysis", label: "Risk Analysis", icon: "🔬" },
+  { to: "/patient", label: "Patient Records", icon: "👤" },
   { to: "/firmware", label: "Firmware", icon: "💾" },
   { to: "/hardware", label: "Hardware", icon: "🔌" },
   { to: "/diagnostics", label: "Diagnostics", icon: "🛠" },
@@ -354,8 +356,9 @@ function AppLayout() {
           </nav>
 
           {/* Right side controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <ThemeToggle />
+            <PatientHeaderButton />
             {/* Hamburger (mobile) */}
             <button
               className="flex lg:hidden h-9 w-9 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-all hover:bg-accent hover:text-foreground"

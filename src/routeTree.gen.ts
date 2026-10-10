@@ -15,6 +15,8 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as FirmwareRouteImport } from './routes/firmware'
 import { Route as HardwareRouteImport } from './routes/hardware'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PatientRouteImport } from './routes/patient'
 import { Route as SettingsRouteImport } from './routes/settings'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +49,16 @@ const HardwareRoute = HardwareRouteImport.update({
   path: '/hardware',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientRoute = PatientRouteImport.update({
+  id: '/patient',
+  path: '/patient',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -60,6 +72,8 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
+  '/login': typeof LoginRoute
+  '/patient': typeof PatientRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +83,8 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
+  '/login': typeof LoginRoute
+  '/patient': typeof PatientRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
@@ -79,6 +95,8 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/firmware': typeof FirmwareRoute
   '/hardware': typeof HardwareRoute
+  '/login': typeof LoginRoute
+  '/patient': typeof PatientRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +108,8 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/firmware'
     | '/hardware'
+    | '/login'
+    | '/patient'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +119,8 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/firmware'
     | '/hardware'
+    | '/login'
+    | '/patient'
     | '/settings'
   id:
     | '__root__'
@@ -108,6 +130,8 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/firmware'
     | '/hardware'
+    | '/login'
+    | '/patient'
     | '/settings'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +142,8 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   FirmwareRoute: typeof FirmwareRoute
   HardwareRoute: typeof HardwareRoute
+  LoginRoute: typeof LoginRoute
+  PatientRoute: typeof PatientRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -165,6 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HardwareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient': {
+      id: '/patient'
+      path: '/patient'
+      fullPath: '/patient'
+      preLoaderRoute: typeof PatientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -182,6 +222,8 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   FirmwareRoute: FirmwareRoute,
   HardwareRoute: HardwareRoute,
+  LoginRoute: LoginRoute,
+  PatientRoute: PatientRoute,
   SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
