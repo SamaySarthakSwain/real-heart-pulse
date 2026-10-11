@@ -9488,9 +9488,9 @@
     "semantic_hash": "8e253cb1912979b5f557de0bfee28f27"
   },
   "src/pages/HardwareSetup.tsx": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "d2a8e4bd1f064f1d19ee4c20564d7590",
-    "semantic_hash": "d2a8e4bd1f064f1d19ee4c20564d7590"
+    "mtime": 1791699012.4725058,
+    "ast_hash": "3d454caab72d133ccedacd6b678e94af",
+    "semantic_hash": ""
   },
   "src/pages/LandingPage.tsx": {
     "mtime": 1791163574.4706967,
@@ -9513,8 +9513,8 @@
     "semantic_hash": "8f905e713b0eba7fa8148b7995a708c9"
   },
   "src/routes/__root.tsx": {
-    "mtime": 1791683560.2636807,
-    "ast_hash": "651ba5f51db415544e8bdcd0fa5411b4",
+    "mtime": 1791698958.8094807,
+    "ast_hash": "a3c662c2d9bceff265840089f47895b8",
     "semantic_hash": ""
   },
   "src/routes/analysis.tsx": {
@@ -9523,8 +9523,8 @@
     "semantic_hash": "d1bac3a3cb458052f2f9ef56e582a7b4"
   },
   "src/routes/dashboard.tsx": {
-    "mtime": 1791685805.9115922,
-    "ast_hash": "c91572ac3dcd4ce920f3313ce3180b28",
+    "mtime": 1791697530.8189023,
+    "ast_hash": "27ed3f880400c0f4e3ba3d954959f882",
     "semantic_hash": ""
   },
   "src/routes/diagnostics.tsx": {
@@ -9533,14 +9533,14 @@
     "semantic_hash": "3d5204a3efd451643fc4538be3d64915"
   },
   "src/routes/firmware.tsx": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "c34fe2e57c903c0bbb24e5e05beee0d7",
-    "semantic_hash": "c34fe2e57c903c0bbb24e5e05beee0d7"
+    "mtime": 1791698980.46146,
+    "ast_hash": "365fd9dbb1f32a705743c541fc0398a1",
+    "semantic_hash": ""
   },
   "src/routes/hardware.tsx": {
-    "mtime": 1791163574.4716952,
-    "ast_hash": "3723c1b2be233efd24242b878289c308",
-    "semantic_hash": "3723c1b2be233efd24242b878289c308"
+    "mtime": 1791698966.6472392,
+    "ast_hash": "0277851873b7ff381fc80f875b47afa4",
+    "semantic_hash": ""
   },
   "src/routes/index.tsx": {
     "mtime": 1791163574.4716952,
@@ -9628,8 +9628,8 @@
     "semantic_hash": "c1c16a97189ecceae95c86c2e46aa819"
   },
   "vite.config.ts": {
-    "mtime": 1791652943.94026,
-    "ast_hash": "e3b6728aec8ff22c084fe212ec9cc692",
+    "mtime": 1791698002.7615838,
+    "ast_hash": "11095cf52e20e70cbf3980839bc5ace8",
     "semantic_hash": ""
   },
   "Create_a_clean_minimal_scien.mp4": {
@@ -18973,18 +18973,18 @@
     "semantic_hash": ""
   },
   "src/components/assessment/SearchableSelect.tsx": {
-    "mtime": 1791685556.4802809,
-    "ast_hash": "630e19b27be0d90f0262224b200c958a",
+    "mtime": 1791697739.575158,
+    "ast_hash": "374306db9bf1722402c83bd10993e68a",
     "semantic_hash": ""
   },
   "src/components/assessment/Step1Personal.tsx": {
-    "mtime": 1791685604.3934963,
-    "ast_hash": "7ee7ca60f4a7818a25f3ea2378c38313",
+    "mtime": 1791698209.5450096,
+    "ast_hash": "f7589cb5abae4d262bddc648a6f1e967",
     "semantic_hash": ""
   },
   "src/components/assessment/Step2Contact.tsx": {
-    "mtime": 1791685640.4613423,
-    "ast_hash": "89db4109b68c6225a767564810a2549d",
+    "mtime": 1791698217.8977933,
+    "ast_hash": "3228b6727cb8823cc7148d798e8a783d",
     "semantic_hash": ""
   },
   "src/components/assessment/Step3Medical.tsx": {
@@ -18993,8 +18993,8 @@
     "semantic_hash": ""
   },
   "src/components/assessment/Step4SymptomsWearable.tsx": {
-    "mtime": 1791685708.0712218,
-    "ast_hash": "1acf6a5a2775b8451bc2c83b51177bf9",
+    "mtime": 1791697682.0639918,
+    "ast_hash": "0d60b7bc4962bdb75a7e8ddfaa93403e",
     "semantic_hash": ""
   },
   "src/components/assessment/Step5Review.tsx": {
@@ -19023,23 +19023,23 @@
     "semantic_hash": ""
   },
   "src/components/auth/LoginForm.tsx": {
-    "mtime": 1791683419.6467235,
-    "ast_hash": "2bea21c63d3b33a0d011eb9d5e7a810c",
+    "mtime": 1791697847.7403522,
+    "ast_hash": "99d15dd159c9e0e00a27b6c9f4398e5b",
     "semantic_hash": ""
   },
   "src/components/auth/PasswordInput.tsx": {
-    "mtime": 1791683394.2640254,
-    "ast_hash": "894dce3c907e8e1e94c9e1df407fbf11",
+    "mtime": 1791697764.701854,
+    "ast_hash": "c576e7d475754cb83c049ad0976df092",
     "semantic_hash": ""
   },
   "src/components/auth/RegisterForm.tsx": {
-    "mtime": 1791683453.0134184,
-    "ast_hash": "81e33838d11bfe2ffae81421da3af013",
+    "mtime": 1791697872.6637442,
+    "ast_hash": "0b1706f07c4bffba1a55eef8d7c4ef5d",
     "semantic_hash": ""
   },
   "src/components/patient/PatientHeaderButton.tsx": {
-    "mtime": 1791685845.2640076,
-    "ast_hash": "c3e4ad938328ab77cb436e554cfc2257",
+    "mtime": 1791697991.7529936,
+    "ast_hash": "de1d241f1a01933a2992b0d12871c652",
     "semantic_hash": ""
   },
   "src/pages/HealthAssessmentPage.tsx": {
@@ -19053,13 +19053,13 @@
     "semantic_hash": ""
   },
   "src/pages/PatientProfilePage.tsx": {
-    "mtime": 1791685871.911796,
-    "ast_hash": "bc9dead4b7269eb49abb741b534ec727",
+    "mtime": 1791698124.3667934,
+    "ast_hash": "9eecb54ed62fbc316188f2702bc859d2",
     "semantic_hash": ""
   },
   "src/routes/assessment.tsx": {
-    "mtime": 1791685784.8779962,
-    "ast_hash": "4b384fad9c1a7ac25c36e4163f6507cb",
+    "mtime": 1791697955.8348312,
+    "ast_hash": "96942776b49d76609b6f8cb3aef15ae1",
     "semantic_hash": ""
   },
   "src/routes/login.tsx": {
@@ -19078,13 +19078,13 @@
     "semantic_hash": ""
   },
   "src/store/patientStore.ts": {
-    "mtime": 1791685494.5623505,
-    "ast_hash": "8eac4640f5acc735bda8983d1cf93043",
+    "mtime": 1791697648.3747878,
+    "ast_hash": "17e9e291ba072dd940250c1439138aab",
     "semantic_hash": ""
   },
   "src/types/patient.ts": {
-    "mtime": 1791685432.4094431,
-    "ast_hash": "7c83c427f03e8d11fa5b1fc5133a50fb",
+    "mtime": 1791697616.427165,
+    "ast_hash": "07f9d411fc9a2432f200ce099e1302e6",
     "semantic_hash": ""
   },
   ".agents/rules/ml_summary_tracker.md": {

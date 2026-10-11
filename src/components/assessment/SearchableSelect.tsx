@@ -11,9 +11,9 @@ interface SearchableSelectProps {
   placeholder?: string;
   isMulti?: boolean;
   allowCustom?: boolean;
-  error?: string;
-  helperText?: string;
-  className?: string;
+  error?: string | undefined;
+  helperText?: string | undefined;
+  className?: string | undefined;
 }
 
 export function SearchableSelect({
@@ -121,7 +121,10 @@ export function SearchableSelect({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (activeIndex >= 0 && activeIndex < filteredOptions.length) {
-        handleSelect(filteredOptions[activeIndex]);
+        const selectedOpt = filteredOptions[activeIndex];
+        if (selectedOpt !== undefined) {
+          handleSelect(selectedOpt);
+        }
       } else if (allowCustom && query.trim() && !isExactMatch) {
         handleAddCustom();
       }

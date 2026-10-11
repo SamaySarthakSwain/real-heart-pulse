@@ -9503,9 +9503,9 @@
     "semantic_hash": "1545f86cc678cdcd35111020fd02db67"
   },
   "src/routeTree.gen.ts": {
-    "mtime": 1788257735.2534919,
-    "ast_hash": "fbc2ee22c83cf94ba850e058d196d4ee",
-    "semantic_hash": "fbc2ee22c83cf94ba850e058d196d4ee"
+    "mtime": 1791685786.0413766,
+    "ast_hash": "e05d57c7816c1d36054986e6d3872436",
+    "semantic_hash": ""
   },
   "src/router.tsx": {
     "mtime": 1791163574.4706967,
@@ -9513,9 +9513,9 @@
     "semantic_hash": "8f905e713b0eba7fa8148b7995a708c9"
   },
   "src/routes/__root.tsx": {
-    "mtime": 1791163574.4716952,
-    "ast_hash": "4dffd032dfe0ace7a0d6f8d394ef2e7d",
-    "semantic_hash": "4dffd032dfe0ace7a0d6f8d394ef2e7d"
+    "mtime": 1791683560.2636807,
+    "ast_hash": "651ba5f51db415544e8bdcd0fa5411b4",
+    "semantic_hash": ""
   },
   "src/routes/analysis.tsx": {
     "mtime": 1791163574.4706967,
@@ -9523,9 +9523,9 @@
     "semantic_hash": "d1bac3a3cb458052f2f9ef56e582a7b4"
   },
   "src/routes/dashboard.tsx": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "35f20b7157324269369600f8f507fdb2",
-    "semantic_hash": "35f20b7157324269369600f8f507fdb2"
+    "mtime": 1791685805.9115922,
+    "ast_hash": "c91572ac3dcd4ce920f3313ce3180b28",
+    "semantic_hash": ""
   },
   "src/routes/diagnostics.tsx": {
     "mtime": 1791163574.4706967,
@@ -9628,9 +9628,9 @@
     "semantic_hash": "c1c16a97189ecceae95c86c2e46aa819"
   },
   "vite.config.ts": {
-    "mtime": 1791163574.4726958,
-    "ast_hash": "405bc7564c8c608bb2fdb35590413510",
-    "semantic_hash": "405bc7564c8c608bb2fdb35590413510"
+    "mtime": 1791652943.94026,
+    "ast_hash": "e3b6728aec8ff22c084fe212ec9cc692",
+    "semantic_hash": ""
   },
   "Create_a_clean_minimal_scien.mp4": {
     "mtime": 1788257734.8421915,
@@ -11363,8 +11363,8 @@
     "semantic_hash": ""
   },
   "ML model Summary.md": {
-    "mtime": 1791425915.5686822,
-    "ast_hash": "99c8c934420dbdabcaf195958874a6ae",
+    "mtime": 1791426289.1145015,
+    "ast_hash": "aa138005312898f5bea0fb52c8f39755",
     "semantic_hash": ""
   },
   "Plugins/get-shit-done/.changeset/2937-statusline-context-position.md": {
@@ -18965,6 +18965,131 @@
   "scroll-video/frames/frame_0150.jpg": {
     "mtime": 1788257735.1874938,
     "ast_hash": "ffd3bcafaffc9f97e9078f4256ab484f",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/summary_updater.py": {
+    "mtime": 1791426032.5581393,
+    "ast_hash": "c3b0dbe07db6c8e43a71da2c1be4c4e3",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/SearchableSelect.tsx": {
+    "mtime": 1791685556.4802809,
+    "ast_hash": "630e19b27be0d90f0262224b200c958a",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/Step1Personal.tsx": {
+    "mtime": 1791685604.3934963,
+    "ast_hash": "7ee7ca60f4a7818a25f3ea2378c38313",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/Step2Contact.tsx": {
+    "mtime": 1791685640.4613423,
+    "ast_hash": "89db4109b68c6225a767564810a2549d",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/Step3Medical.tsx": {
+    "mtime": 1791685673.5928366,
+    "ast_hash": "bf003b4d91affbd7b96ed88fc35c76d7",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/Step4SymptomsWearable.tsx": {
+    "mtime": 1791685708.0712218,
+    "ast_hash": "1acf6a5a2775b8451bc2c83b51177bf9",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/Step5Review.tsx": {
+    "mtime": 1791685742.1192274,
+    "ast_hash": "5259ed820bbc5ae4f6c9e4302ab441e4",
+    "semantic_hash": ""
+  },
+  "src/components/assessment/medicalCatalog.ts": {
+    "mtime": 1791685529.447642,
+    "ast_hash": "6eedd1d74c14b250bd39f032b8b2dc0d",
+    "semantic_hash": ""
+  },
+  "src/components/auth/AuthLayout.tsx": {
+    "mtime": 1791683499.2289681,
+    "ast_hash": "769adac0460e5c25e44a873385ebd99f",
+    "semantic_hash": ""
+  },
+  "src/components/auth/AuthWaveformGraphic.tsx": {
+    "mtime": 1791683374.4455132,
+    "ast_hash": "1d27429afcabe26fb06cca5fee170da8",
+    "semantic_hash": ""
+  },
+  "src/components/auth/ForgotPasswordForm.tsx": {
+    "mtime": 1791683475.4452417,
+    "ast_hash": "d72f8b369cdf04f65b4656f1d3cbef17",
+    "semantic_hash": ""
+  },
+  "src/components/auth/LoginForm.tsx": {
+    "mtime": 1791683419.6467235,
+    "ast_hash": "2bea21c63d3b33a0d011eb9d5e7a810c",
+    "semantic_hash": ""
+  },
+  "src/components/auth/PasswordInput.tsx": {
+    "mtime": 1791683394.2640254,
+    "ast_hash": "894dce3c907e8e1e94c9e1df407fbf11",
+    "semantic_hash": ""
+  },
+  "src/components/auth/RegisterForm.tsx": {
+    "mtime": 1791683453.0134184,
+    "ast_hash": "81e33838d11bfe2ffae81421da3af013",
+    "semantic_hash": ""
+  },
+  "src/components/patient/PatientHeaderButton.tsx": {
+    "mtime": 1791685845.2640076,
+    "ast_hash": "c3e4ad938328ab77cb436e554cfc2257",
+    "semantic_hash": ""
+  },
+  "src/pages/HealthAssessmentPage.tsx": {
+    "mtime": 1791685773.8968463,
+    "ast_hash": "39c0f21534c56ba1735591d730dc83fd",
+    "semantic_hash": ""
+  },
+  "src/pages/LoginPage.tsx": {
+    "mtime": 1791685514.5045934,
+    "ast_hash": "4027eb66df7c9201a6b75788a2e381e7",
+    "semantic_hash": ""
+  },
+  "src/pages/PatientProfilePage.tsx": {
+    "mtime": 1791685871.911796,
+    "ast_hash": "bc9dead4b7269eb49abb741b534ec727",
+    "semantic_hash": ""
+  },
+  "src/routes/assessment.tsx": {
+    "mtime": 1791685784.8779962,
+    "ast_hash": "4b384fad9c1a7ac25c36e4163f6507cb",
+    "semantic_hash": ""
+  },
+  "src/routes/login.tsx": {
+    "mtime": 1791652815.899841,
+    "ast_hash": "6c96b047655dd944b9f17f4cf8076261",
+    "semantic_hash": ""
+  },
+  "src/routes/patient.tsx": {
+    "mtime": 1791652820.9852614,
+    "ast_hash": "40d8ed708ae687bdaf5bd5604210436b",
+    "semantic_hash": ""
+  },
+  "src/services/auth/authService.ts": {
+    "mtime": 1791683289.6733034,
+    "ast_hash": "d84b2c85c6dd35c8ebf8665b9c0738d1",
+    "semantic_hash": ""
+  },
+  "src/store/patientStore.ts": {
+    "mtime": 1791685494.5623505,
+    "ast_hash": "8eac4640f5acc735bda8983d1cf93043",
+    "semantic_hash": ""
+  },
+  "src/types/patient.ts": {
+    "mtime": 1791685432.4094431,
+    "ast_hash": "7c83c427f03e8d11fa5b1fc5133a50fb",
+    "semantic_hash": ""
+  },
+  ".agents/rules/ml_summary_tracker.md": {
+    "mtime": 1791426040.521143,
+    "ast_hash": "b0000b2c012e7bf57b6656dd14eacec5",
     "semantic_hash": ""
   }
 }

@@ -232,8 +232,7 @@ const NAV_LINKS = [
   { to: "/dashboard", label: "Dashboard", icon: "📊" },
   { to: "/analysis", label: "Risk Analysis", icon: "🔬" },
   { to: "/patient", label: "Patient Records", icon: "👤" },
-  { to: "/firmware", label: "Firmware", icon: "💾" },
-  { to: "/hardware", label: "Hardware", icon: "🔌" },
+  { to: "/hardware", label: "Hardware & Firmware", icon: "🔌" },
   { to: "/diagnostics", label: "Diagnostics", icon: "🛠" },
   { to: "/settings", label: "Settings", icon: "⚙️" },
 ] as const;

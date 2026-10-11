@@ -17,11 +17,8 @@ export default defineConfig({
   },
   vite: {
     server: {
-      host: "127.0.0.1",
+      host: true,
       port: 5173,
-    },
-    optimizeDeps: {
-      holdUntilCrawlEnd: false,
     },
   },
 });

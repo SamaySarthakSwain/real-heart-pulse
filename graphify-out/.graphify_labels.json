@@ -2835,5 +2835,11 @@
   "2833": "src_components_ui_tooltip_tooltiptrigger",
   "2834": "vite.config.ts",
   "2835": "test_crossfile_concept_merge_deterministic_across_hash_seeds",
-  "2836": "test_convert_office_file_outside_root_falls_back"
+  "2836": "test_convert_office_file_outside_root_falls_back",
+  "2837": "test_rebuild_bodies_read_graphify_root",
+  "2838": "test_rebuild_bodies_with_graphify_root_are_valid_python",
+  "2839": "test_sigalrm_handler_kills_children_before_raising",
+  "2840": "test_probes_use_find_spec_not_full_import",
+  "2841": "test_shebang_read_is_null_byte_safe",
+  "2842": "test_uv_tool_probe_present_in_emitted_detect"
 }

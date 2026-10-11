@@ -48,7 +48,7 @@ export function Step4SymptomsWearable({
   );
 
   const handleCaptureVitals = () => {
-    if (connectionState === "connected") {
+    if (connectionState === "CONNECTED") {
       onChange({
         wearableData: {
           connected: true,
@@ -161,20 +161,20 @@ export function Step4SymptomsWearable({
             </h3>
             <span
               className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                connectionState === "connected"
+                connectionState === "CONNECTED"
                   ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
                   : "bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
               }`}
             >
               <span
                 className={`h-2 w-2 rounded-full ${
-                  connectionState === "connected"
+                  connectionState === "CONNECTED"
                     ? "bg-emerald-500 animate-ping"
                     : "bg-slate-400"
                 }`}
               />
               <span>
-                {connectionState === "connected" ? "Wearable Connected" : "Wearable Disconnected"}
+                {connectionState === "CONNECTED" ? "Wearable Connected" : "Wearable Disconnected"}
               </span>
             </span>
           </div>
@@ -183,7 +183,7 @@ export function Step4SymptomsWearable({
           </p>
         </div>
 
-        {connectionState === "connected" ? (
+        {connectionState === "CONNECTED" ? (
           /* Live Connected Stream Card */
           <div className="rounded-2xl border border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 space-y-4">
             <div className="flex items-center justify-between">

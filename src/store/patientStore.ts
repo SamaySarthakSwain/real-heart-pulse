@@ -1,6 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Patient, TestRecord, AuthCredentials, RegisterPatientPayload, AuthResult } from "@/types/patient";
+import type {
+  Patient,
+  TestRecord,
+  AuthCredentials,
+  RegisterPatientPayload,
+  AuthResult,
+  PatientProfileData,
+  PatientContactData,
+  EmergencyContactData,
+  CardiacAssessmentData,
+} from "@/types/patient";
 import {
   hashPassword,
   resolvePatientIdentifier,

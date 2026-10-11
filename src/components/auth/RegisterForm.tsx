@@ -37,12 +37,12 @@ export function RegisterForm({ onNavigateToLogin, onSuccess }: RegisterFormProps
   const [isLoading, setIsLoading] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
-    name?: string;
-    email?: string;
-    username?: string;
-    patientId?: string;
-    password?: string;
-    confirmPassword?: string;
+    name?: string | undefined;
+    email?: string | undefined;
+    username?: string | undefined;
+    patientId?: string | undefined;
+    password?: string | undefined;
+    confirmPassword?: string | undefined;
   }>({});
 
   const strength = evaluatePasswordStrength(password);

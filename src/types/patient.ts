@@ -14,16 +14,17 @@ export type BloodGroup =
   | "Unknown"
   | "I don't know my blood group";
 
+
 export interface PatientProfileData {
   fullName: string;
-  dateOfBirth?: string; // YYYY-MM-DD
-  age?: number;
+  dateOfBirth?: string | undefined; // YYYY-MM-DD
+  age?: number | undefined;
   gender: PatientGender;
   bloodGroup: BloodGroup | string;
-  heightCm?: number;
-  weightKg?: number;
-  profilePhoto?: string; // base64 or URL
-  updatedAt?: string;
+  heightCm?: number | undefined;
+  weightKg?: number | undefined;
+  profilePhoto?: string | undefined; // base64 or URL
+  updatedAt?: string | undefined;
 }
 
 export interface PatientContactData {
@@ -31,12 +32,12 @@ export interface PatientContactData {
   emailVerified: boolean;
   mobileNumber: string;
   countryCode: string;
-  alternateNumber?: string;
-  alternateCountryCode?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
+  alternateNumber?: string | undefined;
+  alternateCountryCode?: string | undefined;
+  address?: string | undefined;
+  city?: string | undefined;
+  state?: string | undefined;
+  postalCode?: string | undefined;
   country: string;
   preferredCommunication: "Email" | "SMS" | "Phone call" | "In-app notifications";
   preferredLanguage: "English" | "Hindi" | "Odia" | "Other";
@@ -47,26 +48,26 @@ export interface EmergencyContactData {
   relationship: string;
   countryCode: string;
   contactNumber: string;
-  alternateNumber?: string;
+  alternateNumber?: string | undefined;
   consentGranted: boolean;
 }
 
 export interface MedicationItem {
   name: string;
-  dosage?: string;
+  dosage?: string | undefined;
 }
 
 export interface CardiacAssessmentData {
   // Blood Pressure
-  bloodPressureSystolic?: number;
-  bloodPressureDiastolic?: number;
+  bloodPressureSystolic?: number | undefined;
+  bloodPressureDiastolic?: number | undefined;
   bloodPressureUnknown: boolean;
 
   // Cholesterol
-  cholesterolTotal?: number;
-  cholesterolLdl?: number;
-  cholesterolHdl?: number;
-  cholesterolTriglycerides?: number;
+  cholesterolTotal?: number | undefined;
+  cholesterolLdl?: number | undefined;
+  cholesterolHdl?: number | undefined;
+  cholesterolTriglycerides?: number | undefined;
   cholesterolUnit: "mg/dL" | "mmol/L";
   cholesterolUnknown: boolean;
 
@@ -79,26 +80,26 @@ export interface CardiacAssessmentData {
   // Lifestyle
   smokingStatus: "Never smoked" | "Former smoker" | "Current smoker" | "Prefer not to say";
   physicalActivity: "Sedentary" | "Lightly active" | "Moderately active" | "Very active";
-  sleepDurationHours?: number;
+  sleepDurationHours?: number | undefined;
 
   // Symptoms & Wearable
   symptoms: string[];
-  symptomsOther?: string;
-  emergencyWarningAcknowledged?: boolean;
+  symptomsOther?: string | undefined;
+  emergencyWarningAcknowledged?: boolean | undefined;
 
   wearableData?: {
     connected: boolean;
-    heartRate?: number | null;
-    ppgStatus?: string | null;
-    hrv?: number | null;
-    spo2?: number | null;
-    temperature?: number | null;
-    signalQuality?: number | null;
-    capturedAt?: string | null;
-  };
+    heartRate?: number | null | undefined;
+    ppgStatus?: string | null | undefined;
+    hrv?: number | null | undefined;
+    spo2?: number | null | undefined;
+    temperature?: number | null | undefined;
+    signalQuality?: number | null | undefined;
+    capturedAt?: string | null | undefined;
+  } | undefined;
 
   privacyConsentGranted: boolean;
-  completedAt?: string;
+  completedAt?: string | undefined;
 }
 
 export interface Patient {
@@ -107,29 +108,29 @@ export interface Patient {
   age: number;
   gender: PatientGender;
   email: string;
-  username?: string;
-  passwordHash?: string;
-  phone?: string;
-  bloodType?: string;
-  condition?: string;
-  allergies?: string;
-  medications?: string[];
-  emergencyContact?: string;
-  avatarUrl?: string;
+  username?: string | undefined;
+  passwordHash?: string | undefined;
+  phone?: string | undefined;
+  bloodType?: string | undefined;
+  condition?: string | undefined;
+  allergies?: string | undefined;
+  medications?: string[] | undefined;
+  emergencyContact?: string | undefined;
+  avatarUrl?: string | undefined;
   createdAt: string;
 
   // Assessment tracking & structured records
   hasCompletedAssessment: boolean;
-  profileData?: PatientProfileData;
-  contactData?: PatientContactData;
-  emergencyData?: EmergencyContactData;
-  assessmentData?: CardiacAssessmentData;
+  profileData?: PatientProfileData | undefined;
+  contactData?: PatientContactData | undefined;
+  emergencyData?: EmergencyContactData | undefined;
+  assessmentData?: CardiacAssessmentData | undefined;
 }
 
 export interface AuthCredentials {
   identifier: string; // email, username, or patient ID
   password: string;
-  rememberMe?: boolean;
+  rememberMe?: boolean | undefined;
 }
 
 export interface RegisterPatientPayload {
@@ -137,15 +138,14 @@ export interface RegisterPatientPayload {
   email: string;
   username: string;
   password: string;
-  patientId?: string; // Optional provider-issued patient ID
+  patientId?: string | undefined; // Optional provider-issued patient ID
 }
 
 export interface AuthResult {
   success: boolean;
-  error?: string;
-  patient?: Patient;
+  error?: string | undefined;
+  patient?: Patient | undefined;
 }
-
 
 export interface TestRecord {
   id: string;
@@ -154,11 +154,11 @@ export interface TestRecord {
   testType: "ECG Monitoring" | "PPG & Vitals" | "AI Arrhythmia Screening" | "Comprehensive Cardiac Panel";
   bpm: number;
   spo2: number;
-  temperature?: number;
-  bloodPressure?: string;
-  ecgStatus?: string;
-  aiRiskLevel?: RiskLevel;
-  aiDiagnosis?: string;
-  notes?: string;
-  device?: string;
+  temperature?: number | undefined;
+  bloodPressure?: string | undefined;
+  ecgStatus?: string | undefined;
+  aiRiskLevel?: RiskLevel | undefined;
+  aiDiagnosis?: string | undefined;
+  notes?: string | undefined;
+  device?: string | undefined;
 }

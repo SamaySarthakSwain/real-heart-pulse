@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Eye, EyeOff, Lock } from "lucide-react";
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  hint?: string;
+  label?: string | undefined;
+  error?: string | undefined;
+  hint?: string | undefined;
   id: string;
 }
 

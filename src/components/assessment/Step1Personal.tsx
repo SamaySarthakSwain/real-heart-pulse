@@ -10,6 +10,16 @@ interface Step1PersonalProps {
   onNext: () => void;
 }
 
+interface Step1Errors {
+  photo?: string | undefined;
+  fullName?: string | undefined;
+  dateOfBirth?: string | undefined;
+  gender?: string | undefined;
+  bloodGroup?: string | undefined;
+  heightCm?: string | undefined;
+  weightKg?: string | undefined;
+}
+
 export function Step1Personal({ data, onChange, onNext }: Step1PersonalProps) {
   const [unitHeight, setUnitHeight] = useState<"cm" | "ft">("cm");
   const [unitWeight, setUnitWeight] = useState<"kg" | "lbs">("kg");
@@ -18,7 +28,7 @@ export function Step1Personal({ data, onChange, onNext }: Step1PersonalProps) {
     data.heightCm ? Math.round((data.heightCm % 30.48) / 2.54) : 9
   );
   const [lbs, setLbs] = useState<number>(data.weightKg ? Math.round(data.weightKg * 2.20462) : 154);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Step1Errors>({});
 
   // Calculate age automatically from DOB
   const handleDobChange = (dob: string) => {
@@ -63,7 +73,7 @@ export function Step1Personal({ data, onChange, onNext }: Step1PersonalProps) {
   };
 
   const validateAndProceed = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Step1Errors = {};
     if (!data.fullName?.trim()) {
       newErrors.fullName = "Full name is required.";
     }

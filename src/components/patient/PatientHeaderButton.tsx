@@ -84,12 +84,12 @@ export function PatientHeaderButton() {
 
           <div className="py-1 space-y-0.5">
             <Link
-              to="/assessment"
+              to="/patient"
               onClick={() => setDropdownOpen(false)}
               className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <Heart className="h-4 w-4 text-[#FF6B00]" />
-              <span>Health Assessment Wizard</span>
+              <span>Advanced Monitoring</span>
             </Link>
 
             <Link

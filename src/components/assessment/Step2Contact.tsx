@@ -29,6 +29,14 @@ interface Step2ContactProps {
   onBack: () => void;
 }
 
+interface Step2Errors {
+  mobileNumber?: string | undefined;
+  contactName?: string | undefined;
+  relationship?: string | undefined;
+  contactNumber?: string | undefined;
+  consent?: string | undefined;
+}
+
 export function Step2Contact({
   contactData,
   emergencyData,
@@ -37,10 +45,10 @@ export function Step2Contact({
   onNext,
   onBack,
 }: Step2ContactProps) {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Step2Errors>({});
 
   const validateAndProceed = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Step2Errors = {};
 
     if (!contactData.mobileNumber?.trim()) {
       newErrors.mobileNumber = "Mobile number is required.";

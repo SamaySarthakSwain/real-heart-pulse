@@ -22,7 +22,10 @@ export function LoginForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ identifier?: string; password?: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{
+    identifier?: string | undefined;
+    password?: string | undefined;
+  }>({});
 
   const validate = (): boolean => {
     const errors: { identifier?: string; password?: string } = {};
