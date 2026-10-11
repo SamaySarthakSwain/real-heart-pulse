@@ -4,16 +4,16 @@ import { HardwareSetup } from "@/pages/HardwareSetup";
 export const Route = createFileRoute("/hardware")({
   head: () => ({
     meta: [
-      { title: "Hardware & Firmware — ESP32 ECG & PPG Monitor" },
+      { title: "Device Hub — Hardware, Firmware & Diagnostics" },
       {
         name: "description",
         content:
-          "ESP32 hardware wiring diagrams, pin mappings, C++ Arduino firmware sketch, serial formats, and connection wizard.",
+          "Complete ESP32 Device Hub: hardware wiring diagrams, pin mappings, C++ Arduino firmware sketch, connection wizard, and live sensor stream diagnostics.",
       },
-      { property: "og:title", content: "Hardware & Firmware — ESP32 ECG & PPG Monitor" },
+      { property: "og:title", content: "Device Hub — Hardware, Firmware & Diagnostics" },
       {
         property: "og:description",
-        content: "ESP32 sensor wiring, Arduino firmware sketch, serial formats, and a step-by-step device connection wizard.",
+        content: "Unified ESP32 Device Hub for sensor wiring, firmware sketch flashing, and live telemetry diagnostics.",
       },
     ],
   }),

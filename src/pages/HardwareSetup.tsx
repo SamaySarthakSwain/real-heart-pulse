@@ -3,6 +3,7 @@ import { ConnectionWizard } from "@/components/dashboard/connection/ConnectionWi
 import { HardwareTest } from "@/components/dashboard/diagnostics/HardwareTest";
 import { MedicalDisclaimer } from "@/components/dashboard/MedicalDisclaimer";
 import { Firmware } from "@/pages/Firmware";
+import { Diagnostics } from "@/pages/Diagnostics";
 
 const MAX_PINS: Array<[string, string, string]> = [
   ["VIN", "3.3V", "Power supply"],
@@ -11,14 +12,26 @@ const MAX_PINS: Array<[string, string, string]> = [
   ["SCL", "GPIO 22", "I²C clock"],
 ];
 
+type DeviceTab = "hardware" | "firmware" | "diagnostics";
+
 export function HardwareSetup() {
-  const [activeTab, setActiveTab] = useState<"hardware" | "firmware">(() => {
+  const [activeTab, setActiveTab] = useState<DeviceTab>(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("tab") === "firmware") return "firmware";
+      const tab = params.get("tab");
+      if (tab === "firmware" || tab === "diagnostics") return tab;
     }
     return "hardware";
   });
+
+  const handleTabChange = (tab: DeviceTab) => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tab);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -31,10 +44,10 @@ export function HardwareSetup() {
             </span>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground">
-                Hardware & Firmware Setup
+                Device Hub
               </h1>
               <p className="mt-0.5 text-xs sm:text-sm text-muted-foreground">
-                ESP32 wiring diagrams, sensor pin mappings, flashing sketch, and hardware connection diagnostics.
+                ESP32 hardware wiring diagrams, firmware flashing sketch, and live stream diagnostics.
               </p>
             </div>
           </div>
@@ -44,25 +57,36 @@ export function HardwareSetup() {
         <div className="inline-flex rounded-xl bg-muted/70 p-1 border border-border/60 shadow-inner">
           <button
             type="button"
-            onClick={() => setActiveTab("hardware")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold transition-all ${
+            onClick={() => handleTabChange("hardware")}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "hardware"
                 ? "bg-card text-foreground shadow-sm border border-border/60"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <span>🔌</span> Hardware Setup & Wiring
+            <span>🔌</span> Hardware Setup
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("firmware")}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold transition-all ${
+            onClick={() => handleTabChange("firmware")}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all ${
               activeTab === "firmware"
                 ? "bg-card text-foreground shadow-sm border border-border/60"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <span>💾</span> ESP32 Firmware & Sketch
+            <span>💾</span> Firmware Sketch
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("diagnostics")}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all ${
+              activeTab === "diagnostics"
+                ? "bg-card text-foreground shadow-sm border border-border/60"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span>🛠️</span> Diagnostics
           </button>
         </div>
       </div>
@@ -101,24 +125,33 @@ export function HardwareSetup() {
             </pre>
           </section>
 
-          {/* Quick Jump to Firmware */}
+          {/* Quick Jump to Firmware & Diagnostics */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm">
             <div className="flex items-center gap-3">
               <span className="text-2xl">💾</span>
               <div>
-                <p className="font-semibold text-foreground">Ready to flash your ESP32 microcontroller?</p>
+                <p className="font-semibold text-foreground">Ready to flash or monitor your ESP32?</p>
                 <p className="text-xs text-muted-foreground">
-                  View the full C++ Arduino sketch for ECG, PPG, BMI323, LM35, and WiFi streaming.
+                  View the full C++ Arduino sketch or inspect live packet stream telemetry.
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setActiveTab("firmware")}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
-            >
-              Open Firmware Sketch →
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange("firmware")}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                Firmware Sketch →
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("diagnostics")}
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+              >
+                Diagnostics →
+              </button>
+            </div>
           </div>
 
           {/* MAX30102 pinout */}
@@ -213,16 +246,60 @@ CSV                       123456,2048,52341,48213,76,98`}
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setActiveTab("hardware")}
-              className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
-            >
-              ← Back to Hardware Setup
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange("hardware")}
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+              >
+                ← Hardware Setup
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("diagnostics")}
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+              >
+                Diagnostics →
+              </button>
+            </div>
           </div>
 
           <Firmware />
+        </div>
+      )}
+
+      {/* Subgroup 3: Live Diagnostics */}
+      {activeTab === "diagnostics" && (
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🛠️</span>
+              <div>
+                <p className="font-semibold text-foreground">Live Telemetry & Pipeline Diagnostics</p>
+                <p className="text-xs text-muted-foreground">
+                  Monitoring packet throughput, latency, sample rates, and raw serial stream data.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange("hardware")}
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+              >
+                ← Hardware Setup
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("firmware")}
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+              >
+                Firmware Sketch
+              </button>
+            </div>
+          </div>
+
+          <Diagnostics />
         </div>
       )}
     </div>
