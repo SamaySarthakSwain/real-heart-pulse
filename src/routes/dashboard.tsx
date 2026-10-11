@@ -1,7 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Dashboard } from "@/pages/Dashboard";
+import { usePatientStore } from "@/store/patientStore";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: () => {
+    const currentPatient = usePatientStore.getState().getCurrentPatient();
+    if (currentPatient && !currentPatient.hasCompletedAssessment) {
+      throw redirect({ to: "/assessment" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Live Dashboard — ESP32 Health Monitor" },

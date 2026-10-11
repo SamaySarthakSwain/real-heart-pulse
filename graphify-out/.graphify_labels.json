@@ -2833,5 +2833,7 @@
   "2831": "src_components_ui_tooltip_tooltip",
   "2832": "src_components_ui_tooltip_tooltipprovider",
   "2833": "src_components_ui_tooltip_tooltiptrigger",
-  "2834": "vite.config.ts"
+  "2834": "vite.config.ts",
+  "2835": "test_crossfile_concept_merge_deterministic_across_hash_seeds",
+  "2836": "test_convert_office_file_outside_root_falls_back"
 }

@@ -194,6 +194,14 @@ export function PatientProfilePage() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/assessment"
+              className="inline-flex items-center gap-2 rounded-xl border border-orange-500/40 bg-orange-500/10 px-4 py-2.5 text-sm font-semibold text-orange-600 dark:text-orange-400 hover:bg-orange-500/20 transition-all shadow-sm"
+            >
+              <Heart className="h-4 w-4" />
+              <span>Health Assessment Wizard</span>
+            </Link>
+
             <button
               onClick={handleOpenEdit}
               className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-background/80 px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm hover:bg-accent hover:border-border transition-all"

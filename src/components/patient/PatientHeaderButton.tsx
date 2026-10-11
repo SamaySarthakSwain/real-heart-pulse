@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LogIn, LogOut, User, FileText, ChevronDown, Activity } from "lucide-react";
+import { LogIn, LogOut, User, FileText, ChevronDown, Activity, Heart } from "lucide-react";
 import { usePatientStore } from "@/store/patientStore";
 import { useState, useRef, useEffect } from "react";
 
@@ -65,13 +65,33 @@ export function PatientHeaderButton() {
           <div className="border-b border-border/60 px-3 py-2.5">
             <p className="text-xs font-semibold text-foreground">{currentPatient.name}</p>
             <p className="text-[11px] text-muted-foreground font-mono">{currentPatient.id}</p>
-            <div className="mt-1 flex items-center gap-1.5 text-[11px] text-primary">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Active Patient Session</span>
+            <div className="mt-1 flex items-center justify-between text-[11px]">
+              <div className="flex items-center gap-1.5 text-primary">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Active Session</span>
+              </div>
+              <span
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                  currentPatient.hasCompletedAssessment
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                    : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                }`}
+              >
+                {currentPatient.hasCompletedAssessment ? "Profile Complete" : "Intake Needed"}
+              </span>
             </div>
           </div>
 
           <div className="py-1 space-y-0.5">
+            <Link
+              to="/assessment"
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <Heart className="h-4 w-4 text-[#FF6B00]" />
+              <span>Health Assessment Wizard</span>
+            </Link>
+
             <Link
               to="/patient"
               onClick={() => setDropdownOpen(false)}

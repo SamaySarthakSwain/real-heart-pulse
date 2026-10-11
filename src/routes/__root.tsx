@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider, useTheme, themeInitScript } from "../lib/theme";
 import { PatientHeaderButton } from "@/components/patient/PatientHeaderButton";
+import { Toaster } from "sonner";
 
 /* ── 404 ─────────────────────────────────────────────────────────────────── */
 function NotFoundComponent() {
@@ -391,6 +392,7 @@ function AppLayout() {
         {/* Required: nested routes render here */}
         <Outlet />
       </main>
+      <Toaster position="top-right" richColors />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="border-t border-border mt-8">
