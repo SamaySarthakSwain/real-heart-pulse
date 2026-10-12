@@ -147,6 +147,25 @@ We have currently utilized **5 distinct datasets** to train various ML and DL mo
 
 ---
 
+
+
+### Hospital-Grade SOTA ECG Model (SE-ResNet-1D + Bi-directional GRU)
+- **Concept / Architecture:** 1D Residual Convolutional Network with Squeeze-and-Excitation Lead Attention and Bidirectional GRU Rhythm Aggregation
+- **Dataset Used:** PTB-XL ECG Diagnostic Database (Multi-Label 5 Superclasses)
+
+#### Performance Metrics
+| Metric | Score |
+|---|---|
+| **Macro ROC-AUC** | 0.8847 |
+| **MI ROC-AUC** | 0.8922 |
+| **STTC ROC-AUC** | 0.9374 |
+| **NORM ROC-AUC** | 0.9233 |
+- **Model Artifact:** `C:\Users\Lenovo\OneDrive\Desktop\Ear to Heart\real-heart-pulse\cardiac_ml_studio\src\..\models\sota_se_resnet_gru.pt` (Size: **4.52 MB** (4,735,765 B))
+
+*Features lead-dropout and baseline wander sensor augmentations. Serialized to models/sota_se_resnet_gru.pt*
+
+---
+
 ## 💾 Model Weights & Artifacts Storage Registry
 
 All trained model weights, checkpoints, and scalers are saved under the `cardiac_ml_studio/models/` directory:
@@ -157,8 +176,10 @@ All trained model weights, checkpoints, and scalers are saved under the `cardiac
 | `ischemia_xgboost.joblib` | Joblib serialized model | **358.73 KB** (367,336 B) | `cardiac_ml_studio/models/ischemia_xgboost.joblib` | XGBoost (Ischemia Classifier) |
 | `amyloidosis_xgboost.joblib` | Joblib serialized model | **350.70 KB** (359,116 B) | `cardiac_ml_studio/models/amyloidosis_xgboost.joblib` | XGBoost (Amyloidosis Classifier) |
 | `fibrosis_xgboost.joblib` | Joblib serialized model | **349.04 KB** (357,412 B) | `cardiac_ml_studio/models/fibrosis_xgboost.joblib` | XGBoost (Fibrosis Classifier) |
-| `heart_failure_rf.joblib` | Joblib serialized model | **2.25 MB** (2,300.31 KB) | `cardiac_ml_studio/models/heart_failure_rf.joblib` | Random Forest (Heart Failure Classifier) |
+| `heart_failure_rf.joblib` | Joblib serialized model | **2.25 MB** (2,300.31 KB) | `cardiac_ml_studio/models/heart_failure_rf.joblib` | Random Forest (Heart Failure Baseline) |
 | `heart_failure_scaler.joblib` | Joblib serialized scaler | **1.17 KB** (1,199 B) | `cardiac_ml_studio/models/heart_failure_scaler.joblib` | StandardScaler (Heart Failure Preprocessing) |
+| `heart_failure_sota_stacking.joblib` | Joblib serialized ensemble | **7.10 MB** (7,448,216 B) | `cardiac_ml_studio/models/heart_failure_sota_stacking.joblib` | SOTA 4-Way Stacking Classifier (RF + XGB + CatBoost + LightGBM) |
+| `sota_se_resnet_gru.pt` | PyTorch State Dict (`.pt`) | **4.52 MB** (4,735,765 B) | `cardiac_ml_studio/models/sota_se_resnet_gru.pt` | SE-ResNet-1D + BiGRU Multi-Label ECG Model |
 
 ---
 
