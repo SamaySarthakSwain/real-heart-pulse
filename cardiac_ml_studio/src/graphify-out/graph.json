@@ -1,0 +1,860 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "download_datasets.py",
+      "file_type": "code",
+      "source_file": "download_datasets.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "download_datasets",
+      "community": 1,
+      "norm_label": "download_datasets.py"
+    },
+    {
+      "label": "ensure_dir()",
+      "file_type": "code",
+      "source_file": "download_datasets.py",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "download_datasets_ensure_dir",
+      "community": 1,
+      "norm_label": "ensure_dir()"
+    },
+    {
+      "label": "generate_ischemia_dataset()",
+      "file_type": "code",
+      "source_file": "download_datasets.py",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "download_datasets_generate_ischemia_dataset",
+      "community": 1,
+      "norm_label": "generate_ischemia_dataset()"
+    },
+    {
+      "label": "generate_amyloidosis_dataset()",
+      "file_type": "code",
+      "source_file": "download_datasets.py",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "download_datasets_generate_amyloidosis_dataset",
+      "community": 1,
+      "norm_label": "generate_amyloidosis_dataset()"
+    },
+    {
+      "label": "generate_fibrosis_dataset()",
+      "file_type": "code",
+      "source_file": "download_datasets.py",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "download_datasets_generate_fibrosis_dataset",
+      "community": 1,
+      "norm_label": "generate_fibrosis_dataset()"
+    },
+    {
+      "label": "Simulates Ischemia & CAD dataset based on UCI/Cleveland and PTB-XL ST-T features",
+      "file_type": "rationale",
+      "source_file": "download_datasets.py",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "download_datasets_rationale_14",
+      "community": 1,
+      "norm_label": "simulates ischemia & cad dataset based on uci/cleveland and ptb-xl st-t features"
+    },
+    {
+      "label": "Simulates Cardiac Amyloidosis dataset based on EchoNet, Mayo Clinic parameters.",
+      "file_type": "rationale",
+      "source_file": "download_datasets.py",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "download_datasets_rationale_51",
+      "community": 1,
+      "norm_label": "simulates cardiac amyloidosis dataset based on echonet, mayo clinic parameters."
+    },
+    {
+      "label": "Simulates Cardiac Fibrosis (Myocardial Scarring & Interstitial) based on EMIDEC/",
+      "file_type": "rationale",
+      "source_file": "download_datasets.py",
+      "source_location": "L86",
+      "_origin": "ast",
+      "id": "download_datasets_rationale_86",
+      "community": 1,
+      "norm_label": "simulates cardiac fibrosis (myocardial scarring & interstitial) based on emidec/"
+    },
+    {
+      "label": "eval_dl.py",
+      "file_type": "code",
+      "source_file": "eval_dl.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "eval_dl",
+      "community": 0,
+      "norm_label": "eval_dl.py"
+    },
+    {
+      "label": "evaluate()",
+      "file_type": "code",
+      "source_file": "eval_dl.py",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "eval_dl_evaluate",
+      "community": 0,
+      "norm_label": "evaluate()"
+    },
+    {
+      "label": "generate_paper_graphs.py",
+      "file_type": "code",
+      "source_file": "generate_paper_graphs.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "generate_paper_graphs",
+      "community": 5,
+      "norm_label": "generate_paper_graphs.py"
+    },
+    {
+      "label": "generate_paper_figures()",
+      "file_type": "code",
+      "source_file": "generate_paper_graphs.py",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "generate_paper_graphs_generate_paper_figures",
+      "community": 5,
+      "norm_label": "generate_paper_figures()"
+    },
+    {
+      "label": "predict.py",
+      "file_type": "code",
+      "source_file": "predict.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "predict",
+      "community": 0,
+      "norm_label": "predict.py"
+    },
+    {
+      "label": "CardiacMLPredictor",
+      "file_type": "code",
+      "source_file": "predict.py",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "predict_cardiacmlpredictor",
+      "community": 3,
+      "norm_label": "cardiacmlpredictor"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "predict.py",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "predict_cardiacmlpredictor_init",
+      "community": 3,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".load_model()",
+      "file_type": "code",
+      "source_file": "predict.py",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "predict_cardiacmlpredictor_load_model",
+      "community": 3,
+      "norm_label": ".load_model()"
+    },
+    {
+      "label": ".predict_ecg()",
+      "file_type": "code",
+      "source_file": "predict.py",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "predict_cardiacmlpredictor_predict_ecg",
+      "community": 3,
+      "norm_label": ".predict_ecg()"
+    },
+    {
+      "label": "waveform_data: A 2D list/array of shape (12, 1000) representing 12-lead ECG over",
+      "file_type": "rationale",
+      "source_file": "predict.py",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "predict_rationale_31",
+      "community": 3,
+      "norm_label": "waveform_data: a 2d list/array of shape (12, 1000) representing 12-lead ecg over"
+    },
+    {
+      "label": "step1_dataset_audit.py",
+      "file_type": "code",
+      "source_file": "step1_dataset_audit.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "step1_dataset_audit",
+      "community": 6,
+      "norm_label": "step1_dataset_audit.py"
+    },
+    {
+      "label": "audit_dataset()",
+      "file_type": "code",
+      "source_file": "step1_dataset_audit.py",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "step1_dataset_audit_audit_dataset",
+      "community": 6,
+      "norm_label": "audit_dataset()"
+    },
+    {
+      "label": "step3_leakage_and_clean.py",
+      "file_type": "code",
+      "source_file": "step3_leakage_and_clean.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "step3_leakage_and_clean",
+      "community": 7,
+      "norm_label": "step3_leakage_and_clean.py"
+    },
+    {
+      "label": "audit_leakage_and_clean()",
+      "file_type": "code",
+      "source_file": "step3_leakage_and_clean.py",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "step3_leakage_and_clean_audit_leakage_and_clean",
+      "community": 7,
+      "norm_label": "audit_leakage_and_clean()"
+    },
+    {
+      "label": "summary_updater.py",
+      "file_type": "code",
+      "source_file": "summary_updater.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "summary_updater",
+      "community": 2,
+      "norm_label": "summary_updater.py"
+    },
+    {
+      "label": "get_dir_size_str()",
+      "file_type": "code",
+      "source_file": "summary_updater.py",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "summary_updater_get_dir_size_str",
+      "community": 2,
+      "norm_label": "get_dir_size_str()"
+    },
+    {
+      "label": "update_summary_registry()",
+      "file_type": "code",
+      "source_file": "summary_updater.py",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "summary_updater_update_summary_registry",
+      "community": 2,
+      "norm_label": "update_summary_registry()"
+    },
+    {
+      "label": "Automated utility to update 'ML model Summary.md' with new model training result",
+      "file_type": "rationale",
+      "source_file": "summary_updater.py",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "summary_updater_rationale_38",
+      "community": 2,
+      "norm_label": "automated utility to update 'ml model summary.md' with new model training result"
+    },
+    {
+      "label": "train_all.py",
+      "file_type": "code",
+      "source_file": "train_all.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "train_all",
+      "community": 4,
+      "norm_label": "train_all.py"
+    },
+    {
+      "label": "ensure_dir()",
+      "file_type": "code",
+      "source_file": "train_all.py",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "train_all_ensure_dir",
+      "community": 4,
+      "norm_label": "ensure_dir()"
+    },
+    {
+      "label": "train_and_evaluate()",
+      "file_type": "code",
+      "source_file": "train_all.py",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "train_all_train_and_evaluate",
+      "community": 4,
+      "norm_label": "train_and_evaluate()"
+    },
+    {
+      "label": "train_dl_pipeline.py",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "train_dl_pipeline",
+      "community": 0,
+      "norm_label": "train_dl_pipeline.py"
+    },
+    {
+      "label": "ECG_1D_CNN",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "train_dl_pipeline_ecg_1d_cnn",
+      "community": 0,
+      "norm_label": "ecg_1d_cnn"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "train_dl_pipeline_ecg_1d_cnn_init",
+      "community": 0,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".forward()",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "train_dl_pipeline_ecg_1d_cnn_forward",
+      "community": 0,
+      "norm_label": ".forward()"
+    },
+    {
+      "label": "load_and_preprocess_signals()",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "train_dl_pipeline_load_and_preprocess_signals",
+      "community": 0,
+      "norm_label": "load_and_preprocess_signals()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L87",
+      "_origin": "ast",
+      "id": "train_dl_pipeline_main",
+      "community": 0,
+      "norm_label": "main()"
+    },
+    {
+      "label": "train_heart_failure.py",
+      "file_type": "code",
+      "source_file": "train_heart_failure.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "train_heart_failure",
+      "community": 2,
+      "norm_label": "train_heart_failure.py"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "train_heart_failure.py",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "train_heart_failure_main",
+      "community": 2,
+      "norm_label": "main()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "download_datasets",
+      "target": "download_datasets_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "download_datasets",
+      "target": "download_datasets_generate_amyloidosis_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "download_datasets",
+      "target": "download_datasets_generate_fibrosis_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "download_datasets",
+      "target": "download_datasets_generate_ischemia_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "download_datasets_generate_amyloidosis_dataset",
+      "target": "download_datasets_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "download_datasets_generate_fibrosis_dataset",
+      "target": "download_datasets_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "download_datasets_generate_ischemia_dataset",
+      "target": "download_datasets_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "download_datasets_rationale_14",
+      "target": "download_datasets_generate_ischemia_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "download_datasets_rationale_51",
+      "target": "download_datasets_generate_amyloidosis_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "download_datasets.py",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "download_datasets_rationale_86",
+      "target": "download_datasets_generate_fibrosis_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "eval_dl",
+      "target": "eval_dl_evaluate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "eval_dl",
+      "target": "train_dl_pipeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "eval_dl",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "eval_dl",
+      "target": "train_dl_pipeline_load_and_preprocess_signals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "eval_dl_evaluate",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "eval_dl.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "eval_dl_evaluate",
+      "target": "train_dl_pipeline_load_and_preprocess_signals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "generate_paper_graphs.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "generate_paper_graphs",
+      "target": "generate_paper_graphs_generate_paper_figures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "predict",
+      "target": "predict_cardiacmlpredictor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "predict",
+      "target": "train_dl_pipeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "predict",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "predict_cardiacmlpredictor",
+      "target": "predict_cardiacmlpredictor_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "predict_cardiacmlpredictor",
+      "target": "predict_cardiacmlpredictor_load_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "predict_cardiacmlpredictor",
+      "target": "predict_cardiacmlpredictor_predict_ecg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "predict.py",
+      "source_location": "L4",
+      "weight": 0.8,
+      "source": "predict_cardiacmlpredictor",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "predict_cardiacmlpredictor_init",
+      "target": "predict_cardiacmlpredictor_load_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "predict.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "predict_cardiacmlpredictor_init",
+      "target": "train_dl_pipeline_ecg_1d_cnn"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "predict.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "predict_rationale_31",
+      "target": "predict_cardiacmlpredictor_predict_ecg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "step1_dataset_audit.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "step1_dataset_audit",
+      "target": "step1_dataset_audit_audit_dataset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "step3_leakage_and_clean.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "step3_leakage_and_clean",
+      "target": "step3_leakage_and_clean_audit_leakage_and_clean",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "summary_updater.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "summary_updater",
+      "target": "summary_updater_get_dir_size_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "summary_updater.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "summary_updater",
+      "target": "summary_updater_update_summary_registry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "summary_updater.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "summary_updater_update_summary_registry",
+      "target": "summary_updater_get_dir_size_str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "summary_updater.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "summary_updater_rationale_38",
+      "target": "summary_updater_update_summary_registry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "train_heart_failure.py",
+      "source_location": "L164",
+      "weight": 1.0,
+      "source": "train_heart_failure",
+      "target": "summary_updater_update_summary_registry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "train_heart_failure.py",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "train_heart_failure_main",
+      "target": "summary_updater_update_summary_registry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_all.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "train_all",
+      "target": "train_all_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_all.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "train_all",
+      "target": "train_all_train_and_evaluate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "train_all.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "train_all_train_and_evaluate",
+      "target": "train_all_ensure_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "train_dl_pipeline",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "train_dl_pipeline",
+      "target": "train_dl_pipeline_load_and_preprocess_signals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "train_dl_pipeline",
+      "target": "train_dl_pipeline_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "train_dl_pipeline_ecg_1d_cnn",
+      "target": "train_dl_pipeline_ecg_1d_cnn_forward",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "context": "argument",
+      "source": "train_dl_pipeline_ecg_1d_cnn_init",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "train_dl_pipeline_main",
+      "target": "train_dl_pipeline_ecg_1d_cnn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "train_dl_pipeline.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "train_dl_pipeline_main",
+      "target": "train_dl_pipeline_load_and_preprocess_signals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "train_heart_failure.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "train_heart_failure",
+      "target": "train_heart_failure_main",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "f6ca7aeca5f58533d9ac858fdc9f6054ab895db1"
+}
