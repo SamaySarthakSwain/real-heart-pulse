@@ -33,6 +33,7 @@ import {
 import { toast } from "sonner";
 import { usePatientStore } from "@/store/patientStore";
 import { useSensorStore } from "@/store/sensorStore";
+import { LongitudinalTrajectoryPanel } from "@/components/dashboard/reports/LongitudinalTrajectoryPanel";
 import type {
   PatientGender,
   RiskLevel,
@@ -548,7 +549,11 @@ export function PatientProfilePage() {
 
       {/* ── SUBGROUP 1: PAST TESTING RECORDS ───────────────────────────── */}
       {activeSubgroup === "records" && (
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
+          <LongitudinalTrajectoryPanel
+            patientId={currentPatient.id}
+            patientName={currentPatient.name}
+          />
           {filteredRecords.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border/80 bg-card/40 p-12 text-center space-y-3">
               <div className="mx-auto h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">

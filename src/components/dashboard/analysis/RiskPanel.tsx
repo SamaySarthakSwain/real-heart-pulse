@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { buffers, useSensorStore } from "@/store/sensorStore";
+import { usePatientStore } from "@/store/patientStore";
 import { analyseRisk, type ConditionRisk } from "@/services/analysis/heartRisk";
 import { StatusPill, type PillTone } from "@/components/dashboard/StatusPill";
+import { runEdgeOfflineDiagnostics } from "@/services/analysis/edgeOfflineEngine";
 
 const bandTone: Record<ConditionRisk["band"], PillTone> = {
   low: "ok",
@@ -22,9 +24,15 @@ function num(value: number | null, digits = 0, unit = "") {
 }
 
 interface DLAnalysisResult {
+  isOfflineFallback?: boolean;
   primary_diagnosis: string;
   confidence: number;
   detailed_analysis: { class: string; description: string; probability: number }[];
+  sqi_assessment?: {
+    overall_sqi: number;
+    decision: string;
+    message: string;
+  };
 }
 
 export function RiskPanel() {
@@ -45,17 +53,33 @@ export function RiskPanel() {
         }
 
         try {
+          const currentPatient = usePatientStore.getState().getCurrentPatient();
+          const liveSpo2 = useSensorStore.getState().spo2;
+
           const res = await fetch("http://localhost:8000/predict/ecg", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ signals: [padded] }),
+            body: JSON.stringify({
+              signals: [padded],
+              patient_id: currentPatient?.id || "PT-10492",
+              reported_spo2: liveSpo2 || 98.0,
+            }),
           });
           if (res.ok) {
             const data = await res.json();
             setDlAnalysis(data);
+            useSensorStore.getState().setAiDiagnosisResult(data);
+          } else {
+            // Client-side Edge Offline Fallback
+            const fallback = runEdgeOfflineDiagnostics(padded);
+            setDlAnalysis(fallback);
+            useSensorStore.getState().setAiDiagnosisResult(fallback);
           }
-        } catch (e) {
-          console.error("DL API Error:", e);
+        } catch {
+          // Client-side Edge Offline Fallback if server unreachable
+          const fallback = runEdgeOfflineDiagnostics(padded);
+          setDlAnalysis(fallback);
+          useSensorStore.getState().setAiDiagnosisResult(fallback);
         }
       }
     }, 2000);
@@ -106,9 +130,22 @@ export function RiskPanel() {
                 <div className="absolute top-0 right-0 p-2 opacity-20">
                   <span className="text-4xl font-bold">AI</span>
                 </div>
-                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4">
-                  PyTorch 1D-CNN (PTB-XL Model)
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-bold text-primary tracking-widest uppercase">
+                    {dlAnalysis.isOfflineFallback
+                      ? "Edge Offline Diagnostics (Browser Engine)"
+                      : "SE-ResNet-1D + BiGRU (Hospital-Grade DL)"}
+                  </h3>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-semibold ${
+                      dlAnalysis.isOfflineFallback
+                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                        : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    }`}
+                  >
+                    {dlAnalysis.isOfflineFallback ? "OFFLINE EDGE" : "SOTA CONNECTED"}
+                  </span>
+                </div>
 
                 <div className="mb-6 flex items-center justify-between bg-background rounded-lg p-3 border border-border">
                   <span className="font-semibold text-lg">{dlAnalysis.primary_diagnosis}</span>

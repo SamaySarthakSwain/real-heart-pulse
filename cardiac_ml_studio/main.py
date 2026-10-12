@@ -10,11 +10,13 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from predict import CardiacMLPredictor
 from multimodal_fusion import MultimodalPredictor
+from conformal_uncertainty import ConformalUncertaintyGuardrail
+from patient_history_service import PatientTelemetryHistoryService
 
 app = FastAPI(
     title="Ear-to-Heart AI Intelligence API", 
-    version="3.0",
-    description="Hospital-grade Cardiac AI engine featuring SE-ResNet-1D, Pan-Tompkins SQI Gating, 1D Grad-CAM Attribution, and Multi-modal Gated Fusion."
+    version="4.0",
+    description="Hospital-grade Cardiac AI engine featuring SE-ResNet-1D, Pan-Tompkins SQI Gating, 1D Grad-CAM, MongoDB Cloud History, and 95% Conformal Prediction."
 )
 
 # Enable CORS for frontend integration
@@ -26,15 +28,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global model predictors
+# Global model predictors & services
 try:
     cardiac_predictor = CardiacMLPredictor()
     multimodal_predictor = MultimodalPredictor()
-    print("[+] All Cardiac ML & DL Predictors loaded successfully.")
+    conformal_guardrail = ConformalUncertaintyGuardrail(alpha=0.05)
+    history_service = PatientTelemetryHistoryService()
+    print("[+] All Cardiac ML/DL Predictors, Conformal Guardrails, and MongoDB Services loaded successfully.")
 except Exception as e:
     print(f"[!] Initialization warning: {e}")
     cardiac_predictor = None
     multimodal_predictor = None
+    conformal_guardrail = None
+    history_service = None
 
 # -----------------------------------------------------------------------------
 # SCHEMAS
@@ -52,6 +58,7 @@ class RawWaveformRequest(BaseModel):
         98.0, 
         description="Reported SpO2 reading from MAX30102 sensor (70-100%)."
     )
+    patient_id: Optional[str] = Field("default_patient", example="PATIENT-001")
 
 class ClinicalVitalsRequest(BaseModel):
     Age: float = Field(..., example=55.0)
@@ -65,10 +72,12 @@ class ClinicalVitalsRequest(BaseModel):
     ExerciseAngina: str = Field(..., example="Y")
     Oldpeak: float = Field(..., example=1.5)
     ST_Slope: str = Field(..., example="Flat")
+    patient_id: Optional[str] = Field("default_patient", example="PATIENT-001")
 
 class MultimodalRequest(BaseModel):
     signals: List[List[float]]
     vitals: Dict[str, Any]
+    patient_id: Optional[str] = Field("default_patient", example="PATIENT-001")
 
 # -----------------------------------------------------------------------------
 # ENDPOINTS
@@ -78,12 +87,15 @@ def read_root():
     return {
         "status": "ONLINE",
         "system": "Ear-to-Heart SOTA Multimodal Cardiac Pipeline",
+        "version": "4.0 (Hospital-Grade)",
         "features": [
             "Hardware Sensor SQI Validation Gate (AD8232 + MAX30102)",
             "Deep Learning SE-ResNet-1D + BiGRU Multi-Label Classifier",
             "1D Grad-CAM Explainable Pathology Waveform Attribution",
             "SOTA Stacking Tabular Classifier (RF + XGB + CatBoost + LightGBM)",
-            "Gated Cross-Attention Multimodal Telemetry Fusion"
+            "Gated Cross-Attention Multimodal Telemetry Fusion",
+            "95% Conformal Prediction Bounds for Uncertainty Quantification",
+            "Longitudinal Patient History with MongoDB Cloud Synchronization"
         ]
     }
 
@@ -102,6 +114,43 @@ def predict_raw_ecg(req: RawWaveformRequest):
             ppg_data=req.ppg_signal,
             reported_spo2=req.reported_spo2 or 98.0
         )
+        
+        # 1. Conformal Uncertainty Guardrail (95% statistical coverage)
+        if conformal_guardrail and result.get("detailed_analysis"):
+            probs = [c["probability"] for c in result["detailed_analysis"]]
+            sqi = result.get("sqi_assessment", {}).get("overall_sqi", 0.95)
+            conformal_report = conformal_guardrail.evaluate_with_guarantee(probs, sqi_score=sqi)
+            result["conformal_uncertainty"] = conformal_report
+            
+        # 2. Automated MongoDB Telemetry Persistence
+        if history_service and result.get("status") == "ANALYSIS_COMPLETE":
+            try:
+                bpm_val = 72.0
+                sqi_data = result.get("sqi_assessment")
+                if isinstance(sqi_data, dict):
+                    ppg_hrv = sqi_data.get("ppg_hrv_analysis")
+                    if isinstance(ppg_hrv, dict) and ppg_hrv.get("heart_rate_bpm") is not None:
+                        bpm_val = float(ppg_hrv.get("heart_rate_bpm"))
+
+                hf_risk = 0.15
+                if conformal_guardrail and "detailed_analysis" in result:
+                    for det in result["detailed_analysis"]:
+                        if det.get("class") in ["STTC", "MI"]:
+                            hf_risk = max(hf_risk, det.get("probability", 0.15))
+
+                history_service.save_session({
+                    "patient_id": req.patient_id or "default_patient",
+                    "bpm": bpm_val,
+                    "spo2": req.reported_spo2 or 98.0,
+                    "primary_condition": result.get("primary_diagnosis"),
+                    "confidence": result.get("primary_confidence"),
+                    "heart_failure_risk": hf_risk,
+                    "sqi_assessment": result.get("sqi_assessment", {}),
+                    "conformal_certainty": result.get("conformal_uncertainty", {}).get("certainty_level")
+                })
+            except Exception as ex:
+                print(f"[!] Background history sync note: {ex}")
+                
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -113,6 +162,17 @@ def predict_vitals(req: ClinicalVitalsRequest):
     try:
         patient_dict = req.dict()
         res = cardiac_predictor.predict_tabular_vitals(patient_dict)
+        
+        # Sync to MongoDB
+        if history_service:
+            history_service.save_session({
+                "patient_id": req.patient_id or "default_patient",
+                "resting_bp": req.RestingBP,
+                "primary_condition": res.get("predicted_condition"),
+                "confidence": res.get("heart_disease_risk_probability"),
+                "heart_failure_risk": res.get("heart_disease_risk_probability")
+            })
+            
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -123,7 +183,29 @@ def predict_multimodal_endpoint(req: MultimodalRequest):
         raise HTTPException(status_code=500, detail="Multimodal predictor not initialized.")
     try:
         res = multimodal_predictor.predict_multimodal(req.signals, req.vitals)
+        
+        # Sync to MongoDB
+        if history_service:
+            history_service.save_session({
+                "patient_id": req.patient_id or "default_patient",
+                "primary_condition": res.get("risk_tier"),
+                "confidence": res.get("multimodal_heart_failure_risk"),
+                "heart_failure_risk": res.get("multimodal_heart_failure_risk")
+            })
+            
         return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/patient/history/{patient_id}")
+def get_patient_history(patient_id: str):
+    """
+    Retrieves longitudinal risk trend timeline directly from MongoDB.
+    """
+    if not history_service:
+        raise HTTPException(status_code=500, detail="History service not initialized.")
+    try:
+        return history_service.get_patient_trajectory(patient_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

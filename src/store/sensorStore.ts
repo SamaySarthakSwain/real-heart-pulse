@@ -132,6 +132,17 @@ export interface SensorState extends Counters {
   recordingStartedAt: number | null;
   recordedRows: number;
 
+  // AI & SQI Diagnostics Telemetry
+  gradcamAttribution: number[] | null;
+  aiPrimaryDiagnosis: string | null;
+  aiConfidence: number | null;
+  aiDetailedAnalysis: any[] | null;
+  sqiScore: number | null;
+  sqiStatus: string | null;
+  enableAiVision: boolean;
+  toggleAiVision: () => void;
+  setAiDiagnosisResult: (data: any) => void;
+
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   ingestLine: (line: string) => void;
@@ -206,6 +217,25 @@ export const useSensorStore = create<SensorState>((set, get) => ({
   recording: false,
   recordingStartedAt: null,
   recordedRows: 0,
+
+  // AI & SQI Diagnostics Telemetry
+  gradcamAttribution: null,
+  aiPrimaryDiagnosis: null,
+  aiConfidence: null,
+  aiDetailedAnalysis: null,
+  sqiScore: null,
+  sqiStatus: null,
+  enableAiVision: true,
+  toggleAiVision: () => set((s) => ({ enableAiVision: !s.enableAiVision })),
+  setAiDiagnosisResult: (data: any) =>
+    set({
+      aiPrimaryDiagnosis: data?.primary_diagnosis ?? null,
+      aiConfidence: data?.primary_confidence ?? null,
+      aiDetailedAnalysis: data?.detailed_analysis ?? null,
+      gradcamAttribution: data?.gradcam_1d_attribution ?? null,
+      sqiScore: data?.sqi_assessment?.overall_sqi ?? null,
+      sqiStatus: data?.sqi_assessment?.decision ?? null,
+    }),
 
   connect: async () => {
     if (transport?.isConnected()) return;

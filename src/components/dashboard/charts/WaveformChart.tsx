@@ -11,12 +11,13 @@ interface Props {
   emptyMessage: string;
   hasData: boolean;
   fillWidth?: boolean;
+  gradcamAttribution?: number[] | null;
+  enableAiVision?: boolean;
 }
 
 /**
  * Canvas waveform driven by requestAnimationFrame reading a ring buffer directly.
- * No React re-render per sample, and no point is ever generated locally —
- * it draws exactly the samples the ESP32 sent.
+ * Features AI Vision (1D Grad-CAM glowing heatmap) to highlight cardiac pathology beats.
  */
 export function WaveformChart({
   buffer,
@@ -28,6 +29,8 @@ export function WaveformChart({
   emptyMessage,
   hasData,
   fillWidth = false,
+  gradcamAttribution = null,
+  enableAiVision = false,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef<number>(0);
@@ -39,7 +42,7 @@ export function WaveformChart({
     if (!ctx) return;
 
     const styles = getComputedStyle(canvas);
-    const gridColor = styles.getPropertyValue("--signal-grid").trim() || "#333";
+    const gridColor = styles.getPropertyValue("--signal-grid").trim() || "#222";
     const strokeColor = styles.getPropertyValue(color).trim() || "#0f0";
 
     const draw = () => {
@@ -52,6 +55,7 @@ export function WaveformChart({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
 
+      // Hospital ECG Grid Styling
       ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -85,18 +89,53 @@ export function WaveformChart({
           const timeMin = points[0]?.[0] ?? now;
           const timeSpanMs = fillWidth ? Math.max(now - timeMin, 1) : windowMs;
 
-          ctx.strokeStyle = strokeColor;
-          ctx.lineWidth = 1.6;
-          ctx.beginPath();
-          points.forEach(([t, v], index) => {
-            const x = fillWidth
-              ? ((t - timeMin) / timeSpanMs) * width
-              : width - ((now - t) / timeSpanMs) * width;
-            const y = height - 8 - ((v - min) / span) * (height - 16);
-            if (index === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          });
-          ctx.stroke();
+          const nPoints = points.length;
+          const camLen = gradcamAttribution?.length || 0;
+
+          // Render waveform with segment-level AI Vision color attribution
+          for (let i = 0; i < nPoints - 1; i++) {
+            const [t0, v0] = points[i];
+            const [t1, v1] = points[i + 1];
+
+            const x0 = fillWidth
+              ? ((t0 - timeMin) / timeSpanMs) * width
+              : width - ((now - t0) / timeSpanMs) * width;
+            const y0 = height - 8 - ((v0 - min) / span) * (height - 16);
+
+            const x1 = fillWidth
+              ? ((t1 - timeMin) / timeSpanMs) * width
+              : width - ((now - t1) / timeSpanMs) * width;
+            const y1 = height - 8 - ((v1 - min) / span) * (height - 16);
+
+            // Determine if this point has high Grad-CAM attribution
+            let segColor = strokeColor;
+            let segWidth = 1.6;
+            ctx.shadowBlur = 0;
+
+            if (enableAiVision && camLen > 0) {
+              const camIdx = Math.floor((i / nPoints) * camLen);
+              const attr = gradcamAttribution![camIdx] ?? 0;
+              if (attr > 0.65) {
+                segColor = "#ef4444"; // High Risk Red Glow
+                segWidth = 2.4;
+                ctx.shadowColor = "#ef4444";
+                ctx.shadowBlur = 8;
+              } else if (attr > 0.35) {
+                segColor = "#f59e0b"; // Moderate Amber
+                segWidth = 2.0;
+                ctx.shadowColor = "#f59e0b";
+                ctx.shadowBlur = 4;
+              }
+            }
+
+            ctx.strokeStyle = segColor;
+            ctx.lineWidth = segWidth;
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+          }
+          ctx.shadowBlur = 0; // Reset blur
         }
       }
 
@@ -105,7 +144,7 @@ export function WaveformChart({
 
     frameRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [buffer, color, height, windowSeconds, paused]);
+  }, [buffer, color, height, windowSeconds, paused, gradcamAttribution, enableAiVision]);
 
   return (
     <div className="relative">

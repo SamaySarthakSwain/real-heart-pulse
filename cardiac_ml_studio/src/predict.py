@@ -53,7 +53,7 @@ class CardiacMLPredictor:
                 self.dl_model.load_state_dict(torch.load(sota_path, map_location=self.device))
                 self.dl_model.eval()
                 # Target stage3 for Grad-CAM
-                self.gradcam = ECG1DGradCAM(self.dl_model, self.dl_model.stage3.conv2)
+                self.gradcam = ECG1DGradCAM(self.dl_model, self.dl_model.stage3)
                 self.dl_model_type = "SOTA_SE_ResNet_GRU"
                 print("[+] Loaded SOTA SE-ResNet-1D + BiGRU deep learning model.")
                 return
@@ -156,7 +156,8 @@ class CardiacMLPredictor:
             "primary_diagnosis": self.class_descriptions[primary_condition],
             "primary_confidence": float(probs[primary_idx]),
             "detailed_analysis": results,
-            "gradcam_1d_attribution": attribution_map
+            "gradcam_1d_attribution": attribution_map,
+            "gradcam_attribution": attribution_map
         }
 
     def predict_tabular_vitals(self, patient_dict):

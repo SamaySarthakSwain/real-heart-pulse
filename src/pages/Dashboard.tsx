@@ -9,6 +9,7 @@ import { StatusPill, type PillTone } from "@/components/dashboard/StatusPill";
 import { Button } from "@/components/ui/button";
 import { downloadFile, toCSV, toJSON } from "@/services/export/exporters";
 import { cn } from "@/lib/utils";
+import { ClinicalReportModal } from "@/components/dashboard/reports/ClinicalReportModal";
 
 function useFreshness(time: number | null, windowMs = 2000) {
   const [, tick] = useState(0);
@@ -277,10 +278,31 @@ export function Dashboard() {
               >
                 Clear
               </Button>
+              <Button
+                size="sm"
+                variant={s.enableAiVision ? "default" : "secondary"}
+                className={`rounded-xl text-xs font-medium transition-all ${
+                  s.enableAiVision ? "bg-amber-500 hover:bg-amber-600 text-black shadow-md shadow-amber-500/20" : ""
+                }`}
+                onClick={s.toggleAiVision}
+                title="Toggle real-time 1D Grad-CAM glowing heatmap on anomalous ECG segments"
+              >
+                {s.enableAiVision ? "AI Vision: ON" : "AI Vision: OFF"}
+              </Button>
+              <ClinicalReportModal />
             </div>
           }
         >
-          ECG Waveform — {s.settings.timeWindowSeconds}s window
+          <div className="flex items-center gap-2">
+            <span>ECG Waveform — {s.settings.timeWindowSeconds}s window</span>
+            {s.sqiScore !== null && (
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold ${
+                s.sqiScore >= 0.7 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+              }`}>
+                SQI: {(s.sqiScore * 100).toFixed(0)}%
+              </span>
+            )}
+          </div>
         </SectionTitle>
         <WaveformChart
           buffer={buffers.ecg}
@@ -290,6 +312,8 @@ export function Dashboard() {
           paused={s.paused}
           windowSeconds={s.settings.timeWindowSeconds}
           height={220}
+          gradcamAttribution={s.gradcamAttribution}
+          enableAiVision={s.enableAiVision}
           emptyMessage={
             live ? "Waiting for ECG samples from the AD8232" : "ECG: no signal — ESP32 disconnected"
           }
@@ -418,6 +442,7 @@ export function Dashboard() {
               >
                 ↓ JSON
               </Button>
+              <ClinicalReportModal />
             </div>
           }
         >

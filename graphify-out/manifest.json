@@ -474,17 +474,17 @@
     "semantic_hash": "74badcbcacd7606ebe46c8808adb9446"
   },
   ".agents/get-shit-done/bin/shared/config-defaults.manifest.json": {
-    "mtime": 1791164015.4588282,
+    "mtime": 1791720077.8511617,
     "ast_hash": "dd947b960ff31ce61a192cca62a727a9",
     "semantic_hash": "dd947b960ff31ce61a192cca62a727a9"
   },
   ".agents/get-shit-done/bin/shared/config-schema.manifest.json": {
-    "mtime": 1791164015.46083,
+    "mtime": 1791720077.861066,
     "ast_hash": "e66d61e17736f0c1dcb47d4fa8de45d1",
     "semantic_hash": "e66d61e17736f0c1dcb47d4fa8de45d1"
   },
   ".agents/get-shit-done/bin/shared/model-catalog.json": {
-    "mtime": 1791164015.4658294,
+    "mtime": 1791720077.8705523,
     "ast_hash": "7fdabd0eafb07d8c94e75e894ad5ef18",
     "semantic_hash": "7fdabd0eafb07d8c94e75e894ad5ef18"
   },
@@ -495,7 +495,7 @@
     "semantic_hash": "95f931a87db14f5a6285bc2b09597d0f"
   },
   ".agents/get-shit-done/templates/config.json": {
-    "mtime": 1791164014.682712,
+    "mtime": 1791720078.8558228,
     "ast_hash": "ff06af39ccdf8bd11f88769760d3aaee",
     "semantic_hash": "ff06af39ccdf8bd11f88769760d3aaee"
   },
@@ -9078,9 +9078,9 @@
     "semantic_hash": "1713c4ede148cc142e79c786e8d11ec4"
   },
   "cardiac_ml_studio/main.py": {
-    "mtime": 1791125858.655636,
-    "ast_hash": "da247eaccb5c36a4b9d9afce9f21ef93",
-    "semantic_hash": "da247eaccb5c36a4b9d9afce9f21ef93"
+    "mtime": 1791828179.9101682,
+    "ast_hash": "89d53fe92abf67716b90e677caea7fd9",
+    "semantic_hash": ""
   },
   "cardiac_ml_studio/results/deep_learning_metrics.json": {
     "mtime": 1791125529.4206097,
@@ -9103,9 +9103,9 @@
     "semantic_hash": "c9d6652c7d52bf81b944e6d7b4c5faf1"
   },
   "cardiac_ml_studio/src/predict.py": {
-    "mtime": 1791125849.5284498,
-    "ast_hash": "704c85ba1ccf2d6554692214280040dc",
-    "semantic_hash": "704c85ba1ccf2d6554692214280040dc"
+    "mtime": 1791828165.1799312,
+    "ast_hash": "4708061b7e81b38103fbab82b1ca0964",
+    "semantic_hash": ""
   },
   "cardiac_ml_studio/src/step1_dataset_audit.py": {
     "mtime": 1791118311.969638,
@@ -9138,9 +9138,9 @@
     "semantic_hash": "345bdd57e188e0e4525edcd00e5003f5"
   },
   "package.json": {
-    "mtime": 1788257734.8603108,
-    "ast_hash": "b91bc06a7fcd0c4998f807a03af43b27",
-    "semantic_hash": "b91bc06a7fcd0c4998f807a03af43b27"
+    "mtime": 1791827078.5849464,
+    "ast_hash": "4c611524c2c820f0839ac6d4fa1568e5",
+    "semantic_hash": ""
   },
   "src/components/dashboard/MedicalDisclaimer.tsx": {
     "mtime": 1791163574.468695,
@@ -9153,14 +9153,14 @@
     "semantic_hash": "98fb483341070bc695565267ffb704dd"
   },
   "src/components/dashboard/analysis/RiskPanel.tsx": {
-    "mtime": 1791163601.2162013,
-    "ast_hash": "d1ab713f09ad9eca9e6fbff33fc15639",
-    "semantic_hash": "d1ab713f09ad9eca9e6fbff33fc15639"
+    "mtime": 1791827932.384365,
+    "ast_hash": "401f2c148ff91f68a095e97af20428be",
+    "semantic_hash": ""
   },
   "src/components/dashboard/charts/WaveformChart.tsx": {
-    "mtime": 1791163574.468695,
-    "ast_hash": "a3a1db79501afc6336a0ae001f594574",
-    "semantic_hash": "a3a1db79501afc6336a0ae001f594574"
+    "mtime": 1791827179.2037492,
+    "ast_hash": "6fda82312333c1dde302096ca7e8d8d4",
+    "semantic_hash": ""
   },
   "src/components/dashboard/connection/ConnectionBar.tsx": {
     "mtime": 1791163574.468695,
@@ -9448,9 +9448,9 @@
     "semantic_hash": "f630d9686a9a989170f22eff4de7b30d"
   },
   "src/lib/error-page.ts": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "8da0ddd7569bac2676b9a5c8edff8a36",
-    "semantic_hash": "8da0ddd7569bac2676b9a5c8edff8a36"
+    "mtime": 1791740221.1493301,
+    "ast_hash": "258c613102d6b0791e23f130435fc90d",
+    "semantic_hash": ""
   },
   "src/lib/lovable-error-reporting.ts": {
     "mtime": 1791163574.4706967,
@@ -9473,9 +9473,9 @@
     "semantic_hash": "646f30d134f7fc262e1666af4f0b0342"
   },
   "src/pages/Dashboard.tsx": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "73ba855e2d7f5a7932140c89b53f0793",
-    "semantic_hash": "73ba855e2d7f5a7932140c89b53f0793"
+    "mtime": 1791827385.190109,
+    "ast_hash": "7ab7c2fc13c7130bff783a1ed0ea4466",
+    "semantic_hash": ""
   },
   "src/pages/Diagnostics.tsx": {
     "mtime": 1791163574.4706967,
@@ -9488,8 +9488,8 @@
     "semantic_hash": "8e253cb1912979b5f557de0bfee28f27"
   },
   "src/pages/HardwareSetup.tsx": {
-    "mtime": 1791699012.4725058,
-    "ast_hash": "3d454caab72d133ccedacd6b678e94af",
+    "mtime": 1791699566.2369306,
+    "ast_hash": "e761cb0c32bbaac854dbd4814c26441b",
     "semantic_hash": ""
   },
   "src/pages/LandingPage.tsx": {
@@ -9513,8 +9513,8 @@
     "semantic_hash": "8f905e713b0eba7fa8148b7995a708c9"
   },
   "src/routes/__root.tsx": {
-    "mtime": 1791698958.8094807,
-    "ast_hash": "a3c662c2d9bceff265840089f47895b8",
+    "mtime": 1791699459.2176242,
+    "ast_hash": "82270a806de8169f7a99b290e5d2c7e9",
     "semantic_hash": ""
   },
   "src/routes/analysis.tsx": {
@@ -9528,9 +9528,9 @@
     "semantic_hash": ""
   },
   "src/routes/diagnostics.tsx": {
-    "mtime": 1791163574.4706967,
-    "ast_hash": "3d5204a3efd451643fc4538be3d64915",
-    "semantic_hash": "3d5204a3efd451643fc4538be3d64915"
+    "mtime": 1791699486.752272,
+    "ast_hash": "c3601d4dcc1af988ab5ef44882c80b9c",
+    "semantic_hash": ""
   },
   "src/routes/firmware.tsx": {
     "mtime": 1791698980.46146,
@@ -9538,8 +9538,8 @@
     "semantic_hash": ""
   },
   "src/routes/hardware.tsx": {
-    "mtime": 1791698966.6472392,
-    "ast_hash": "0277851873b7ff381fc80f875b47afa4",
+    "mtime": 1791699508.9553695,
+    "ast_hash": "799bd4167ab165054ec71618ea1ae5c4",
     "semantic_hash": ""
   },
   "src/routes/index.tsx": {
@@ -9553,9 +9553,9 @@
     "semantic_hash": "4489c99081dcf75c904bbddfe6caabea"
   },
   "src/server.ts": {
-    "mtime": 1791163574.4716952,
-    "ast_hash": "c7bbc49bb70e318af618d92775ee0f27",
-    "semantic_hash": "c7bbc49bb70e318af618d92775ee0f27"
+    "mtime": 1791740238.559599,
+    "ast_hash": "b6402508379c87e40b13ea1694da8253",
+    "semantic_hash": ""
   },
   "src/services/analysis/features.ts": {
     "mtime": 1791163574.4716952,
@@ -9603,14 +9603,14 @@
     "semantic_hash": "2a45a462462a8b5a2337295bd4fafc6c"
   },
   "src/start.ts": {
-    "mtime": 1791163574.4716952,
-    "ast_hash": "0502f82c58afce5012b4c102e6fe2437",
-    "semantic_hash": "0502f82c58afce5012b4c102e6fe2437"
+    "mtime": 1791740254.1059785,
+    "ast_hash": "4e2e51b71160b644038b2c4a5f272cbc",
+    "semantic_hash": ""
   },
   "src/store/sensorStore.ts": {
-    "mtime": 1791163574.4716952,
-    "ast_hash": "e477c5b1f3d32f7d8dd0a81d98dbab6d",
-    "semantic_hash": "e477c5b1f3d32f7d8dd0a81d98dbab6d"
+    "mtime": 1791827133.7382596,
+    "ast_hash": "250ac8338c4638ffeeb4770e3f32af35",
+    "semantic_hash": ""
   },
   "src/types/sensor.ts": {
     "mtime": 1791163574.4716952,
@@ -9713,642 +9713,642 @@
     "semantic_hash": ""
   },
   ".agents/get-shit-done/CHANGELOG.md": {
-    "mtime": 1791164013.419411,
+    "mtime": 1791720076.6579256,
     "ast_hash": "89e57170994b5f54cd7b8ff87abc3ef7",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/contexts/dev.md": {
-    "mtime": 1791164276.4912212,
+    "mtime": 1791720077.893774,
     "ast_hash": "2e147b850faa61ea0b62f46da7287f94",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/contexts/research.md": {
-    "mtime": 1791164276.4912212,
+    "mtime": 1791720077.9086478,
     "ast_hash": "58d6c34d2dc99953b3e000b0f6e1a2ed",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/contexts/review.md": {
-    "mtime": 1791164276.492822,
+    "mtime": 1791720077.9206681,
     "ast_hash": "24857b1cf19282e739a2166931f4e7bc",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/agent-contracts.md": {
-    "mtime": 1791164276.494468,
+    "mtime": 1791720077.9316692,
     "ast_hash": "653c68b8d9d245716b59bbcdbdeb207c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/ai-evals.md": {
-    "mtime": 1791164276.4960582,
+    "mtime": 1791720077.9444685,
     "ast_hash": "cf952e592f4602893ba7d77b4e69eb14",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/ai-frameworks.md": {
-    "mtime": 1791164276.4986699,
+    "mtime": 1791720077.9539635,
     "ast_hash": "dd6c27b3e70b56f46543c66b1bc978ea",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/artifact-types.md": {
-    "mtime": 1791164276.499177,
+    "mtime": 1791720077.9634776,
     "ast_hash": "6398ceec02e11f597fbdf02114bdb522",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/autonomous-smart-discuss.md": {
-    "mtime": 1791164276.5021412,
+    "mtime": 1791720077.9764788,
     "ast_hash": "c0c26542ad5482e5c7a578d55ea8fcf1",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/checkpoints.md": {
-    "mtime": 1791164276.5038252,
+    "mtime": 1791720077.988987,
     "ast_hash": "fce528d3f04e8a9586d76836bb5a1642",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/common-bug-patterns.md": {
-    "mtime": 1791164276.50543,
+    "mtime": 1791720078.0015233,
     "ast_hash": "e4fd457dbd475e848410172b84039c8f",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/context-budget.md": {
-    "mtime": 1791164276.50543,
+    "mtime": 1791720078.0096853,
     "ast_hash": "460d0901b1066650ca548396f56a557e",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/continuation-format.md": {
-    "mtime": 1791164276.507019,
+    "mtime": 1791720078.0189464,
     "ast_hash": "b25048e03262bbd4641b0b895f4f41f0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/debugger-philosophy.md": {
-    "mtime": 1791164276.5086164,
+    "mtime": 1791720078.0300503,
     "ast_hash": "41bd774f6cf26c7276f00ef92cdce620",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/decimal-phase-calculation.md": {
-    "mtime": 1791164276.5103211,
+    "mtime": 1791720078.042361,
     "ast_hash": "26b64c36fbd94ef4e887ee80bb88b9e6",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/doc-conflict-engine.md": {
-    "mtime": 1791164276.511997,
+    "mtime": 1791720078.0524454,
     "ast_hash": "7210b4c4b3984aa462ef52a548d0e178",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/domain-probes.md": {
-    "mtime": 1791164276.5136225,
+    "mtime": 1791720078.0768144,
     "ast_hash": "26fdf1c1b1e7408ea7f2084a097d9217",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/execute-mvp-tdd.md": {
-    "mtime": 1791164276.5152225,
+    "mtime": 1791720078.0848737,
     "ast_hash": "c317be1ea10eb849b83aed65ea90a335",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/executor-examples.md": {
-    "mtime": 1791164276.5170205,
+    "mtime": 1791720078.0936484,
     "ast_hash": "2a12423a88f906b1ba4e9585aa6239b5",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/few-shot-examples/plan-checker.md": {
-    "mtime": 1791164276.5186243,
+    "mtime": 1791720078.106248,
     "ast_hash": "f44a4050f4bdcb1457c4b258a38692e0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/few-shot-examples/verifier.md": {
-    "mtime": 1791164276.520198,
+    "mtime": 1791720078.1197357,
     "ast_hash": "30a4385d73f6ed98aceb4c6e0deff59d",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/gate-prompts.md": {
-    "mtime": 1791164276.5217872,
+    "mtime": 1791720078.1324215,
     "ast_hash": "117d4883bafa18aeedfcec73ee0e4c54",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/gates.md": {
-    "mtime": 1791164276.5233767,
+    "mtime": 1791720078.1429322,
     "ast_hash": "ad9e830ed117e3ceffa9c0c719c05b5a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/git-integration.md": {
-    "mtime": 1791164276.525089,
+    "mtime": 1791720078.1538017,
     "ast_hash": "340bb0930a19a43a6f17bcd995b7c845",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/git-planning-commit.md": {
-    "mtime": 1791164276.5268004,
+    "mtime": 1791720078.1662478,
     "ast_hash": "e356b0413b2b403e98ae78369c6ca82a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/ios-scaffold.md": {
-    "mtime": 1791164276.5299807,
+    "mtime": 1791720078.178822,
     "ast_hash": "f8fc4d888622af8bf8bf6ee9d40c1fd3",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/mandatory-initial-read.md": {
-    "mtime": 1791164276.531644,
+    "mtime": 1791720078.1928139,
     "ast_hash": "0c46ca422fb3efe3ec2c5c0392ca08d2",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/model-profile-resolution.md": {
-    "mtime": 1791164276.533424,
+    "mtime": 1791720078.2032187,
     "ast_hash": "3086e132477ea7d6215ffe2269bd59c0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/model-profiles.md": {
-    "mtime": 1791164276.53502,
+    "mtime": 1791720078.2152581,
     "ast_hash": "ef8d8e630956f39e6b44147f0ed678b6",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/mvp-concepts.md": {
-    "mtime": 1791164276.5368133,
+    "mtime": 1791720078.2268312,
     "ast_hash": "621f7e1184162ea4633f0a807df9bf63",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/phase-argument-parsing.md": {
-    "mtime": 1791164276.538427,
+    "mtime": 1791720078.23942,
     "ast_hash": "e4ace75761d3ff8e83741a74934566dc",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-antipatterns.md": {
-    "mtime": 1791164276.5400238,
+    "mtime": 1791720078.2513282,
     "ast_hash": "0268563d6649b7699e4b4d23f34d8eb4",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-chunked.md": {
-    "mtime": 1791164276.541653,
+    "mtime": 1791720078.264336,
     "ast_hash": "91e8d5b28252e9c62ad673a9002e519d",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-gap-closure.md": {
-    "mtime": 1791164276.5432785,
+    "mtime": 1791720078.2763479,
     "ast_hash": "57e293b545b0568d899877e4cc65dc4c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-graphify-auto-update.md": {
-    "mtime": 1791164276.5448797,
+    "mtime": 1791720078.2911901,
     "ast_hash": "a073b0eb2c48502b5bb4d1ead22a1bf5",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-human-verify-mode.md": {
-    "mtime": 1791164276.5464714,
+    "mtime": 1791720078.3061426,
     "ast_hash": "f6d88d40f5f3bec9a05694fdd9371efc",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-mvp-mode.md": {
-    "mtime": 1791164276.5464714,
+    "mtime": 1791720078.3192215,
     "ast_hash": "8fdbefb843b2c597fc8282749c1ffb1e",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-reviews.md": {
-    "mtime": 1791164276.5480688,
+    "mtime": 1791720078.3327656,
     "ast_hash": "01949cbe53c98b60d0380c68c1cf9a28",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-revision.md": {
-    "mtime": 1791164276.5496655,
+    "mtime": 1791720078.3450792,
     "ast_hash": "d164bed06f2f13bc06dc4758ec9ee45a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planner-source-audit.md": {
-    "mtime": 1791164276.5512676,
+    "mtime": 1791720078.355924,
     "ast_hash": "edc36106f3ad5426558872e24bc4bf5c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/planning-config.md": {
-    "mtime": 1791164276.5528483,
+    "mtime": 1791720078.3674488,
     "ast_hash": "2264f5130670926d32317302e956b276",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/project-skills-discovery.md": {
-    "mtime": 1791164276.5544448,
-    "ast_hash": "43fabf9c0e6a08fc1270e43009ab1495",
+    "mtime": 1791720078.3790064,
+    "ast_hash": "93b903fad593e3bf23ec56f61037c884",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/questioning.md": {
-    "mtime": 1791164276.5560386,
+    "mtime": 1791720078.389899,
     "ast_hash": "5912bd3038a511207bf3984ecf2b6e89",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/revision-loop.md": {
-    "mtime": 1791164276.5577018,
+    "mtime": 1791720078.3994162,
     "ast_hash": "00138109821824c3eb1a59f8db233e66",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/scout-codebase.md": {
-    "mtime": 1791164276.5593066,
+    "mtime": 1791720078.4093199,
     "ast_hash": "7bccd64179aed3d0a537b2626bafe7fb",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/skeleton-template.md": {
-    "mtime": 1791164276.5609214,
+    "mtime": 1791720078.4188397,
     "ast_hash": "bee636d024430dfbf6d251d5d9fcb22a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/sketch-interactivity.md": {
-    "mtime": 1791164276.5625424,
+    "mtime": 1791720078.4297695,
     "ast_hash": "e8289188fc23f016b65ced1cd45515e9",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/sketch-theme-system.md": {
-    "mtime": 1791164276.565788,
+    "mtime": 1791720078.4423032,
     "ast_hash": "ffa0f5f8b57654dd49c776c332c27471",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/sketch-tooling.md": {
-    "mtime": 1791164276.565788,
+    "mtime": 1791720078.4555619,
     "ast_hash": "ba81fd48dd145a7d9917505802c2a486",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/sketch-variant-patterns.md": {
-    "mtime": 1791164276.5673919,
+    "mtime": 1791720078.4666114,
     "ast_hash": "02f658f3f71d8ea14c5d14226525ebad",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/spidr-splitting.md": {
-    "mtime": 1791164276.5689924,
+    "mtime": 1791720078.4769657,
     "ast_hash": "036c68c342db37295578436c4847ba44",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/tdd.md": {
-    "mtime": 1791164276.57057,
+    "mtime": 1791720078.4894946,
     "ast_hash": "4c47ba4e341f5dca7d852f68112d35ec",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-models-debug.md": {
-    "mtime": 1791164276.5738573,
+    "mtime": 1791720078.5019684,
     "ast_hash": "28230254461d7d3c5375e42e34f94f68",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-models-execution.md": {
-    "mtime": 1791164276.5738573,
+    "mtime": 1791720078.5147743,
     "ast_hash": "fdc2da6687809d55c09bdbf2c914dfa3",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-models-planning.md": {
-    "mtime": 1791164276.575478,
+    "mtime": 1791720078.5287738,
     "ast_hash": "370817ee8da23265594ef2fd655394d6",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-models-research.md": {
-    "mtime": 1791164276.5770876,
+    "mtime": 1791720078.5404735,
     "ast_hash": "c397c16ecfa0c53b28579c9071658ea1",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-models-verification.md": {
-    "mtime": 1791164276.5786624,
+    "mtime": 1791720078.5522757,
     "ast_hash": "e3e2937f0e3b9c68798886c593cce94c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/thinking-partner.md": {
-    "mtime": 1791164276.5786624,
+    "mtime": 1791720078.5637326,
     "ast_hash": "137ce42cc268135f70389d183b61a015",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/ui-brand.md": {
-    "mtime": 1791164276.580563,
+    "mtime": 1791720078.577196,
     "ast_hash": "2076e8a7907167522e8540e359e54804",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/universal-anti-patterns.md": {
-    "mtime": 1791164276.5821626,
+    "mtime": 1791720078.5886486,
     "ast_hash": "f0b500dc34d14c2f2b7a6ce2f0f61926",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/user-profiling.md": {
-    "mtime": 1791164276.583764,
+    "mtime": 1791720078.6002405,
     "ast_hash": "076d3b3253f5750ecb3c2137d1cbb09b",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/user-story-template.md": {
-    "mtime": 1791164276.5853658,
+    "mtime": 1791720078.6132407,
     "ast_hash": "faeef0b683f6ae1fe97d354cc611d1cd",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/verification-overrides.md": {
-    "mtime": 1791164276.5869508,
+    "mtime": 1791720078.6244867,
     "ast_hash": "e081da2ec417dd1faa1408231bfcaf05",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/verification-patterns.md": {
-    "mtime": 1791164276.588565,
+    "mtime": 1791720078.6395237,
     "ast_hash": "7d55d0f5074e393a19f49263a3e090a4",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/verify-mvp-mode.md": {
-    "mtime": 1791164276.5902245,
+    "mtime": 1791720078.6489944,
     "ast_hash": "eefed68b8363a5ed5549a39c0ae2d87c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/workstream-flag.md": {
-    "mtime": 1791164276.591828,
+    "mtime": 1791720078.6626885,
     "ast_hash": "d6d5e69ae1c7cadfbe86761784231c5b",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/references/worktree-path-safety.md": {
-    "mtime": 1791164276.5934057,
+    "mtime": 1791720078.677616,
     "ast_hash": "3f3e4a712e8c621a5ab521777eeaff57",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/AI-SPEC.md": {
-    "mtime": 1791164276.5949967,
+    "mtime": 1791720078.6925957,
     "ast_hash": "0ab79950242382045f28abcd5ec83574",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/DEBUG.md": {
-    "mtime": 1791164276.6188033,
+    "mtime": 1791720078.706365,
     "ast_hash": "08713c826dfe28859fc31914b6ebd88c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/README.md": {
-    "mtime": 1791164276.6314797,
+    "mtime": 1791720078.721039,
     "ast_hash": "7003240c336dfe7512b85a9a8fbcd55a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/SECURITY.md": {
-    "mtime": 1791164276.6513462,
+    "mtime": 1791720078.7330985,
     "ast_hash": "64605cb6290f899ca25ef14d1292362a",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/UAT.md": {
-    "mtime": 1791164276.6622372,
+    "mtime": 1791720078.7467995,
     "ast_hash": "e9b49d4a147f83dfafa63c0364745322",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/UI-SPEC.md": {
-    "mtime": 1791164276.6638885,
+    "mtime": 1791720078.7587883,
     "ast_hash": "930a095bf33dc86ff1a7061d75cdfb50",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/VALIDATION.md": {
-    "mtime": 1791164276.6671069,
+    "mtime": 1791720078.7695043,
     "ast_hash": "ee97c07d58d6b36fe18d8324b6eeffbb",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/claude-md.md": {
-    "mtime": 1791164276.5949967,
+    "mtime": 1791720078.7831256,
     "ast_hash": "f88ae6da2777aa1957fb72ac40833a40",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/architecture.md": {
-    "mtime": 1791164276.5982206,
+    "mtime": 1791720078.795688,
     "ast_hash": "23435aaeb010beb6ae6fc755e45d39ce",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/concerns.md": {
-    "mtime": 1791164276.5997496,
+    "mtime": 1791720078.799688,
     "ast_hash": "e8af74fbb1f3309787d7dcc57ab0a778",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/conventions.md": {
-    "mtime": 1791164276.5997496,
+    "mtime": 1791720078.8106923,
     "ast_hash": "fbcde42d4bef44b733ca1892594d15c5",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/integrations.md": {
-    "mtime": 1791164276.6015947,
+    "mtime": 1791720078.820837,
     "ast_hash": "c694a44b1deec3b330b2fe8645714f01",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/stack.md": {
-    "mtime": 1791164276.603204,
+    "mtime": 1791720078.8317869,
     "ast_hash": "c40325c57d64687fe4c98cd6fc4a3c37",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/structure.md": {
-    "mtime": 1791164276.6064253,
+    "mtime": 1791720078.8421886,
     "ast_hash": "4cc4e2033ebee3ba4d4946f68e4a4a4c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/codebase/testing.md": {
-    "mtime": 1791164276.608209,
+    "mtime": 1791720078.8525405,
     "ast_hash": "e5a40b1bec56be80320d9e608c691bfc",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/context.md": {
-    "mtime": 1791164276.6113787,
+    "mtime": 1791720078.8661172,
     "ast_hash": "f86897e59511e490b1c975feebf13db2",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/continue-here.md": {
-    "mtime": 1791164276.6140764,
+    "mtime": 1791720078.8766282,
     "ast_hash": "256ce64f58f20a6eb321d1cb21bb98a0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/copilot-instructions.md": {
-    "mtime": 1791164276.6155944,
+    "mtime": 1791720078.8893218,
     "ast_hash": "4e6a050254c311cebfca583486c5beda",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/debug-subagent-prompt.md": {
-    "mtime": 1791164276.6172028,
+    "mtime": 1791720078.898961,
     "ast_hash": "8c10b65ab3c6d19d6fb888427e262c75",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/dev-preferences.md": {
-    "mtime": 1791164276.6207912,
+    "mtime": 1791720078.912248,
     "ast_hash": "cf5bc2eaf510aa1cb172f1c502e0aea3",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/discovery.md": {
-    "mtime": 1791164276.6219096,
+    "mtime": 1791720078.922533,
     "ast_hash": "74d6d97bb00cfecd08222852a1f94a5c",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/discussion-log.md": {
-    "mtime": 1791164276.6235425,
+    "mtime": 1791720078.9341364,
     "ast_hash": "a922e689da9c9cfd066f669ac8ccf535",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/milestone-archive.md": {
-    "mtime": 1791164276.6251328,
+    "mtime": 1791720078.9425461,
     "ast_hash": "a759279ad2a49734fcd82a45711894a0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/milestone.md": {
-    "mtime": 1791164276.6251328,
+    "mtime": 1791720078.9889934,
     "ast_hash": "b20716b1e1da302be2d0b8cfd4dbdb5e",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/phase-prompt.md": {
-    "mtime": 1791164276.6282861,
+    "mtime": 1791720079.006987,
     "ast_hash": "87775662ac986134e072e103a1de68a5",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/planner-subagent-prompt.md": {
-    "mtime": 1791164276.6298835,
+    "mtime": 1791720079.0173988,
     "ast_hash": "e92bae95a8580395ae9e00b458d5924d",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/project.md": {
-    "mtime": 1791164276.6298835,
+    "mtime": 1791720079.0354989,
     "ast_hash": "ba7b02a744dac68039b09f76fdec0181",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/requirements.md": {
-    "mtime": 1791164276.6330755,
+    "mtime": 1791720079.0486765,
     "ast_hash": "f39090383488bb7aea544e23636ec0f1",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research-project/ARCHITECTURE.md": {
-    "mtime": 1791164276.6346588,
+    "mtime": 1791720079.057464,
     "ast_hash": "6f6bf6a3c0188f10c66ec1bc8229cbca",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research-project/FEATURES.md": {
-    "mtime": 1791164276.6362436,
+    "mtime": 1791720079.0695758,
     "ast_hash": "103fff43971197daf7058be920bc1043",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research-project/PITFALLS.md": {
-    "mtime": 1791164276.6362436,
+    "mtime": 1791720079.0795546,
     "ast_hash": "e1f706c67be8af540d112af87b9c33ec",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research-project/STACK.md": {
-    "mtime": 1791164276.6379244,
+    "mtime": 1791720079.0895479,
     "ast_hash": "e32fc804a53f4fc30159c73d2ad9e2d0",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research-project/SUMMARY.md": {
-    "mtime": 1791164276.6411338,
+    "mtime": 1791720079.1004448,
     "ast_hash": "ea03f2174e1f153abe2c6a7aad7533b2",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/research.md": {
-    "mtime": 1791164276.6427336,
+    "mtime": 1791720079.1111808,
     "ast_hash": "a28bfbddc99a1ade68600974f6876a73",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/retrospective.md": {
-    "mtime": 1791164276.6462998,
+    "mtime": 1791720079.123274,
     "ast_hash": "1a474528181133c5a14aec824e80c8e5",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/roadmap.md": {
-    "mtime": 1791164276.6503375,
+    "mtime": 1791720079.1348858,
     "ast_hash": "fae2a3fb14521b1fc8449d0c638b67e4",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/spec.md": {
-    "mtime": 1791164276.6542542,
+    "mtime": 1791720079.1465647,
     "ast_hash": "a8576061692c09747187ae5e4dca6b72",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/state.md": {
-    "mtime": 1791164276.6558473,
+    "mtime": 1791720079.1581018,
     "ast_hash": "e6aeecbe14e255f1aa90584677ead4f7",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/summary-complex.md": {
-    "mtime": 1791164276.657437,
+    "mtime": 1791720079.1747224,
     "ast_hash": "01aceb8974027c7f4b755a55e5760285",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/summary-minimal.md": {
-    "mtime": 1791164276.657437,
+    "mtime": 1791720079.1916993,
     "ast_hash": "f7c860cbc0aaad533940446d39698dd8",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/summary-standard.md": {
-    "mtime": 1791164276.659048,
+    "mtime": 1791720079.2032454,
     "ast_hash": "b0b04946212c0033b2e35d90e05fe175",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/summary.md": {
-    "mtime": 1791164276.6606538,
+    "mtime": 1791720079.2171922,
     "ast_hash": "68cb3982cf714393b92808056b5d7336",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/user-profile.md": {
-    "mtime": 1791164276.6638885,
+    "mtime": 1791720079.2275033,
     "ast_hash": "249af30b48f99bae01299171aada4c66",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/user-setup.md": {
-    "mtime": 1791164276.6655145,
+    "mtime": 1791720079.2444386,
     "ast_hash": "5832ac7e6be53d4dc221c3d2d7c736ea",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/templates/verification-report.md": {
-    "mtime": 1791164276.6689098,
+    "mtime": 1791720079.2585173,
     "ast_hash": "b4ae4441458df24833e7ae0520bc3a1e",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/add-backlog.md": {
-    "mtime": 1791164276.6706982,
+    "mtime": 1791720079.2722354,
     "ast_hash": "efca6075b1d96af0aba507ac1a4c40bb",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/add-phase.md": {
-    "mtime": 1791164276.6706982,
+    "mtime": 1791720079.2835822,
     "ast_hash": "fcceac3bd9f6e6a32f6d30d31c4eed70",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/add-tests.md": {
-    "mtime": 1791164276.6723356,
+    "mtime": 1791720079.2977505,
     "ast_hash": "acef3f203d9ba1f1e4045bf4c5d8dc80",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/add-todo.md": {
-    "mtime": 1791164276.6739476,
+    "mtime": 1791720079.3105404,
     "ast_hash": "140e5cca47672b11dcf1fe2460b561fc",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/ai-integration-phase.md": {
-    "mtime": 1791164276.6757245,
+    "mtime": 1791720079.321437,
     "ast_hash": "d9500256846ac0d549cf5963bc509b17",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/analyze-dependencies.md": {
-    "mtime": 1791164276.6773171,
+    "mtime": 1791720079.324451,
     "ast_hash": "db3d9c96a55aaeab3fc11cf3e7b3cd6f",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/audit-fix.md": {
-    "mtime": 1791164276.6773171,
+    "mtime": 1791720079.335704,
     "ast_hash": "cd3fe592e3bd976af421ffff2dd36b14",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/audit-milestone.md": {
-    "mtime": 1791164276.6789002,
+    "mtime": 1791720079.346215,
     "ast_hash": "0dd2cdf3274a857a661ccabe5ed62f37",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/audit-uat.md": {
-    "mtime": 1791164276.6789002,
+    "mtime": 1791720079.3709407,
     "ast_hash": "898bb064b8b7d61193b88fb349e8e49d",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/autonomous.md": {
-    "mtime": 1791164276.6804967,
+    "mtime": 1791720079.3800583,
     "ast_hash": "f53e6c8ab96a7fc72f0a79bb4cb159f2",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/check-todos.md": {
-    "mtime": 1791164276.6820977,
+    "mtime": 1791720079.3908856,
     "ast_hash": "0e8f3ec946280e2ba03f5f3439bd7b93",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/cleanup.md": {
-    "mtime": 1791164276.6845984,
+    "mtime": 1791720079.398803,
     "ast_hash": "ed3363bf36095cfab1eca25df2a5233e",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/code-review-fix.md": {
-    "mtime": 1791164276.6856053,
+    "mtime": 1791720079.408492,
     "ast_hash": "6d485eac53adc7f149a367c01688a008",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/code-review.md": {
-    "mtime": 1791164276.687184,
+    "mtime": 1791720079.4178863,
     "ast_hash": "e50ce34b2f224a85a0b319324ddd5457",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/complete-milestone.md": {
-    "mtime": 1791164276.687184,
+    "mtime": 1791720079.4272337,
     "ast_hash": "ead26f4f9feffe056a9560476cc2df22",
     "semantic_hash": ""
   },
   ".agents/get-shit-done/workflows/debug.md": {
-    "mtime": 1791164276.689498,
+    "mtime": 1791720079.439006,
     "ast_hash": "d11316f127738a7a6423c8b84e04df9d",
     "semantic_hash": ""
   },
@@ -11363,8 +11363,8 @@
     "semantic_hash": ""
   },
   "ML model Summary.md": {
-    "mtime": 1791426289.1145015,
-    "ast_hash": "aa138005312898f5bea0fb52c8f39755",
+    "mtime": 1791825187.4065554,
+    "ast_hash": "e6206c592f7316f0bc73041dcb264b04",
     "semantic_hash": ""
   },
   "Plugins/get-shit-done/.changeset/2937-statusline-context-position.md": {
@@ -19053,8 +19053,8 @@
     "semantic_hash": ""
   },
   "src/pages/PatientProfilePage.tsx": {
-    "mtime": 1791698124.3667934,
-    "ast_hash": "9eecb54ed62fbc316188f2702bc859d2",
+    "mtime": 1791828007.0402367,
+    "ast_hash": "78d7cae3318ddcf581211bab37bdb648",
     "semantic_hash": ""
   },
   "src/routes/assessment.tsx": {
@@ -19095,6 +19095,166 @@
   "cardiac_ml_studio/src/generate_paper_graphs.py": {
     "mtime": 1791811777.706301,
     "ast_hash": "a879c6bb8de08e4a04e18dc2d186057e",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/catboost_info/catboost_training.json": {
+    "mtime": 1791823675.6217494,
+    "ast_hash": "0dee7ee1e554139d57fd0dde2d8b5ba1",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/models/heart_failure_sota_features.json": {
+    "mtime": 1791823683.97991,
+    "ast_hash": "18a1fd95a1135d2d70e36868d6a9837a",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_deep_learning_metrics.json": {
+    "mtime": 1791825082.5975907,
+    "ast_hash": "62b2c9a05ddc0a261094aeadf8841ca2",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_tabular/sota_tabular_metrics.json": {
+    "mtime": 1791823683.9809172,
+    "ast_hash": "a27ab764e6fd6a7e921e60305a0e6fb9",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/catboost_info/catboost_training.json": {
+    "mtime": 1791823718.5865452,
+    "ast_hash": "9f0bd145302e51f443da809f6334be0d",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/ecg_gradcam.py": {
+    "mtime": 1791823898.3953502,
+    "ast_hash": "76d0e0c3ace93c8ebb1a7a9f4152e92b",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/generate_sota_graphs.py": {
+    "mtime": 1791824048.345489,
+    "ast_hash": "728641341773e9171d8fa92f1cc83c06",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/multimodal_fusion.py": {
+    "mtime": 1791823962.0603383,
+    "ast_hash": "3e663ade19d98766a6dcdecc08e05656",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/sensor_sqi_engine.py": {
+    "mtime": 1791823767.1017902,
+    "ast_hash": "480fbdc84c2b38ac2cdf1cee4610a3c1",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/train_sota_ecg_dl.py": {
+    "mtime": 1791823834.0408988,
+    "ast_hash": "8713d2daec66b15413f640f13caabc1b",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/train_sota_heart_failure.py": {
+    "mtime": 1791823629.3542724,
+    "ast_hash": "97df3cb5ca30e7e1a51d8ee7c63a995d",
+    "semantic_hash": ""
+  },
+  "vercel.json": {
+    "mtime": 1791740263.1164348,
+    "ast_hash": "d46358787266ea3528dd882b4aa53d83",
+    "semantic_hash": ""
+  },
+  "graphify-out/converted/Ear_to_Heart_RP_backup_92eaf31d.md": {
+    "mtime": 1791825226.822628,
+    "ast_hash": "2dd25a72910297386d32c758e489522c",
+    "semantic_hash": ""
+  },
+  "graphify-out/converted/Ear_to_Heart_RP_eee0f54f.md": {
+    "mtime": 1791825226.5100634,
+    "ast_hash": "3d64e48c5697b0e0070588e796c66574",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/paper_figures/fig1_disease_models_benchmark.png": {
+    "mtime": 1791811809.8655014,
+    "ast_hash": "61e5c1d4ca039758d76455c510ab5faa",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/paper_figures/fig2_ptbxl_1dcnn_evaluation.png": {
+    "mtime": 1791811810.3905635,
+    "ast_hash": "91cc38b5a72a3ae67af20f101446938a",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/paper_figures/fig3_xgboost_confusion_matrices.png": {
+    "mtime": 1791811811.4513824,
+    "ast_hash": "bceb63264072855bc635685718327a2a",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/paper_figures/fig4_heart_failure_confusion_matrix.png": {
+    "mtime": 1791811811.9043493,
+    "ast_hash": "7968aa99515c7c2d36e82cc39a13b127",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/paper_figures/fig5_radar_metrics_profile.png": {
+    "mtime": 1791811812.384747,
+    "ast_hash": "bb06cac0c3e476cc9f147bc21f44656a",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig1_sota_roc_curves.png": {
+    "mtime": 1791823683.1033347,
+    "ast_hash": "38094f75b21a55d91f934e1fa4cf4902",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig1_tabular_sota_benchmark.png": {
+    "mtime": 1791824070.2847195,
+    "ast_hash": "3d339ab71759bfe1486a57e4b64f36de",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig1b_sota_confusion_matrix.png": {
+    "mtime": 1791823683.6440966,
+    "ast_hash": "9bd7b2870b860367beefe7811e8d511a",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig2_sensor_sqi_telemetry.png": {
+    "mtime": 1791824071.4101737,
+    "ast_hash": "ab143b3260e970bd8eb00a388e68bc20",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig2_shap_clinical_importance.png": {
+    "mtime": 1791823682.404608,
+    "ast_hash": "8eb394c9452e43eb34dd3b5eb64cce0f",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig3_gradcam_waveform_attribution.png": {
+    "mtime": 1791824077.396829,
+    "ast_hash": "6450d32ef9c3a54034c0012d5fe42d4b",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig4_deep_learning_ecg_multilabel.png": {
+    "mtime": 1791824078.1011672,
+    "ast_hash": "bd4359b3aef37170373aee63337338f5",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/results/sota_figures/fig5_multimodal_fusion_advantage.png": {
+    "mtime": 1791824078.8071835,
+    "ast_hash": "f8671dbe8cfddc80db563f5647bef22f",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/conformal_uncertainty.py": {
+    "mtime": 1791827457.6548433,
+    "ast_hash": "f9f138d308954e53967a956cd5b82b43",
+    "semantic_hash": ""
+  },
+  "cardiac_ml_studio/src/patient_history_service.py": {
+    "mtime": 1791827547.654776,
+    "ast_hash": "f21f43f2799698f0d87df5c6abd1c70e",
+    "semantic_hash": ""
+  },
+  "src/components/dashboard/reports/ClinicalReportModal.tsx": {
+    "mtime": 1791827293.428395,
+    "ast_hash": "99675537012a43e90f09bca0b5a09fd8",
+    "semantic_hash": ""
+  },
+  "src/components/dashboard/reports/LongitudinalTrajectoryPanel.tsx": {
+    "mtime": 1791827975.8717997,
+    "ast_hash": "aa5500732d8ae3c81b85362b5d514db6",
+    "semantic_hash": ""
+  },
+  "src/services/analysis/edgeOfflineEngine.ts": {
+    "mtime": 1791827617.8015347,
+    "ast_hash": "920c5a55597fd906b10bfddc318e280d",
     "semantic_hash": ""
   }
 }
