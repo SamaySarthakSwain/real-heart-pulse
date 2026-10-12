@@ -127,6 +127,26 @@ We have currently utilized **5 distinct datasets** to train various ML and DL mo
 
 ---
 
+
+
+### SOTA Heart Failure Stacking Super Learner (RF + XGB + CatBoost + LightGBM)
+- **Concept / Architecture:** 5-Fold Stacking Ensemble with Logistic Regression Meta-Learner, Domain Feature Engineering & Pruning
+- **Dataset Used:** Heart Failure Prediction (Kaggle Multi-Cohort, 918 patients)
+
+#### Performance Metrics
+| Metric | Score |
+|---|---|
+| **Accuracy** | 0.8804 |
+| **ROC-AUC** | 0.9292 |
+| **F1-Score** | 0.8900 |
+| **Precision** | 0.9082 |
+| **Recall** | 0.8725 |
+- **Model Artifact:** `C:\Users\Lenovo\OneDrive\Desktop\Ear to Heart\real-heart-pulse\cardiac_ml_studio\src\..\models\heart_failure_sota_stacking.joblib` (Size: **7.10 MB** (7,448,216 B))
+
+*Optimal 16-feature pruned domain model with SHAP explanations, saved to models/heart_failure_sota_stacking.joblib*
+
+---
+
 ## 💾 Model Weights & Artifacts Storage Registry
 
 All trained model weights, checkpoints, and scalers are saved under the `cardiac_ml_studio/models/` directory:

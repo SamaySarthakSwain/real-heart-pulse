@@ -1,0 +1,20 @@
+{
+    "optimal_features": [
+        "ST_Slope",
+        "ST_Chest_Interaction",
+        "ChestPainType",
+        "Stress_Index",
+        "ExerciseAngina",
+        "HR_Ratio",
+        "Cholesterol_Age_Ratio",
+        "Oldpeak",
+        "Cholesterol",
+        "MaxHR",
+        "Age",
+        "RPP",
+        "RestingBP",
+        "PulsePressure",
+        "Sex",
+        "FastingBS"
+    ]
+}
