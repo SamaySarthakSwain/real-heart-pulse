@@ -1,0 +1,69 @@
+# Ear to Heart Research Workspace Configuration Template
+# System: Ear to Heart (VitalStream Biomedical Telemetry & AI Diagnostic System)
+# Repository: https://github.com/SamaySarthakSwain/real-heart-pulse
+
+project:
+  name: "Ear to Heart"
+  subtitle: "Ear-Centric Multimodal Physiological Monitoring & Cardiac Screening System"
+  version: "1.0.0"
+  git_branch: "research-paper-workspace"
+  repository_url: "https://github.com/SamaySarthakSwain/real-heart-pulse"
+  lead_authors:
+    - name: "Samay Sarthak Swain"
+      role: "Lead Investigator & Architect"
+      affiliation: "Biomedical Engineering & AI Research"
+      email: "samaysarthakswain@gmail.com"
+
+publication:
+  target_venue: "IEEE Transactions on Biomedical Engineering"
+  alternate_venues:
+    - "IEEE Journal of Biomedical and Health Informatics"
+    - "Computers in Biology and Medicine"
+    - "Nature Digital Medicine"
+  manuscript_format: "IEEEtran"
+  citation_style: "IEEE"
+  max_pages: 12
+  color_palette: "viridis"
+  dpi_target: 600
+
+hardware:
+  mcu: "Espressif ESP32 Dev Module (240 MHz Dual Core)"
+  ecg_sensor: "Analog Devices AD8232 (Single-Lead, Lead-II orientation)"
+  ppg_sensor: "Maxim Integrated MAX30102 (Red: 660nm, IR: 880nm)"
+  imu_sensor: "Bosch Sensortec BMI323 (6-DoF Accelerometer + Gyroscope)"
+  temp_sensor: "Texas Instruments LM35 (Analog Celsius)"
+  display: "Solomon Systech SSD1306 (128x64 OLED)"
+  baud_rate: 115200
+  websocket_port: 81
+
+machine_learning:
+  random_seed: 42
+  cuda_device: "cuda:0"
+  conformal_alpha: 0.05
+  imu_motion_gating_threshold_g: 1.4
+  ecg_sampling_rate_hz: 100
+  ecg_window_seconds: 10
+  sqi_min_kurtosis: 4.0
+  ppg_min_perfusion_index: 0.2
+
+datasets:
+  clinical_cohort_size: 113449
+  registries:
+    - name: "Cardiovascular Disease 70k"
+      source: "European Cardiovascular Study"
+      records: 68601
+    - name: "PhysioNet MIT-BIH Arrhythmia"
+      source: "PhysioNet (mitdb)"
+      records: 35449
+    - name: "Framingham Heart Study"
+      source: "Framingham Longitudinal Cohort"
+      records: 4238
+    - name: "Population Stroke Registry"
+      source: "Clinical Stroke Database"
+      records: 5110
+    - name: "Heart Failure Multi-Center"
+      source: "Combined UCI/FedCS Cohort"
+      records: 918
+    - name: "PTB-XL Diagnostic ECG"
+      source: "PhysioNet PTB-XL"
+      records: 21801
