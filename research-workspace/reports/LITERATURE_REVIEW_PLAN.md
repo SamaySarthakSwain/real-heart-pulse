@@ -135,14 +135,15 @@ The following foundational literature has been verified and cataloged for direct
 | **`[Wagner2020]`** | Wagner, P., et al. (2020) | *PTB-XL, a large publicly available electrocardiography dataset* | Nature Scientific Data | `10.1038/s41597-020-0495-6` | PTB-XL ECG Database Benchmark |
 | **`[Moody2001]`** | Moody, G. B., & Mark, R. G. (2001) | *The impact of the MIT-BIH Arrhythmia Database* | IEEE Eng. Med. Biol. Mag. | `10.1109/51.932724` | PhysioNet MIT-BIH Arrhythmia Standard |
 | **`[Allen2007]`** | Allen, J. (2007) | *Photoplethysmography and its application in clinical physiological measurement* | Physiological Measurement | `10.1088/0967-3334/28/3/R01` | Optical PPG & Vascular Physiology |
-| **`[He2015]`** | He, D., et al. (2015) | *Ear-lead ECG: Novel method for wearable health monitoring* | IEEE Trans. Biomed. Eng. | `10.1109/TBME.2015.2424161` | Ear Biopotential Acquisition |
-| **`[Lo2016]`** | Lo, B., et al. (2016) | *In-ear cardiac monitoring using multimodal sensors* | IEEE J. Biomed. Health Inform. | `10.1109/JBHI.2016.2588537` | In-Ear ECG/PPG Sensor Fusion |
+| **`[Goverdovsky2017]`** | Goverdovsky, V., et al. (2017) | *Hearables: Multimodal physiological in-ear sensing* | Nature Scientific Reports | `10.1038/s41598-017-06925-2` | In-Ear Multimodal Physiological Sensing |
+| **`[vonRosenberg2017]`** | von Rosenberg, W., et al. (2017) | *Hearables: feasibility of recording cardiac rhythms from head and in-ear locations* | Royal Society Open Science | `10.1098/rsos.171214` | In-Ear ECG Cardiac Rhythm Feasibility |
+| **`[Celik2017]`** | Celik, N., Savi, P., & Civera, P. (2017) | *Wearable mobile ear-based ECG monitoring device using graphene-coated sensors* | IEEE SENSORS | `10.1109/ICSENS.2017.8233911` | Ear-ECG Sensor Hardware |
 | **`[Clifford2012]`** | Clifford, G. D., et al. (2012) | *Signal quality indices and data fusion for determining clinical acceptability of electrocardiograms* | Physiological Measurement | `10.1088/0967-3334/33/9/1419` | Statistical ECG SQI Framework |
 | **`[Elgendi2016]`** | Elgendi, M. (2016) | *Optimal signal quality index for photoplethysmogram signals* | Bioengineering | `10.3390/bioengineering3040021` | PPG Perfusion & Morphology SQI |
 | **`[Hu2018]`** | Hu, J., Shen, L., & Sun, G. (2018) | *Squeeze-and-Excitation Networks* | IEEE/CVF CVPR | `10.1109/CVPR.2018.00751` | Channel Attention & Recalibration |
-| **`[Angelopoulos2021]`** | Angelopoulos, A. N., & Bates, S. (2021) | *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification* | arXiv Preprint | `arXiv:2107.07511` | Finite-Sample Mathematical Guarantees |
-| **`[Selvaraju2017]`** | Selvaraju, R. R., et al. (2017) | *Grad-CAM: Visual Explanations from Deep Networks via Gradient-Based Localization* | IEEE/CVF ICCV | `10.1109/ICCV.2017.74` | Gradient-Weighted Saliency |
-| **`[Kannel1976]`** | Kannel, W. B., et al. (1976) | *A general cardiovascular risk profile: The Framingham Study* | American Journal of Cardiology | `10.1016/0002-9149(76)90351-4` | Longitudinal Cardiovascular Epidemiology |
+| **`[Angelopoulos2021]`** | Angelopoulos, A. N., & Bates, S. (2021) | *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification* | arXiv / DataCite | `10.48550/arXiv.2107.07511` | Finite-Sample Mathematical Guarantees |
+| **`[Pan1985]`** | Pan, J., & Tompkins, W. J. (1985) | *A real-time QRS detection algorithm* | IEEE Trans. Biomed. Eng. | `10.1109/TBME.1985.325532` | Standard QRS Peak Detection |
+| **`[Kannel1976]`** | Kannel, W. B., et al. (1976) | *A general cardiovascular risk profile: The Framingham Study* | American Journal of Cardiology | `10.1016/0002-9149(76)90061-8` | Longitudinal Cardiovascular Epidemiology |
 | **`[Pan1985]`** | Pan, J., & Tompkins, W. J. (1985) | *A real-time QRS detection algorithm* | IEEE Trans. Biomed. Eng. | `10.1109/TBME.1985.325532` | Standard QRS Peak Detection |
 
 ---
