@@ -154,8 +154,8 @@ const int PULSE_WIDTH = 411;
 
 const int ADC_RANGE = 4096;
 
-// Finger detection threshold
-const uint32_t FINGER_THRESHOLD = 20000;
+// Finger detection threshold (calibrated for ADC_RANGE 4096: ambient is ~30, finger contact is >800)
+const uint32_t FINGER_THRESHOLD = 400;
 
 // ================================================================
 // MAXIM HR + SPO2 BUFFER

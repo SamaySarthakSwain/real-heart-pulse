@@ -58,8 +58,8 @@ function Divider() {
 export function Dashboard() {
   const s = useSensorStore();
   const live = s.connectionState === "CONNECTED";
-  const ecgLive = useFreshness(s.lastEcgTime) && live && !s.ecgLeadOff;
-  const ppgLive = useFreshness(s.lastPpgTime) && live && s.fingerPresent;
+  const ecgLive = useFreshness(s.lastEcgTime, 4000) && live && !s.ecgLeadOff;
+  const ppgLive = useFreshness(s.lastPpgTime, 4000) && live && s.fingerPresent;
   const bpmFresh = useFreshness(s.lastBpmTime, 8000) && live && s.fingerPresent;
   const spo2Fresh = useFreshness(s.lastSpo2Time, 8000) && live && s.fingerPresent;
   const tempFresh = useFreshness(s.lastTemperatureTime, 8000) && live;
@@ -188,8 +188,8 @@ export function Dashboard() {
                 </StatusPill>
               </header>
               <p className="mt-4 font-mono text-lg tabular-nums font-bold text-signal-ir">
-                {s.fingerPresent && s.ppgIRCurrent !== null && s.ppgRedCurrent !== null
-                  ? `IR ${s.ppgIRCurrent} · RED ${s.ppgRedCurrent}`
+                {s.fingerPresent && (s.ppgIRCurrent !== null || s.ppgRedCurrent !== null)
+                  ? `IR ${s.ppgIRCurrent ?? "——"} · RED ${s.ppgRedCurrent ?? "——"}`
                   : "NO FINGER DETECTED"}
               </p>
               <p className="mt-3 font-mono text-xs text-muted-foreground/70">

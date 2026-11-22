@@ -356,11 +356,14 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     // -----------------------------------------------------------------
     // Physical contact verification: Finger detection & Leads-off gating
     // -----------------------------------------------------------------
+    // Calibrated for MAX30102: ambient room air is ~30 counts,
+    // while human finger contact is >= 400 counts (typically 1000 - 3500).
+    const rawOptical = packet.ppgIR ?? packet.ppgRed;
     const hasFinger =
-      packet.fingerPresent !== undefined
-        ? packet.fingerPresent
-        : packet.ppgIR !== undefined
-          ? packet.ppgIR >= 20000
+      rawOptical !== undefined
+        ? rawOptical >= 400
+        : packet.fingerPresent !== undefined
+          ? packet.fingerPresent
           : state.fingerPresent;
 
     patch.fingerPresent = hasFinger;
@@ -388,17 +391,25 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     }
 
     // PPG (MAX30102): gatekeep against absent finger / ambient light
-    if (hasFinger && packet.ppgIR !== undefined && packet.ppgIR >= 20000) {
-      buffers.ppgIR.push(packet.ppgIR, now);
-      recentPpgTimes.push(now);
-      patch.ppgIRCurrent = packet.ppgIR;
-      patch.ppgSamples = state.ppgSamples + 1;
-      patch.ppgSampleRate = rate(recentPpgTimes, now);
-      patch.lastPpgTime = now;
+    if (hasFinger && rawOptical !== undefined && rawOptical >= 400) {
+      if (packet.ppgIR !== undefined) {
+        buffers.ppgIR.push(packet.ppgIR, now);
+        recentPpgTimes.push(now);
+        patch.ppgIRCurrent = packet.ppgIR;
+        patch.ppgSamples = state.ppgSamples + 1;
+        patch.ppgSampleRate = rate(recentPpgTimes, now);
+        patch.lastPpgTime = now;
+      }
 
       if (packet.ppgRed !== undefined && packet.ppgRed > 0) {
         buffers.ppgRed.push(packet.ppgRed, now);
         patch.ppgRedCurrent = packet.ppgRed;
+        if (packet.ppgIR === undefined) {
+          recentPpgTimes.push(now);
+          patch.ppgSamples = state.ppgSamples + 1;
+          patch.ppgSampleRate = rate(recentPpgTimes, now);
+          patch.lastPpgTime = now;
+        }
       }
       if (packet.ppgWave !== undefined) {
         buffers.ppgWave.push(packet.ppgWave, now);

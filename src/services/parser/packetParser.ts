@@ -139,9 +139,9 @@ function assign(
   else if (field === "spo2") packet.spo2 = n * options.plotterScaleSpo2;
   else (packet as Record<string, number>)[field] = n;
 
-  // Infer finger presence if not explicitly tagged
-  if (field === "ppgIR" && packet.fingerPresent === undefined) {
-    packet.fingerPresent = n >= 20000;
+  // Infer finger presence from optical level (ambient is ~30, human tissue contact is >= 400)
+  if ((field === "ppgIR" || field === "ppgRed") && packet.fingerPresent === undefined) {
+    packet.fingerPresent = n >= 400;
   }
   return true;
 }
