@@ -378,7 +378,7 @@ export function Dashboard() {
             buffer={buffers.ppgIR}
             color="--signal-ir"
             label="PPG IR"
-            hasData={s.fingerPresent && ppgLive && s.ppgSamples > 0}
+            hasData={s.fingerPresent && (ppgLive || s.ppgIRCurrent !== null) && s.ppgSamples > 0}
             paused={s.paused}
             windowSeconds={s.settings.timeWindowSeconds}
             emptyMessage={
@@ -398,7 +398,7 @@ export function Dashboard() {
             buffer={buffers.ppgRed}
             color="--signal-red"
             label="PPG RED"
-            hasData={s.fingerPresent && ppgLive && s.ppgRedCurrent !== null}
+            hasData={s.fingerPresent && (ppgLive || s.ppgRedCurrent !== null) && s.ppgSamples > 0}
             paused={s.paused}
             windowSeconds={s.settings.timeWindowSeconds}
             emptyMessage={

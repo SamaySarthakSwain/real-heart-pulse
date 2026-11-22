@@ -358,13 +358,11 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     // -----------------------------------------------------------------
     // Calibrated for MAX30102: ambient room air is ~30 counts,
     // while human finger contact is >= 400 counts (typically 1000 - 3500).
-    const rawOptical = packet.ppgIR ?? packet.ppgRed;
+    const rawOptical = Math.max(packet.ppgIR ?? 0, packet.ppgRed ?? 0);
     const hasFinger =
-      rawOptical !== undefined
-        ? rawOptical >= 400
-        : packet.fingerPresent !== undefined
-          ? packet.fingerPresent
-          : state.fingerPresent;
+      packet.fingerPresent !== undefined
+        ? packet.fingerPresent
+        : rawOptical >= 400;
 
     patch.fingerPresent = hasFinger;
 
@@ -391,8 +389,8 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     }
 
     // PPG (MAX30102): gatekeep against absent finger / ambient light
-    if (hasFinger && rawOptical !== undefined && rawOptical >= 400) {
-      if (packet.ppgIR !== undefined) {
+    if (hasFinger && rawOptical >= 400) {
+      if (packet.ppgIR !== undefined && packet.ppgIR > 0) {
         buffers.ppgIR.push(packet.ppgIR, now);
         recentPpgTimes.push(now);
         patch.ppgIRCurrent = packet.ppgIR;
@@ -404,7 +402,7 @@ export const useSensorStore = create<SensorState>((set, get) => ({
       if (packet.ppgRed !== undefined && packet.ppgRed > 0) {
         buffers.ppgRed.push(packet.ppgRed, now);
         patch.ppgRedCurrent = packet.ppgRed;
-        if (packet.ppgIR === undefined) {
+        if (packet.ppgIR === undefined || packet.ppgIR === 0) {
           recentPpgTimes.push(now);
           patch.ppgSamples = state.ppgSamples + 1;
           patch.ppgSampleRate = rate(recentPpgTimes, now);
@@ -417,7 +415,8 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     } else {
       patch.ppgIRCurrent = null;
       patch.ppgRedCurrent = null;
-      if (!hasFinger) {
+      // Allow a 2.5s grace period for lastPpgTime so charts glide out smoothly
+      if (!hasFinger && now - (state.lastPpgTime ?? 0) > 2500) {
         patch.lastPpgTime = null;
       }
     }
