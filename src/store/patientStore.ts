@@ -5,6 +5,7 @@ import type {
   TestRecord,
   AuthCredentials,
   RegisterPatientPayload,
+  GoogleAuthPayload,
   AuthResult,
   PatientProfileData,
   PatientContactData,
@@ -28,6 +29,7 @@ interface PatientState {
   login: (patientId: string) => boolean;
   loginWithCredentials: (emailOrId: string) => boolean;
   authenticatePatient: (credentials: AuthCredentials) => Promise<AuthResult>;
+  loginWithGoogle: (payload: GoogleAuthPayload) => Promise<AuthResult>;
   registerPatientAccount: (payload: RegisterPatientPayload) => Promise<AuthResult>;
   requestPasswordReset: (email: string) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
@@ -378,6 +380,102 @@ export const usePatientStore = create<PatientState>()(
         return {
           success: true,
           patient: found,
+        };
+      },
+
+      loginWithGoogle: async (payload: GoogleAuthPayload) => {
+        // Realistic Google OAuth handshake & verification delay
+        await new Promise((r) => setTimeout(r, 600));
+
+        const emailClean = payload.email.trim().toLowerCase();
+        const usernamePrefix = emailClean.split("@")[0].replace(/[^a-zA-Z0-9_.-]/g, "");
+
+        // 1. Check if patient already exists by email or username
+        const existing = get().patients.find(
+          (p) =>
+            p.email.toLowerCase() === emailClean ||
+            (p.username && p.username.toLowerCase() === usernamePrefix)
+        );
+
+        if (existing) {
+          // If existing, ensure emailVerified is true and link avatar if available
+          const updatedPatient: Patient = {
+            ...existing,
+            contactData: {
+              ...existing.contactData,
+              email: existing.contactData?.email || emailClean,
+              emailVerified: true,
+              country: existing.contactData?.country || "India",
+              mobileNumber: existing.contactData?.mobileNumber || "",
+              countryCode: existing.contactData?.countryCode || "+91",
+              preferredCommunication: existing.contactData?.preferredCommunication || "Email",
+              preferredLanguage: existing.contactData?.preferredLanguage || "English",
+            },
+            profileData: {
+              ...existing.profileData,
+              fullName: existing.profileData?.fullName || existing.name,
+              gender: existing.profileData?.gender || existing.gender,
+              bloodGroup: existing.profileData?.bloodGroup || existing.bloodType,
+              profilePhoto: payload.avatar || existing.profileData?.profilePhoto,
+            },
+          };
+
+          set((s) => ({
+            patients: s.patients.map((p) => (p.id === existing.id ? updatedPatient : p)),
+            currentPatientId: existing.id,
+            rememberMe: true,
+          }));
+
+          return {
+            success: true,
+            patient: updatedPatient,
+          };
+        }
+
+        // 2. New patient registered via Google OAuth
+        const newPatientId = `PT-${Math.floor(10000 + Math.random() * 90000)}`;
+        const newPatient: Patient = {
+          id: newPatientId,
+          name: payload.name.trim() || "Google Patient",
+          age: 40,
+          gender: "Male",
+          email: emailClean,
+          username: usernamePrefix,
+          bloodType: "O+",
+          condition: "Google Connected • Baseline Telemetry Active",
+          createdAt: new Date().toISOString(),
+          hasCompletedAssessment: false,
+          profileData: {
+            fullName: payload.name.trim() || "Google Patient",
+            gender: "Male",
+            bloodGroup: "O+",
+            profilePhoto: payload.avatar,
+            updatedAt: new Date().toISOString(),
+          },
+          contactData: {
+            email: emailClean,
+            emailVerified: true,
+            mobileNumber: "",
+            countryCode: "+91",
+            country: "India",
+            preferredCommunication: "Email",
+            preferredLanguage: "English",
+          },
+        };
+
+        set((s) => ({
+          patients: [newPatient, ...s.patients],
+          currentPatientId: newPatientId,
+          rememberMe: true,
+          records: {
+            ...s.records,
+            [newPatientId]: [],
+          },
+        }));
+
+        return {
+          success: true,
+          patient: newPatient,
         };
       },
 

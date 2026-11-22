@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { User, AlertCircle, Loader2, ArrowRight, ShieldCheck, KeyRound } from "lucide-react";
 import { PasswordInput } from "./PasswordInput";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 import { usePatientStore } from "@/store/patientStore";
 
 interface LoginFormProps {
@@ -186,6 +187,23 @@ export function LoginForm({
           )}
         </button>
       </div>
+
+      {/* Social / Google Auth Divider */}
+      <div className="relative my-3 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+        </div>
+        <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
+          Or continue with
+        </div>
+      </div>
+
+      {/* Sign in with Google Button */}
+      <GoogleSignInButton
+        onSuccess={onSuccess}
+        mode="signin"
+        disabled={isLoading}
+      />
 
       {/* Discreet Demo Account Helper for testing convenience */}
       <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 p-2.5 text-[11px] text-[#667085] dark:text-slate-400">

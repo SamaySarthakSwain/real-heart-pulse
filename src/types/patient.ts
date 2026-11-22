@@ -141,6 +141,13 @@ export interface RegisterPatientPayload {
   patientId?: string | undefined; // Optional provider-issued patient ID
 }
 
+export interface GoogleAuthPayload {
+  name: string;
+  email: string;
+  avatar?: string | undefined;
+  googleId?: string | undefined;
+}
+
 export interface AuthResult {
   success: boolean;
   error?: string | undefined;

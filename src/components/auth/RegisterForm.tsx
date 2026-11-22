@@ -12,6 +12,7 @@ import {
   Info,
 } from "lucide-react";
 import { PasswordInput } from "./PasswordInput";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 import {
   validateEmail,
   validateUsername,
@@ -442,6 +443,23 @@ export function RegisterForm({ onNavigateToLogin, onSuccess }: RegisterFormProps
           )}
         </button>
       </div>
+
+      {/* Social / Google Auth Divider */}
+      <div className="relative my-3 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+        </div>
+        <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
+          Or continue with
+        </div>
+      </div>
+
+      {/* Sign up with Google Button */}
+      <GoogleSignInButton
+        onSuccess={onSuccess}
+        mode="signup"
+        disabled={isLoading}
+      />
 
       {/* Already have an account link */}
       <div className="pt-2 text-center text-xs text-[#667085] dark:text-slate-400 border-t border-slate-100 dark:border-slate-800">
