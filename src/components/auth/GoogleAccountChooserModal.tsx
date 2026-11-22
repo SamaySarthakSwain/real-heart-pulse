@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { GoogleIcon } from "./GoogleIcon";
 import { usePatientStore } from "@/store/patientStore";
-import { User, CheckCircle2, Loader2, Plus, ArrowRight, X, Shield } from "lucide-react";
+import { soundFx } from "@/services/audio/soundFx";
+import { User, CheckCircle2, Loader2, Plus, ArrowRight, X, Shield, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 interface GoogleAccount {
@@ -14,18 +15,18 @@ interface GoogleAccount {
 
 const PRESET_GOOGLE_ACCOUNTS: GoogleAccount[] = [
   {
+    name: "Samay Sarthak Swain",
+    email: "samaysarthakswain@gmail.com",
+    tag: "Primary Google Account • HEART",
+    avatarInitials: "SS",
+    avatarColor: "bg-teal-600",
+  },
+  {
     name: "Robert Chen",
     email: "robert.chen.medical@gmail.com",
     tag: "Patient ID: PT-10492",
     avatarInitials: "RC",
     avatarColor: "bg-blue-600",
-  },
-  {
-    name: "Dr. Aikya Sharma",
-    email: "aikya.biomedical@gmail.com",
-    tag: "Clinical Research Team",
-    avatarInitials: "AS",
-    avatarColor: "bg-emerald-600",
   },
 ];
 
@@ -56,6 +57,7 @@ export function GoogleAccountChooserModal({
   if (!isOpen) return null;
 
   const handleSelectAccount = async (account: { name: string; email: string }) => {
+    soundFx.playSatisfyingPop();
     setSelectedEmail(account.email);
     setIsSigningIn(true);
     try {
@@ -65,6 +67,7 @@ export function GoogleAccountChooserModal({
       });
 
       if (res.success && res.patient) {
+        soundFx.playSuccessChime();
         toast.success(`Signed in with Google as ${account.name}`, {
           description: `Connected to ${account.email}`,
         });

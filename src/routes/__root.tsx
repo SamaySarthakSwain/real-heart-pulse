@@ -154,6 +154,8 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         {/* Anti-FOUC: apply saved theme before any paint */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Google Identity Services SDK for Google Auth */}
+        <script src="https://accounts.google.com/gsi/client" async defer />
         <HeadContent />
       </head>
       <body>

@@ -69,7 +69,7 @@ export function LoginForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {/* Top Error Alert */}
       {errorMessage && (
         <div
@@ -83,6 +83,24 @@ export function LoginForm({
           </div>
         </div>
       )}
+
+      {/* ── Official Google Auth Authentication (Fast 1-Click Access) ── */}
+      <div className="space-y-3 pt-1">
+        <GoogleSignInButton
+          onSuccess={onSuccess}
+          mode="signin"
+          disabled={isLoading}
+        />
+
+        <div className="relative my-3.5 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+          </div>
+          <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
+            Or sign in with email & password
+          </div>
+        </div>
+      </div>
 
       {/* Field 1: Identifier */}
       <div className="space-y-1.5">
@@ -187,23 +205,6 @@ export function LoginForm({
           )}
         </button>
       </div>
-
-      {/* Social / Google Auth Divider */}
-      <div className="relative my-3 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-200 dark:border-slate-800" />
-        </div>
-        <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
-          Or continue with
-        </div>
-      </div>
-
-      {/* Sign in with Google Button */}
-      <GoogleSignInButton
-        onSuccess={onSuccess}
-        mode="signin"
-        disabled={isLoading}
-      />
 
       {/* Discreet Demo Account Helper for testing convenience */}
       <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 p-2.5 text-[11px] text-[#667085] dark:text-slate-400">

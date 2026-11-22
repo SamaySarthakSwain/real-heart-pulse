@@ -125,6 +125,24 @@ export function RegisterForm({ onNavigateToLogin, onSuccess }: RegisterFormProps
         </div>
       )}
 
+      {/* ── Official Google Auth (1-Click Patient Sign Up) ── */}
+      <div className="space-y-3 pt-1">
+        <GoogleSignInButton
+          onSuccess={onSuccess}
+          mode="signup"
+          disabled={isLoading}
+        />
+
+        <div className="relative my-3.5 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+          </div>
+          <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
+            Or create account manually
+          </div>
+        </div>
+      </div>
+
       {/* Field 1: Full Name */}
       <div className="space-y-1">
         <label
@@ -443,23 +461,6 @@ export function RegisterForm({ onNavigateToLogin, onSuccess }: RegisterFormProps
           )}
         </button>
       </div>
-
-      {/* Social / Google Auth Divider */}
-      <div className="relative my-3 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-200 dark:border-slate-800" />
-        </div>
-        <div className="relative bg-white dark:bg-[#142033] px-3 text-[11px] font-medium uppercase tracking-wider text-[#667085] dark:text-slate-400">
-          Or continue with
-        </div>
-      </div>
-
-      {/* Sign up with Google Button */}
-      <GoogleSignInButton
-        onSuccess={onSuccess}
-        mode="signup"
-        disabled={isLoading}
-      />
 
       {/* Already have an account link */}
       <div className="pt-2 text-center text-xs text-[#667085] dark:text-slate-400 border-t border-slate-100 dark:border-slate-800">
