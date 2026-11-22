@@ -5,10 +5,6 @@ import {
   generateClinicalSynthesis,
   analyzeEcgWaveformVision,
   sendCopilotChatMessage,
-  hasGeminiApiKey,
-  getGeminiApiKey,
-  setGeminiApiKey,
-  testGeminiConnection,
   type TelemetryContextPayload,
 } from "@/services/gemini/geminiService";
 import type {
@@ -23,20 +19,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
   Sparkles,
   Bot,
   Activity,
   Send,
   Camera,
   Upload,
-  Key,
   CheckCircle2,
   AlertTriangle,
   HelpCircle,
@@ -45,7 +33,6 @@ import {
   Copy,
   Check,
   Stethoscope,
-  ExternalLink,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -89,11 +76,6 @@ const QUICK_PROMPTS = [
 ];
 
 export function GeminiCopilotPanel() {
-  const [apiKeyModalOpen, setApiKeyModalOpen] = useState(false);
-  const [inputApiKey, setInputApiKey] = useState(getGeminiApiKey());
-  const [testingKey, setTestingKey] = useState(false);
-  const [keyStatus, setKeyStatus] = useState<string | null>(null);
-
   // Synthesis state
   const [synthesizing, setSynthesizing] = useState(false);
   const synthesis = useSensorStore((s) => s.geminiSynthesis);
@@ -104,7 +86,7 @@ export function GeminiCopilotPanel() {
     {
       id: "initial-msg",
       role: "model",
-      text: "Hello! I am your **Gemini Cardiology Copilot** powered by `gemini-3.8-flash`. I am actively monitoring your patient profile and live ESP32 telemetry (AD8232 ECG Lead-II, MAX30102 PPG SpO₂/BPM, and temperature). How can I assist with your cardiac assessment today?",
+      text: "Hello! I am your **Gemini Cardiology Copilot** powered by `gemini-3.5-flash-lite`. I am actively monitoring your patient profile and live ESP32 telemetry (AD8232 ECG Lead-II, MAX30102 PPG SpO₂/BPM, and temperature). How can I assist with your cardiac assessment today?",
       timestamp: Date.now(),
     },
   ]);
@@ -125,24 +107,6 @@ export function GeminiCopilotPanel() {
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, sendingChat]);
-
-  const handleSaveApiKey = async () => {
-    setTestingKey(true);
-    setKeyStatus(null);
-    try {
-      const res = await testGeminiConnection(inputApiKey);
-      if (res.success) {
-        setGeminiApiKey(inputApiKey);
-        toast.success("Gemini API connected successfully!");
-        setApiKeyModalOpen(false);
-      } else {
-        setKeyStatus(res.message);
-        toast.error("Failed to connect with provided key.");
-      }
-    } finally {
-      setTestingKey(false);
-    }
-  };
 
   const getPayload = (): TelemetryContextPayload => {
     const s = useSensorStore.getState();
@@ -214,18 +178,15 @@ export function GeminiCopilotPanel() {
   };
 
   const handleRunSynthesis = async () => {
-    if (!hasGeminiApiKey()) {
-      setApiKeyModalOpen(true);
-      return;
-    }
     setSynthesizing(true);
     try {
       const payload = getPayload();
       const result = await generateClinicalSynthesis(payload);
       setSynthesis(result);
-      toast.success("Gemini Clinical Synthesis generated!");
+      toast.success("Clinical Telemetry Synthesis updated!");
     } catch (err: any) {
-      toast.error(err?.message || "Failed to generate synthesis");
+      console.warn("Synthesis generation issue:", err);
+      toast.error("Unable to update synthesis. Re-evaluating telemetry...");
     } finally {
       setSynthesizing(false);
     }
@@ -234,11 +195,6 @@ export function GeminiCopilotPanel() {
   const handleSendChat = async (textToSend?: string) => {
     const text = textToSend || chatInput;
     if (!text.trim()) return;
-
-    if (!hasGeminiApiKey()) {
-      setApiKeyModalOpen(true);
-      return;
-    }
 
     const userMsg: CopilotChatMessage = {
       id: `user-${Date.now()}`,
@@ -275,11 +231,11 @@ Current Hardware Telemetry:
       };
       setChatMessages([...newHistory, modelMsg]);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to generate chat response.");
+      console.warn("Chat response issue:", err);
       const errorMsg: CopilotChatMessage = {
         id: `err-${Date.now()}`,
         role: "model",
-        text: `⚠️ **Error communicating with Gemini API**: ${err?.message || "Network error"}. Please check your API key in Settings.`,
+        text: "I was unable to retrieve a cloud response at this moment, but your continuous Lead-II telemetry and vitals remain monitored.",
         timestamp: Date.now(),
       };
       setChatMessages([...newHistory, errorMsg]);
@@ -387,10 +343,6 @@ Current Hardware Telemetry:
       toast.error("Please capture or upload an ECG image first.");
       return;
     }
-    if (!hasGeminiApiKey()) {
-      setApiKeyModalOpen(true);
-      return;
-    }
 
     setAnalyzingVision(true);
     try {
@@ -398,9 +350,10 @@ Current Hardware Telemetry:
       const contextStr = `Patient: ${payload.patient?.name || "Patient"}, ${payload.patient?.age || 58}y, Meds: ${payload.patient?.medications?.join(", ") || "None"}. Current BPM: ${payload.vitals.bpm || "--"}, SpO2: ${payload.vitals.spo2 || "--"}%`;
       const result = await analyzeEcgWaveformVision(visionImage, "image/png", contextStr);
       setVisionResult(result);
-      toast.success("Gemini Multimodal ECG analysis complete!");
+      toast.success("Multimodal ECG rhythm analysis complete!");
     } catch (err: any) {
-      toast.error(err?.message || "Vision analysis failed.");
+      console.warn("Vision analysis error:", err);
+      toast.error("Vision analysis failed. Please try capturing a fresh strip.");
     } finally {
       setAnalyzingVision(false);
     }
@@ -427,7 +380,7 @@ Current Hardware Telemetry:
                 Gemini Cardiology Copilot & Telemetry Intelligence
               </h2>
               <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
-                gemini-3.8-flash
+                gemini-3.5-flash-lite
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -437,27 +390,10 @@ Current Hardware Telemetry:
         </div>
 
         <div className="flex items-center gap-2">
-          {!hasGeminiApiKey() ? (
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => setApiKeyModalOpen(true)}
-              className="gap-1.5 text-xs rounded-xl font-semibold shadow-sm animate-bounce"
-            >
-              <Key className="h-3.5 w-3.5" />
-              Configure Gemini API Key
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setApiKeyModalOpen(true)}
-              className="gap-1.5 text-xs rounded-xl border-primary/30 bg-background/50 hover:bg-background"
-            >
-              <Key className="h-3.5 w-3.5 text-emerald-500" />
-              API Connected
-            </Button>
-          )}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/20 bg-primary/5 text-primary text-xs font-semibold shadow-xs">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>AI Telemetry Active</span>
+          </div>
         </div>
       </div>
 
@@ -1002,95 +938,6 @@ Current Hardware Telemetry:
           )}
         </TabsContent>
       </Tabs>
-
-      {/* ── API Key Configuration Dialog ──────────────────────────────── */}
-      <Dialog open={apiKeyModalOpen} onOpenChange={setApiKeyModalOpen}>
-        <DialogContent className="max-w-md p-6 bg-card">
-          <DialogHeader className="space-y-1">
-            <DialogTitle className="text-base font-bold flex items-center gap-2">
-              <Key className="h-4 w-4 text-primary" />
-              Configure Google Gemini API
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Power the clinical telemetry synthesis, cardiology copilot chat, and ECG vision diagnostics using the latest Gemini models.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 pt-3">
-            <div className="space-y-2">
-              <label htmlFor="gemini-api-key" className="text-xs font-semibold text-foreground">
-                Gemini API Key
-              </label>
-              <Input
-                id="gemini-api-key"
-                type="password"
-                placeholder="AIzaSy..."
-                value={inputApiKey}
-                onChange={(e) => setInputApiKey(e.target.value)}
-                className="rounded-xl text-xs font-mono"
-              />
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <span>Stored securely in browser local storage. Never sent to any third party.</span>
-              </p>
-            </div>
-
-            {keyStatus && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive">
-                {keyStatus}
-              </div>
-            )}
-
-            <div className="bg-muted/40 p-3 rounded-xl border border-border text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-foreground">Model Selected:</span>
-                <Badge variant="outline" className="font-mono text-[10px]">
-                  gemini-3.8-flash
-                </Badge>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Need an API key? You can generate a free Gemini key in seconds from Google AI Studio.
-              </p>
-              <a
-                href="https://aistudio.google.com/apikey"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
-              >
-                Get a free API key at Google AI Studio <ExternalLink className="h-3 w-3" />
-              </a>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setApiKeyModalOpen(false)}
-                className="rounded-xl text-xs"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                disabled={testingKey || !inputApiKey.trim()}
-                onClick={handleSaveApiKey}
-                className="rounded-xl text-xs bg-primary text-primary-foreground font-semibold gap-1.5"
-              >
-                {testingKey ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Testing Connection...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Save & Connect
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

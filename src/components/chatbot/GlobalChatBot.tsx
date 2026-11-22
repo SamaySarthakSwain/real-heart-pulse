@@ -13,7 +13,6 @@ import {
   Check,
   X,
   Minimize2,
-  Key,
   Globe,
   Radio,
   Activity,
@@ -44,7 +43,6 @@ import {
   isSpeechSynthesisSupported,
 } from "@/services/chatbot/voiceService";
 import { soundFx } from "@/services/audio/soundFx";
-import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from "@/services/gemini/geminiService";
 import { toast } from "sonner";
 
 export function GlobalChatBot() {
@@ -67,10 +65,6 @@ export function GlobalChatBot() {
   // Acoustic Sound FX state
   const [soundMuted, setSoundMuted] = useState(soundFx.getMuted());
   const [isPlayingChime, setIsPlayingChime] = useState(false);
-
-  // Gemini API Key config dialog
-  const [showKeyModal, setShowKeyModal] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState(getGeminiApiKey());
 
   // Real Hardware telemetry state
   const [telemetry, setTelemetry] = useState<HardwareTelemetrySummary>(extractRealHardwareTelemetry());
@@ -371,7 +365,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant with swee
               </div>
             </div>
 
-            {/* Header Controls: Sweet Chime, Voice Test, Voice Settings, Language, TTS Toggle, API Key, Close */}
+            {/* Header Controls: Sweet Chime, Voice Test, Voice Settings, Language, TTS Toggle, Close */}
             <div className="flex items-center gap-1">
               {/* Play Sweet Chime Button */}
               <button
@@ -720,67 +714,6 @@ I am your multi-lingual, voice-interactive medical telemetry assistant with swee
                 <Send className="h-4 w-4" />
               </button>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── 3. GEMINI API KEY CONFIG MODAL ───────────────────────────────────── */}
-      {showKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#141A16] p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400">
-                  <Key className="h-4 w-4" />
-                </div>
-                <h3 className="text-sm font-bold text-[#142033] dark:text-white">
-                  Gemini API Configuration
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowKeyModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <p className="text-xs text-[#667085] dark:text-slate-400 leading-relaxed">
-              HEART AI Copilot uses <strong>Google Gemini</strong> to provide conversational multi-lingual telemetry explanations with sweet natural voice.
-            </p>
-
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-[#142033] dark:text-slate-300">
-                API Key
-              </label>
-              <input
-                type="password"
-                value={apiKeyInput}
-                onChange={(e) => setApiKeyInput(e.target.value)}
-                placeholder="AIzaSy..."
-                className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-xs font-mono text-[#142033] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => setShowKeyModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setGeminiApiKey(apiKeyInput);
-                  toast.success("Gemini API Key saved successfully");
-                  setShowKeyModal(false);
-                  soundFx.playSatisfyingPop();
-                }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 hover:bg-teal-500 text-white transition-all shadow-md shadow-teal-500/20"
-              >
-                Save Key
-              </button>
-            </div>
           </div>
         </div>
       )}

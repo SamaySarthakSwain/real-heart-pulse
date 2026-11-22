@@ -156,16 +156,27 @@ Current Real Hardware Telemetry:
         parts: [{ text: question }],
       });
 
-      const res = await client.models.generateContent({
-        model: "gemini-3.8-flash",
-        contents,
-        config: {
-          systemInstruction: systemPrompt,
-          temperature: 0.25,
-        },
-      });
+      let reply = "";
+      const candidateModels = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.5-flash"];
+      for (const model of candidateModels) {
+        try {
+          const res = await client.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction: systemPrompt,
+              temperature: 0.25,
+            },
+          });
+          if (res.text?.trim()) {
+            reply = res.text.trim();
+            break;
+          }
+        } catch (modelErr: any) {
+          console.warn(`Model ${model} unavailable, trying fallback...`, modelErr?.message || modelErr);
+        }
+      }
 
-      const reply = res.text?.trim();
       if (reply) return reply;
     } catch (e: any) {
       console.warn("Gemini API call failed, using clinical reasoning fallback:", e);
