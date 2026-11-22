@@ -100,31 +100,31 @@ export function LandingPage() {
         <div className="container px-4 md:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
             <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold tracking-wider uppercase font-mono shadow-sm" style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                Web Serial API Powered
+                REC NIST Clean-Tech · Continuous Telemetry
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
-                Real-Time <br />
-                <span className="gradient-text-primary">Heart Monitoring</span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.08]">
+                Ear to Heart <br />
+                <span className="gradient-text-primary">Clinical Edge AI</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-[600px] mx-auto lg:mx-0 leading-relaxed">
-                Stream biomedical signals directly from your ESP32 hardware to the browser. Zero
-                cloud dependencies. Complete privacy.
+                Hospital-grade auricular biopotential telemetry streaming synchronous AD8232 ECG, MAX30102 PPG, and real-time deep learning inference. Zero cloud dependencies. Finite-sample safety guarantees.
               </p>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
                 <Link
                   to="/dashboard"
-                  className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-1 hover:shadow-primary/25 hover:bg-primary/90 overflow-hidden"
+                  className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-primary/30 hover:bg-primary/95 overflow-hidden"
+                  style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 24px rgba(0, 180, 150, 0.22)" }}
                 >
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                  <span className="relative">Launch Dashboard</span>
+                  <div className="absolute inset-0 bg-white/15 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                  <span className="relative">Launch Clinical Dashboard</span>
                   <svg
                     className="w-5 h-5 relative group-hover:translate-x-1 transition-transform"
                     fill="none"
@@ -141,9 +141,10 @@ export function LandingPage() {
                 </Link>
                 <Link
                   to="/hardware"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-8 py-4 text-base font-semibold text-foreground transition-all hover:bg-accent hover:-translate-y-1"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-card/80 px-8 py-4 text-base font-semibold text-foreground transition-all duration-300 hover:bg-accent hover:-translate-y-1 hover:border-primary/40"
+                  style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)" }}
                 >
-                  Setup Hardware
+                  Setup Hardware Hub
                 </Link>
               </div>
             </div>
@@ -175,46 +176,49 @@ export function LandingPage() {
         <div className="grid md:grid-cols-3 gap-8 relative z-10">
           <ScrollReveal
             delay={100}
-            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+            className="tex-anodized rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-chart-1/10 rounded-bl-full blur-2xl group-hover:bg-chart-1/20 transition-colors" />
-            <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-background/80 rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
               🔌
             </div>
-            <h3 className="text-xl font-semibold mb-3">1. Hardware Capture</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              MAX30102 and AD8232 sensors capture raw photoplethysmogram (PPG) and electrocardiogram
-              (ECG) data.
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 01</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Hardware Capture</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              Tragus-earlobe-canal montage acquires differential biopotentials via AD8232 (G=100) and pulsatile capillary volume via dual-wavelength MAX30102.
             </p>
           </ScrollReveal>
 
           <ScrollReveal
             delay={200}
-            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+            className="tex-photovoltaic rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 text-white"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full blur-2xl group-hover:bg-primary/20 transition-colors" />
-            <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-black/40 rounded-2xl border border-primary/30 flex items-center justify-center text-2xl mb-6 shadow-sm">
               ⚡
             </div>
-            <h3 className="text-xl font-semibold mb-3">2. ESP32 Processing</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              The microcontroller performs initial noise filtering, peak detection, and formats the
-              data for serial transmission.
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 02</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-white">ESP32 Edge Processing</h3>
+            <p className="text-white/80 leading-relaxed text-sm">
+              Zero-phase 4th-order Butterworth bandpass (0.5–40 Hz), 2nd-order notch filtering, and multi-parameter SQI gating (K_SQI, P_SQI) on dual-core Xtensa.
             </p>
           </ScrollReveal>
 
           <ScrollReveal
             delay={300}
-            className="glass-card gradient-border rounded-3xl p-8 relative overflow-hidden group"
+            className="tex-frosted-glass rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-chart-2/10 rounded-bl-full blur-2xl group-hover:bg-chart-2/20 transition-colors" />
-            <div className="w-14 h-14 bg-background rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-background/80 rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
               💻
             </div>
-            <h3 className="text-xl font-semibold mb-3">3. Web Serial UI</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              The browser securely connects to the USB port, parsing the stream at 115200 baud to
-              render live 60fps charts.
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 03</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Web Serial UI & Edge AI</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              Browser-native 115200 baud streaming renders 60fps waveforms with SE-ResNet-BiGRU arrhythmia detection and inductive conformal uncertainty safety bounds.
             </p>
           </ScrollReveal>
         </div>

@@ -37,10 +37,13 @@ export function MetricCard({
         "border bg-card",
         "transition-all duration-300",
         "hover:shadow-xl hover:-translate-y-0.5",
-        isLive && "hover:shadow-primary/10",
+        isLive && "hover:shadow-primary/10 hover:border-primary/30",
       )}
+      style={{
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 4px 18px rgba(0, 0, 0, 0.04)",
+      }}
     >
-      {/* Subtle gradient accent in top-right corner */}
+      {/* Subtle clean-tech gradient glow in top-right corner */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full opacity-10 blur-2xl bg-primary"
@@ -50,7 +53,7 @@ export function MetricCard({
       <header className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           {icon && <span className="text-xl leading-none">{icon}</span>}
-          <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          <h3 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase font-mono">
             {label}
           </h3>
         </div>
@@ -62,7 +65,7 @@ export function MetricCard({
         className={cn(
           "mt-4 font-mono text-4xl font-bold tabular-nums leading-none tracking-tight",
           "transition-colors duration-500",
-          hasValue ? accentClass : "text-muted-foreground/40",
+          hasValue ? accentClass : "text-muted-foreground/35",
           hasValue && isLive && "drop-shadow-sm",
         )}
       >
@@ -73,8 +76,8 @@ export function MetricCard({
       </p>
 
       {/* Footnote / waiting */}
-      <p className="mt-3 text-xs text-muted-foreground/70 leading-snug">
-        {hasValue ? (footnote ?? "From ESP32 sensor data") : waitingText}
+      <p className="mt-3 text-xs text-muted-foreground/75 leading-snug">
+        {hasValue ? (footnote ?? "From ESP32 sensor telemetry") : waitingText}
       </p>
 
       {/* Live pulse bar at bottom */}
@@ -84,9 +87,7 @@ export function MetricCard({
           className="absolute bottom-0 left-0 h-[2px] w-full rounded-full"
           style={{
             background:
-              "linear-gradient(90deg, transparent, oklch(0.76 0.17 165 / 60%), transparent)",
-            animation: "shimmer 2.5s linear infinite",
-            backgroundSize: "200% 100%",
+              "linear-gradient(90deg, transparent 0%, #00B496 50%, transparent 100%)",
           }}
         />
       )}

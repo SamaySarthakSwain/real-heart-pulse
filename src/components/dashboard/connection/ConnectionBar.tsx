@@ -57,9 +57,12 @@ export function ConnectionBar() {
       className={cn(
         "rounded-2xl border p-5 transition-all duration-300",
         "bg-card hover:shadow-lg",
-        connected && receiving && "border-status-ok/25 shadow-status-ok/5",
+        connected && receiving && "border-status-ok/30 shadow-status-ok/10",
         !connected && "border-border",
       )}
+      style={{
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 4px 18px rgba(0, 0, 0, 0.04)",
+      }}
     >
       {/* Top row: status + connect button */}
       <div className="flex flex-wrap items-center justify-between gap-4">

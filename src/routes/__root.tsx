@@ -187,9 +187,10 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-all hover:bg-accent hover:text-foreground hover:scale-110 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      aria-label={theme === "dark" ? "Switch to Washi Light Mode" : "Switch to Obsidian Dark Mode"}
+      title={theme === "dark" ? "Switch to Washi Light Mode" : "Switch to Obsidian Dark Mode"}
+      className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card/85 text-muted-foreground transition-all duration-300 hover:border-primary/40 hover:bg-accent hover:text-foreground hover:scale-105 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.14)" }}
     >
       {theme === "dark" ? (
         /* Sun icon */
@@ -198,7 +199,7 @@ function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          className="h-4.5 w-4.5 h-[18px] w-[18px]"
+          className="h-[18px] w-[18px] text-primary"
         >
           <circle cx="12" cy="12" r="4" />
           <path
@@ -213,7 +214,7 @@ function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          className="h-[18px] w-[18px]"
+          className="h-[18px] w-[18px] text-primary"
         >
           <path
             strokeLinecap="round"
@@ -328,11 +329,16 @@ function AppLayout() {
               <HeartbeatLogo />
             </div>
             <div className="min-w-0">
-              <p className="font-mono text-[10px] tracking-[0.18em] text-primary/80 uppercase leading-none">
-                AikyaNova Labs
-              </p>
-              <h1 className="text-sm font-semibold text-foreground truncate leading-tight mt-0.5">
-                ESP32 Health Monitor
+              <div className="flex items-center gap-2">
+                <p className="font-mono text-[10px] tracking-[0.2em] text-primary font-semibold uppercase leading-none">
+                  AikyaNova Labs
+                </p>
+                <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-medium rounded-full gold-badge leading-none">
+                  REC CLEAN-TECH
+                </span>
+              </div>
+              <h1 className="text-sm font-semibold text-foreground tracking-tight truncate leading-tight mt-0.5">
+                Ear to Heart <span className="text-muted-foreground font-normal text-xs">· Telemetry & Edge AI</span>
               </h1>
             </div>
           </div>
@@ -345,9 +351,9 @@ function AppLayout() {
                 to={to}
                 activeOptions={{ exact: to === "/" }}
                 activeProps={{
-                  className: "bg-primary/12 text-primary font-medium shadow-sm",
+                  className: "bg-primary/12 text-primary font-semibold border border-primary/25 shadow-sm shadow-primary/10",
                 }}
-                className="relative rounded-xl px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="relative rounded-xl px-3.5 py-2 text-sm text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >
                 {label}
               </Link>

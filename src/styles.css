@@ -6,13 +6,17 @@
 
 /*
  * ==========================================================================
- * DESIGN SYSTEM — ESP32 Real-Time Health Monitor
+ * REC NIST CLEAN-TECH DESIGN SYSTEM (VOLUMES 1-4)
+ * Luxury Haute-Technologie Theme for "Ear to Heart"
  *
- * Color strategy:
- *   Light mode (:root)  → clean clinical whites + emerald-teal accents
- *   Dark mode  (.dark)  → deep navy + vibrant teal/green medical palette
- *
- * All colors use oklch for perceptually uniform contrast.
+ * Core Color Foundations:
+ *   Family 01: Neutrals & Monochromes (N01 #0A0D0B Obsidian Carbon, N02 #121613 Pitch Charcoal, N10 #F8FAF8 Alabaster)
+ *   Family 02: Forest & Emerald Greens (G04 #0F5E24 Signature Brand Forest, G06 #228B40 Vibrant Emerald)
+ *   Family 03: Clean-Tech Lime & Chartreuse (L06 #AEE454 Solar Chartreuse, L07 #C4F068 Electric Lime)
+ *   Family 04: Cyan & Jade Teals (T04 #00B496 Persian Jade Teal, T06 #1DB2BA Radiant Cyan)
+ *   Family 05: Royal & Sky Blues (B01 #081226 Midnight Abyss, B02 #0C1E40 Oxford Deep Blue, B06 #3885F2 Azure)
+ *   Family 07: Crimson & Rose Reds (R04 #9C1535 Tuscan Ruby, R06 #EE0943 Vivid Crimson Rose)
+ *   Family 09: Gold & Ochre Yellows (Y03 #7D600B Antique Brass, Y05 #F0C807 Warm Amber Gold)
  * ==========================================================================
  */
 
@@ -64,231 +68,417 @@
   --color-status-ok: var(--status-ok);
   --color-status-warn: var(--status-warn);
   --color-status-idle: var(--status-idle);
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-gold-brass: var(--gold-brass);
+  --color-gold-amber: var(--gold-amber);
+  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* ── LIGHT MODE ─────────────────────────────────────────────────────────── */
+/* ── LIGHT MODE (Artisanal Cold-Pressed Washi & Executive Luxury) ────────── */
 :root {
-  --radius: 0.75rem;
+  --radius: 0.875rem;
 
-  /* Backgrounds */
-  --background:        oklch(0.97 0.006 240);
-  --card:              oklch(1    0     0);
-  --popover:           oklch(1    0     0);
+  /* Canvas Backgrounds — Artisanal Washi Base with Natural Cellulose Tooth (σ = 7.2) */
+  --background:        #F6F8F5;
+  --card:              #FFFFFF;
+  --popover:           #FFFFFF;
 
-  /* Text */
-  --foreground:        oklch(0.18 0.025 255);
-  --card-foreground:   oklch(0.18 0.025 255);
-  --popover-foreground:oklch(0.18 0.025 255);
+  /* Typography — Deep Oxford Blue (B02 #0C1E40) & Pitch Charcoal (N02 #121613) */
+  --foreground:        #0C1E40;
+  --card-foreground:   #0C1E40;
+  --popover-foreground:#0C1E40;
 
-  /* Primary — vibrant teal-emerald */
-  --primary:           oklch(0.56 0.17  165);
-  --primary-foreground:oklch(0.99 0     0);
+  /* Primary Accent — Persian Jade Teal (T04 #00B496) & Signature Forest (G04 #0F5E24) */
+  --primary:           #00B496;
+  --primary-foreground:#FFFFFF;
 
-  /* Secondary */
-  --secondary:         oklch(0.93 0.012 240);
-  --secondary-foreground:oklch(0.22 0.025 255);
+  /* Secondary — Ceramic Mist (N09 #E5EBE6) & Executive Navy (B03 #102C5C) */
+  --secondary:         #EBF0EC;
+  --secondary-foreground:#102C5C;
 
-  /* Muted */
-  --muted:             oklch(0.94 0.008 240);
-  --muted-foreground:  oklch(0.50 0.025 255);
+  /* Muted — Subtle Paper Tint & Heather Neutral Grey (N06 #6E7770) */
+  --muted:             #EEF3EF;
+  --muted-foreground:  #536359;
 
-  /* Accent */
-  --accent:            oklch(0.91 0.015 220);
-  --accent-foreground: oklch(0.18 0.025 255);
+  /* Accent — Arctic Cloud (B10 #E4EFFE) & Mediterranean Azure */
+  --accent:            #E4EFFE;
+  --accent-foreground: #0C1E40;
 
-  /* Destructive */
-  --destructive:       oklch(0.58 0.22  25);
-  --destructive-foreground:oklch(0.99 0 0);
+  /* Destructive — Tuscan Ruby (R04 #9C1535) & Burgundy Noir (R01 #2B060E) */
+  --destructive:       #9C1535;
+  --destructive-foreground:#FFFFFF;
 
-  /* Borders & Inputs */
-  --border:            oklch(0.88 0.012 240);
-  --input:             oklch(0.88 0.012 240);
-  --ring:              oklch(0.56 0.17  165);
+  /* Luxury Metals */
+  --gold-brass:        #7D600B;
+  --gold-amber:        #A6810E;
 
-  /* Medical signal colors */
-  --signal-ecg:        oklch(0.68 0.20  145);
-  --signal-ir:         oklch(0.58 0.16  220);
-  --signal-red:        oklch(0.62 0.20  25);
-  --signal-grid:       oklch(0.88 0.012 240);
+  /* Borders & Inputs — Architectural Hairlines */
+  --border:            rgba(16, 44, 92, 0.11);
+  --input:             rgba(16, 44, 92, 0.14);
+  --ring:              #00B496;
 
-  /* Status indicators */
-  --status-ok:         oklch(0.62 0.19  155);
-  --status-warn:       oklch(0.70 0.16  82);
-  --status-idle:       oklch(0.55 0.025 240);
+  /* Medical Signals — Calibrated for Crisp Paper Contrast */
+  --signal-ecg:        #0F5E24;
+  --signal-ir:         #1656AD;
+  --signal-red:        #EE0943;
+  --signal-grid:       rgba(0, 180, 150, 0.09);
 
-  /* Charts */
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6   0.118 184.704);
-  --chart-3: oklch(0.398 0.07  227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* Status Indicators */
+  --status-ok:         #0F5E24;
+  --status-warn:       #A6810E;
+  --status-idle:       #6E7770;
+
+  /* Chart Colors */
+  --chart-1: #00B496;
+  --chart-2: #1656AD;
+  --chart-3: #9C1535;
+  --chart-4: #F0C807;
+  --chart-5: #3885F2;
 
   /* Sidebar */
-  --sidebar:                      oklch(0.98  0.004 247);
-  --sidebar-foreground:           oklch(0.18  0.025 255);
-  --sidebar-primary:              oklch(0.56  0.17  165);
-  --sidebar-primary-foreground:   oklch(0.99  0     0);
-  --sidebar-accent:               oklch(0.93  0.012 240);
-  --sidebar-accent-foreground:    oklch(0.18  0.025 255);
-  --sidebar-border:               oklch(0.88  0.012 240);
-  --sidebar-ring:                 oklch(0.56  0.17  165);
+  --sidebar:                      #FBFDFB;
+  --sidebar-foreground:           #0C1E40;
+  --sidebar-primary:              #00B496;
+  --sidebar-primary-foreground:   #FFFFFF;
+  --sidebar-accent:               #EEF3EF;
+  --sidebar-accent-foreground:    #0C1E40;
+  --sidebar-border:               rgba(16, 44, 92, 0.10);
+  --sidebar-ring:                 #00B496;
 
-  /* Glass overlay tint (light) */
-  --glass-bg: oklch(1 0 0 / 70%);
-  --glass-border: oklch(0 0 0 / 8%);
-  --header-bg: oklch(1 0 0 / 82%);
+  /* Glass Tint (Light) — Acid-Etched Frosted Washi */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(16, 44, 92, 0.08);
+  --header-bg: rgba(246, 248, 245, 0.86);
 }
 
-/* ── DARK MODE ──────────────────────────────────────────────────────────── */
+/* ── DARK MODE (Obsidian Carbon & Midnight Velvet Tooth) ──────────────────── */
 .dark {
-  /* Backgrounds — deep medical navy */
-  --background:        oklch(0.115 0.028 258);
-  --card:              oklch(0.155 0.030 258);
-  --popover:           oklch(0.155 0.030 258);
+  /* Canvas Backgrounds — Obsidian Carbon (N01 #0A0D0B) & Midnight Abyss (B01 #081226) */
+  --background:        #090C0A;
+  --card:              #111512;
+  --popover:           #111512;
 
-  /* Text */
-  --foreground:        oklch(0.94  0.010 240);
-  --card-foreground:   oklch(0.94  0.010 240);
-  --popover-foreground:oklch(0.94  0.010 240);
+  /* Typography — Alabaster Pure White (N10 #F8FAF8) & Cool Platinum (N07 #9BA59E) */
+  --foreground:        #F8FAF8;
+  --card-foreground:   #F8FAF8;
+  --popover-foreground:#F8FAF8;
 
-  /* Primary — vibrant teal-green */
-  --primary:           oklch(0.76  0.17  165);
-  --primary-foreground:oklch(0.10  0.02  200);
+  /* Primary Accent — Radiant Cyan (T06 #1DB2BA) & Persian Jade Teal (T04 #00B496) */
+  --primary:           #00B496;
+  --primary-foreground:#062325;
 
-  /* Secondary */
-  --secondary:         oklch(0.22  0.032 258);
-  --secondary-foreground:oklch(0.92 0.010 240);
+  /* Secondary — Dark Mineral Slate (N04 #2B312D) & Warm Silk Silver (N08 #C4CEC6) */
+  --secondary:         #181E1A;
+  --secondary-foreground:#D9E2DC;
 
-  /* Muted */
-  --muted:             oklch(0.20  0.028 258);
-  --muted-foreground:  oklch(0.62  0.022 240);
+  /* Muted — Deep Carton (N03 #1A1E1B) & Graphite Medium (N05 #48504A) */
+  --muted:             #151A16;
+  --muted-foreground:  #8E9E94;
 
-  /* Accent */
-  --accent:            oklch(0.23  0.035 250);
-  --accent-foreground: oklch(0.94  0.010 240);
+  /* Accent — Abyssal Marine (T01 #062325) & Oxford Deep Blue (B02 #0C1E40) */
+  --accent:            #102C5C;
+  --accent-foreground: #E4EFFE;
 
-  /* Destructive */
-  --destructive:       oklch(0.65  0.22  22);
-  --destructive-foreground:oklch(0.97 0.005 240);
+  /* Destructive — Vivid Crimson Rose (R06 #EE0943) & Cherry Silk (R07 #F42E5D) */
+  --destructive:       #EE0943;
+  --destructive-foreground:#FFFFFF;
 
-  /* Borders & Inputs */
-  --border:            oklch(1 0 0 / 9%);
-  --input:             oklch(1 0 0 / 13%);
-  --ring:              oklch(0.76  0.17  165);
+  /* Luxury Metals */
+  --gold-brass:        #F0C807;
+  --gold-amber:        #F6D52B;
 
-  /* Medical signal colors — brighter for dark bg */
-  --signal-ecg:        oklch(0.83  0.20  145);
-  --signal-ir:         oklch(0.76  0.14  220);
-  --signal-red:        oklch(0.70  0.21  25);
-  --signal-grid:       oklch(0.28  0.02  240);
+  /* Borders & Inputs — Chamfered Fine Hairlines */
+  --border:            rgba(255, 255, 255, 0.08);
+  --input:             rgba(255, 255, 255, 0.12);
+  --ring:              #00B496;
 
-  /* Status indicators */
-  --status-ok:         oklch(0.78  0.18  155);
-  --status-warn:       oklch(0.80  0.16  85);
-  --status-idle:       oklch(0.55  0.025 240);
+  /* Medical Signals — High-Vibrancy Glowing Waveforms */
+  --signal-ecg:        #1DB2BA;
+  --signal-ir:         #3885F2;
+  --signal-red:        #F42E5D;
+  --signal-grid:       rgba(29, 178, 186, 0.11);
 
-  /* Charts */
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17  162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  /* Status Indicators */
+  --status-ok:         #4EA662;
+  --status-warn:       #F0C807;
+  --status-idle:       #6E7770;
+
+  /* Chart Colors */
+  --chart-1: #00B496;
+  --chart-2: #3885F2;
+  --chart-3: #EE0943;
+  --chart-4: #F6D52B;
+  --chart-5: #1DB2BA;
 
   /* Sidebar */
-  --sidebar:                      oklch(0.155 0.030 258);
-  --sidebar-foreground:           oklch(0.94  0.010 240);
-  --sidebar-primary:              oklch(0.76  0.17  165);
-  --sidebar-primary-foreground:   oklch(0.10  0.02  200);
-  --sidebar-accent:               oklch(0.22  0.032 258);
-  --sidebar-accent-foreground:    oklch(0.94  0.010 240);
-  --sidebar-border:               oklch(1 0 0 / 9%);
-  --sidebar-ring:                 oklch(0.76  0.17  165);
+  --sidebar:                      #0F1310;
+  --sidebar-foreground:           #F8FAF8;
+  --sidebar-primary:              #00B496;
+  --sidebar-primary-foreground:   #062325;
+  --sidebar-accent:               #181E1A;
+  --sidebar-accent-foreground:    #F8FAF8;
+  --sidebar-border:               rgba(255, 255, 255, 0.08);
+  --sidebar-ring:                 #00B496;
 
-  /* Glass overlay tint (dark) */
-  --glass-bg: oklch(0.155 0.030 258 / 75%);
-  --glass-border: oklch(1 0 0 / 8%);
-  --header-bg: oklch(0.115 0.028 258 / 85%);
+  /* Glass Tint (Dark) — Acid-Etched Smoked Obsidian Glass */
+  --glass-bg: rgba(17, 21, 18, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.085);
+  --header-bg: rgba(9, 12, 10, 0.84);
 }
 
-/* ── KEYFRAME ANIMATIONS ─────────────────────────────────────────────────── */
-@keyframes heartbeat {
-  0%   { transform: scale(1);   }
-  14%  { transform: scale(1.18); }
-  28%  { transform: scale(1);   }
-  42%  { transform: scale(1.10); }
-  70%  { transform: scale(1);   }
-  100% { transform: scale(1);   }
+/*
+ * ── AUTHENTIC PHYSICAL MATTE NOISE GRAIN OVERLAY ──────────────────────────
+ * High-definition procedural Gaussian noise grain adhering to REC NIST specs:
+ * Light mode: Artisanal Cold-Pressed Washi (σ = 7.2)
+ * Dark mode:  Velvety Obsidian Carbon tooth (σ = 6.4)
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='recNistNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23recNistNoise)' opacity='0.75'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px;
+  transition: opacity 0.35s ease;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
-  50%       { opacity: 0.7; box-shadow: 0 0 8px 3px currentColor; }
+:root:not(.dark) body::before {
+  opacity: 0.038;
+  mix-blend-mode: multiply;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
+.dark body::before {
+  opacity: 0.052;
+  mix-blend-mode: screen;
 }
 
-@keyframes slide-in-up {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+/*
+ * ── TACTILE MATERIAL ARCHETYPES (REC NIST SPECIFICATION) ───────────────────
+ */
+
+/* 01. Solar Photovoltaic Wafer (.tex-photovoltaic) */
+.tex-photovoltaic {
+  background-color: #08201c !important;
+  background-image:
+    linear-gradient(rgba(0, 180, 150, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 180, 150, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(0, 180, 150, 0.16), transparent 70%);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+  border: 1.5px solid rgba(0, 180, 150, 0.28) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* 02. Artisanal Cold-Pressed Washi (.tex-washi) */
+.tex-washi {
+  background-color: #f7f9f5 !important;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7) 0%, transparent 60%),
+    radial-gradient(rgba(15, 94, 36, 0.04) 1px, transparent 0);
+  border: 1.5px solid rgba(15, 94, 36, 0.16) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 4px 18px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.03);
+}
+.dark .tex-washi {
+  background-color: #121815 !important;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(0, 180, 150, 0.08) 0%, transparent 60%),
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  border: 1.5px solid rgba(0, 180, 150, 0.18) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 6px 22px rgba(0, 0, 0, 0.4);
 }
 
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
+/* 03. Bead-Blasted Anodized Aluminum (.tex-anodized) */
+.tex-anodized {
+  background-color: #2b312d !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.10), transparent 70%);
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 28px rgba(0, 0, 0, 0.40);
+}
+:root:not(.dark) .tex-anodized {
+  background-color: #e5ebe6 !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.80), transparent 70%);
+  border: 1px solid rgba(16, 44, 92, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
+/* 04. Acid-Etched Smoked Obsidian Glass (.tex-frosted-glass) */
+.tex-frosted-glass {
+  background-color: rgba(12, 18, 14, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(174, 228, 84, 0.20) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    0 12px 36px rgba(0, 0, 0, 0.45);
+}
+:root:not(.dark) .tex-frosted-glass {
+  background-color: rgba(248, 250, 248, 0.88) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(15, 94, 36, 0.18) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 12px 36px rgba(12, 30, 64, 0.08);
 }
 
-/* ── UTILITY CLASSES ─────────────────────────────────────────────────────── */
-.animate-heartbeat    { animation: heartbeat 1.4s ease-in-out infinite; }
-.animate-pulse-dot    { animation: pulse-dot 1.8s ease-in-out infinite; }
-.animate-slide-in-up  { animation: slide-in-up 0.45s ease both; }
-.animate-fade-in      { animation: fade-in 0.3s ease both; }
-.animate-spin-slow    { animation: spin-slow 3s linear infinite; }
+/* 05. Micro-Perforated Acoustic Wool Felt (.tex-perforated-felt) */
+.tex-perforated-felt {
+  background-color: #0f421e !important;
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.45) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+  background-size: 16px 16px, 16px 16px;
+  background-position: 0 0, 8px 8px;
+  border: 1.5px solid rgba(240, 200, 7, 0.28) !important;
+}
 
-/* Stagger helpers */
-.stagger-1  { animation-delay: 0.05s; }
-.stagger-2  { animation-delay: 0.10s; }
-.stagger-3  { animation-delay: 0.15s; }
-.stagger-4  { animation-delay: 0.20s; }
-.stagger-5  { animation-delay: 0.25s; }
-.stagger-6  { animation-delay: 0.30s; }
-.stagger-7  { animation-delay: 0.35s; }
-.stagger-8  { animation-delay: 0.40s; }
+/* 06. Unglazed Terracotta & Diatomaceous Earth (.tex-terracotta) */
+.tex-terracotta {
+  background-color: #852e10 !important;
+  background-image: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.10) 0%, transparent 60%);
+  border: 1.5px solid rgba(250, 177, 118, 0.32) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 24px rgba(56, 17, 5, 0.30);
+}
 
-/* Glassmorphism card */
+/* 07. Technical Drafting Blueprint Vellum (.tex-blueprint) */
+.tex-blueprint {
+  background-color: #0a1830 !important;
+  background-image:
+    linear-gradient(rgba(59, 208, 216, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 208, 216, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px;
+  border: 1.5px solid rgba(59, 208, 216, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 10px 30px rgba(8, 18, 38, 0.45);
+}
+
+/* ── LUXURY ELEVATIONS & CHAMFERED HIGHLIGHTS ────────────────────────────── */
+.luxury-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 4px 18px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease;
+}
+
+:root:not(.dark) .luxury-card {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 4px 20px rgba(12, 30, 64, 0.05),
+    0 1px 3px rgba(12, 30, 64, 0.03);
+}
+
+.dark .luxury-card {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 6px 24px rgba(0, 0, 0, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.luxury-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 36px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.dark .luxury-card:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 14px 40px rgba(0, 0, 0, 0.65),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Glassmorphism with Clean-Tech Tooth */
 .glass-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.05);
+}
+.dark .glass-card {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 36px rgba(0, 0, 0, 0.45);
 }
 
-/* Premium gradient text */
+/* Luxury Gradient Text */
 .gradient-text-primary {
   background: linear-gradient(
     135deg,
-    oklch(0.76 0.17 165) 0%,
-    oklch(0.62 0.16 220) 100%
+    #00B496 0%,
+    #1DB2BA 45%,
+    #3885F2 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text-primary {
+  background: linear-gradient(
+    135deg,
+    #00B496 0%,
+    #3BD0D8 45%,
+    #8BBCFC 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Gradient border card */
+.gradient-text-gold {
+  background: linear-gradient(
+    135deg,
+    #A6810E 0%,
+    #F0C807 50%,
+    #FEFBE4 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Chamfered Luxury Gold Badge */
+.gold-badge {
+  background: linear-gradient(135deg, rgba(125, 96, 11, 0.15) 0%, rgba(240, 200, 7, 0.10) 100%);
+  border: 1px solid rgba(240, 200, 7, 0.35);
+  color: #F0C807;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+:root:not(.dark) .gold-badge {
+  background: linear-gradient(135deg, rgba(166, 129, 14, 0.12) 0%, rgba(254, 251, 228, 0.5) 100%);
+  border: 1px solid rgba(166, 129, 14, 0.35);
+  color: #7D600B;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Clean-Tech Gradient Border */
 .gradient-border {
   position: relative;
   border: none !important;
@@ -301,9 +491,9 @@
   padding: 1px;
   background: linear-gradient(
     135deg,
-    oklch(0.76 0.17 165 / 35%) 0%,
-    oklch(0.62 0.16 220 / 20%) 50%,
-    oklch(0.76 0.17 165 / 35%) 100%
+    rgba(0, 180, 150, 0.40) 0%,
+    rgba(56, 133, 242, 0.20) 50%,
+    rgba(0, 180, 150, 0.40) 100%
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -316,12 +506,37 @@
   pointer-events: none;
 }
 
-/* Live signal glow */
-.signal-glow-ecg  { text-shadow: 0 0 12px oklch(0.83 0.20 145 / 60%); }
-.signal-glow-ir   { text-shadow: 0 0 12px oklch(0.76 0.14 220 / 60%); }
-.signal-glow-red  { text-shadow: 0 0 12px oklch(0.70 0.21 25  / 60%); }
+/* ── ANIMATIONS ──────────────────────────────────────────────────────────── */
+@keyframes heartbeat {
+  0%   { transform: scale(1);   }
+  14%  { transform: scale(1.16); }
+  28%  { transform: scale(1);   }
+  42%  { transform: scale(1.08); }
+  70%  { transform: scale(1);   }
+  100% { transform: scale(1);   }
+}
 
-/* ── BASE STYLES ─────────────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(0.72); }
+}
+
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-heartbeat    { animation: heartbeat 1.4s cubic-bezier(0.25, 1, 0.5, 1) infinite; }
+.animate-pulse-dot    { animation: pulse-dot 1.8s ease-in-out infinite; }
+.animate-slide-in-up  { animation: slide-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade-in      { animation: fade-in 0.3s ease both; }
+
+/* ── BASE & GLOBAL ELEMENT DECORATION ────────────────────────────────────── */
 @layer base {
   * {
     border-color: var(--color-border);
@@ -337,38 +552,48 @@
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.25s ease;
+    transition: background-color 0.35s ease, color 0.25s ease;
   }
 
-  /* Smooth theme transition for key elements */
+  /* Smooth transition for all cards & surfaces */
   .glass-card,
+  .luxury-card,
   [class*="bg-card"],
   [class*="bg-background"],
   [class*="border-border"] {
     transition:
-      background-color 0.3s ease,
+      background-color 0.35s ease,
       border-color 0.3s ease,
       box-shadow 0.3s ease;
   }
 
-  /* Custom scrollbar */
+  /* Clean-Tech 3D Elevation & Chamfered Highlight for all cards */
+  [class*="bg-card"],
+  .bg-card {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 18px rgba(0, 0, 0, 0.04);
+  }
+  :root:not(.dark) [class*="bg-card"],
+  :root:not(.dark) .bg-card {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 18px rgba(12, 30, 64, 0.04);
+  }
+
+  /* Custom Clean-Tech Scrollbar */
   ::-webkit-scrollbar        { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track  { background: transparent; }
   ::-webkit-scrollbar-thumb  {
-    background: oklch(0.5 0.03 240 / 40%);
+    background: rgba(0, 180, 150, 0.25);
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.5 0.03 240 / 65%);
+    background: rgba(0, 180, 150, 0.50);
   }
 
-  /* Focus ring */
+  /* Focus Ring */
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
   }
 
-  /* Hide the Lovable badge popup */
   #lovable-badge {
     display: none !important;
   }
