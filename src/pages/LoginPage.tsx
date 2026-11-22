@@ -57,7 +57,7 @@ export function LoginPage() {
   const handleRegisterSuccess = () => {
     const patient = usePatientStore.getState().getCurrentPatient();
     toast.success("Account created successfully!", {
-      description: `Welcome to Ear-to-Heart Health Hub. Let's complete your Patient Profile & Health Assessment.`,
+      description: `Welcome to HEART Health Hub. Let's complete your Patient Profile & Health Assessment.`,
     });
     navigate({ to: "/assessment" });
   };

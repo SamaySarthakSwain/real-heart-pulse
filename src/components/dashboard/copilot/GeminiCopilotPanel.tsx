@@ -335,7 +335,7 @@ Current Hardware Telemetry:
     // Header label
     ctx.font = "bold 12px sans-serif";
     ctx.fillStyle = "#881337";
-    ctx.fillText("EAR-TO-HEART TELEMETRY | LEAD-II (100 Hz, 25 mm/s, 10 mm/mV)", 15, 20);
+    ctx.fillText("HEART TELEMETRY | LEAD-II (100 Hz, 25 mm/s, 10 mm/mV)", 15, 20);
 
     // Draw ECG waveform
     ctx.strokeStyle = "#09090b";

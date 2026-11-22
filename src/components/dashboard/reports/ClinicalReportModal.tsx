@@ -107,7 +107,7 @@ export function ClinicalReportModal() {
               </div>
               <div>
                 <h1 className="text-lg font-extrabold tracking-tight text-zinc-900">
-                  EAR-TO-HEART CARDIAC DIAGNOSTICS
+                  HEART CARDIAC DIAGNOSTICS
                 </h1>
                 <p className="text-[11px] text-zinc-500">
                   Hospital Biomedical Telemetry & AI Diagnostic Unit

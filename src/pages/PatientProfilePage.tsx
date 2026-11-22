@@ -310,7 +310,7 @@ export function PatientProfilePage() {
       aiRiskLevel: recordRiskLevel,
       aiDiagnosis: recordAiDiagnosis,
       notes: recordNotes,
-      device: "ESP32 Ear-to-Heart Biosensor v2.0",
+      device: "ESP32 HEART Biosensor v2.0",
     });
 
     toast.success("New test record logged.");

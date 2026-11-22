@@ -157,7 +157,7 @@ export function Step4SymptomsWearable({
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-[#142033] dark:text-white flex items-center gap-2">
               <Radio className="h-4 w-4 text-[#FF6B00]" />
-              <span>Ear-to-Heart Biosensor Wearable Integration</span>
+              <span>HEART Biosensor Wearable Integration</span>
             </h3>
             <span
               className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
@@ -265,7 +265,7 @@ export function Step4SymptomsWearable({
                   Hardware Biosensor Not Currently Streaming
                 </h4>
                 <p className="text-xs text-[#667085] dark:text-slate-400 leading-relaxed">
-                  Your physical ESP32 Ear-to-Heart biosensor is not connected on this browser session. You can complete your medical profile now, and plug in the sensor later on the Live Dashboard to stream real-time ECG and PPG.
+                  Your physical ESP32 HEART biosensor is not connected on this browser session. You can complete your medical profile now, and plug in the sensor later on the Live Dashboard to stream real-time ECG and PPG.
                 </p>
               </div>
             </div>

@@ -31,7 +31,7 @@ export function AuthLayout({ children, mode, title, subtitle }: AuthLayoutProps)
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-3.5 py-1 text-xs font-semibold text-[#FF6B00] dark:text-[#FF8A00] shadow-sm backdrop-blur-md">
               <span className="flex h-2 w-2 rounded-full bg-[#FF6B00] animate-pulse" />
-              <span>Ear-to-Heart Health Hub</span>
+              <span>HEART Health Hub</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#142033] dark:text-white leading-[1.15]">

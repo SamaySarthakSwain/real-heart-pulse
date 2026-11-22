@@ -400,7 +400,7 @@ export function Step2Contact({
             <div className="text-xs text-[#142033] dark:text-slate-200 leading-relaxed">
               <span className="font-semibold block">Emergency Contact Notification Consent</span>
               <span className="text-[#667085] dark:text-slate-400">
-                I hereby authorize Ear-to-Heart Health Hub to reach out to this designated emergency contact only in the event of severe biometric abnormalities (e.g., ventricular tachycardia, sustained asystole, or cardiac distress) where the patient is unresponsive.
+                I hereby authorize HEART Health Hub to reach out to this designated emergency contact only in the event of severe biometric abnormalities (e.g., ventricular tachycardia, sustained asystole, or cardiac distress) where the patient is unresponsive.
               </span>
             </div>
           </label>

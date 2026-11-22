@@ -242,31 +242,50 @@
 }
 
 /* Background canvas with authentic matte grain */
+html,
 body {
   background-color: var(--color-background);
   background-image: var(--bg-noise-texture);
   background-repeat: repeat;
-  background-size: 200px 200px;
+  background-size: 180px 180px;
   background-attachment: fixed;
 }
 
-/* All background surfaces, cards, modals, sidebars, dialogs and panels carry the tactile matte noise grain */
-.bg-card,
-[class*="bg-card"],
+/* All background surfaces, cards, modals, sidebars, dialogs, drawers and panels carry the tactile matte noise grain */
+body,
+#root,
+.min-h-screen,
+main,
+header,
+footer,
+aside,
+section:not([class*="bg-gradient"]),
 .bg-background,
-[class*="bg-background"],
-.luxury-card,
-.glass-card,
+[class*="bg-background"]:not([class*="bg-gradient"]),
+.bg-card,
+[class*="bg-card"]:not([class*="bg-gradient"]),
+.bg-muted,
+[class*="bg-muted"]:not([class*="bg-gradient"]),
+.bg-secondary,
+[class*="bg-secondary"]:not([class*="bg-gradient"]),
+.bg-accent,
+[class*="bg-accent"]:not([class*="bg-gradient"]),
 .bg-popover,
+[class*="bg-popover"]:not([class*="bg-gradient"]),
 .bg-sidebar,
+[class*="bg-sidebar"]:not([class*="bg-gradient"]),
+.luxury-card:not([class*="bg-gradient"]),
+.glass-card:not([class*="bg-gradient"]),
+.card:not([class*="bg-gradient"]),
 [role="dialog"],
-.dialog-content {
-  background-image: var(--bg-noise-texture) !important;
-  background-repeat: repeat !important;
-  background-size: 180px 180px !important;
-}
-
-header {
+.dialog-content,
+[class*="bg-slate-"],
+[class*="bg-zinc-"],
+[class*="bg-[#0D1526]"],
+[class*="bg-[#142033]"],
+[class*="bg-[#1A2639]"],
+[class*="bg-[#F3F6F9]"],
+[class*="bg-[#F7F9FC]"] {
   background-image: var(--bg-noise-texture) !important;
   background-repeat: repeat !important;
   background-size: 180px 180px !important;
@@ -277,10 +296,17 @@ img,
 video,
 canvas,
 picture,
-svg:not(.bg-noise),
+svg,
+svg *,
 .recharts-wrapper,
+.recharts-wrapper *,
+.recharts-surface,
+.recharts-responsive-container,
 .aspect-video,
-[data-no-noise="true"] {
+video *,
+canvas *,
+[data-no-noise="true"],
+.no-noise {
   background-image: none !important;
   isolation: isolate;
   position: relative;

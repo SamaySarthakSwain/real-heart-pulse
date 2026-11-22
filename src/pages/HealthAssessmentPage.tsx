@@ -156,7 +156,7 @@ export function HealthAssessmentPage() {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/10 px-3 py-1 text-xs font-semibold text-[#FF6B00]">
               <Heart className="h-3.5 w-3.5 fill-[#FF6B00]" />
-              <span>Ear-to-Heart Health Hub</span>
+              <span>HEART Health Hub</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#142033] dark:text-white">
               Patient Profile & Health Assessment
