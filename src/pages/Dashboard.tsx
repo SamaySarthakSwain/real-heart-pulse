@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { downloadFile, toCSV, toJSON } from "@/services/export/exporters";
 import { cn } from "@/lib/utils";
 import { ClinicalReportModal } from "@/components/dashboard/reports/ClinicalReportModal";
+import { AutoDiagnosticSessionCard } from "@/components/dashboard/diagnostics/AutoDiagnosticSessionCard";
 
 function useFreshness(time: number | null, windowMs = 2000) {
   const [, tick] = useState(0);
@@ -73,6 +74,11 @@ export function Dashboard() {
       {/* ── Connection status ──────────────────────────────────────────── */}
       <div className="animate-slide-in-up stagger-1">
         <ConnectionBar />
+      </div>
+
+      {/* ── Automated 1-Minute Diagnostic Session & Archiving ──────────── */}
+      <div className="animate-slide-in-up stagger-2">
+        <AutoDiagnosticSessionCard />
       </div>
 
       <Divider />
