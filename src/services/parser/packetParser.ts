@@ -2,7 +2,7 @@ import type { ParseResult, PacketFormat, SensorPacket } from "@/types/sensor";
 
 export interface ParserOptions {
   /**
-   * The AikyaNova SpO2 firmware prints `BPM:` and `SpO2:` divided by 2 so both
+   * The HEART SpO2 firmware prints `BPM:` and `SpO2:` divided by 2 so both
    * fit the Arduino Serial Plotter scale. Multiply back by this factor.
    * Set to 1 if your firmware prints true values.
    */

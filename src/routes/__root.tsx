@@ -119,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "description",
         content: "HEART: Real-time biomedical monitoring dashboard for ESP32 biopotential streams.",
       },
-      { name: "author", content: "AikyaNova Labs" },
+      { name: "author", content: "HEART" },
       { property: "og:title", content: "HEART" },
       {
         property: "og:description",
@@ -127,7 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@AikyaNova" },
+      { name: "twitter:site", content: "@HEART" },
       { name: "theme-color", content: "#0d1526" },
     ],
     links: [
@@ -288,7 +288,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           ))}
         </nav>
         <div className="border-t border-border px-5 py-4">
-          <p className="text-xs text-muted-foreground">AikyaNova Labs © 2025</p>
+          <p className="text-xs text-muted-foreground">HEART © 2025</p>
         </div>
       </div>
     </>
@@ -330,15 +330,7 @@ function AppLayout() {
               <HeartbeatLogo />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="font-mono text-[10px] tracking-[0.2em] text-primary font-semibold uppercase leading-none">
-                  AikyaNova Labs
-                </p>
-                <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-medium rounded-full gold-badge leading-none">
-                  REC NIST
-                </span>
-              </div>
-              <h1 className="text-base font-bold font-mono tracking-widest text-foreground uppercase leading-none mt-1">
+              <h1 className="text-lg font-bold font-mono tracking-widest text-foreground uppercase leading-none">
                 HEART
               </h1>
             </div>
@@ -404,7 +396,7 @@ function AppLayout() {
       <footer className="border-t border-border mt-8">
         <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            © 2025 HEART · AikyaNova Labs — Clinical telemetry & research monitoring.
+            © 2025 HEART — Clinical telemetry & research monitoring.
           </p>
           <p className="font-mono text-[10px] text-muted-foreground/60 tracking-widest uppercase">
             HEART — Real-Time Health Monitor

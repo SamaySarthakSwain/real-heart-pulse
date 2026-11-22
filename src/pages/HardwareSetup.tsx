@@ -104,14 +104,9 @@ export function HardwareSetup() {
                 <h2 className="text-base font-semibold text-foreground">Hardware Architecture</h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">
                   Reference firmware:{" "}
-                  <a
-                    className="text-primary underline decoration-primary/40 hover:decoration-primary transition-colors"
-                    href="https://github.com/AikyaNova-Pvt-Ltd/Aikyanova_Labs_Embedded_Systems"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    AikyaNova Labs Embedded Systems
-                  </a>
+                  <span className="text-primary font-medium">
+                    HEART Embedded Systems
+                  </span>
                   . This dashboard reads whatever those sketches print over USB serial at 115200 baud.
                 </p>
               </div>
