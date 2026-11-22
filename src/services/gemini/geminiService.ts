@@ -50,19 +50,38 @@ export function hasGeminiApiKey(): boolean {
 
 function cleanErrorMessage(err: any): string {
   if (!err) return "Unknown error occurred.";
-  const raw = err?.message || String(err);
+  const raw = typeof err === "string" ? err : err?.message || String(err);
+
+  // Check for 503 / high demand / unavailable
+  if (
+    err?.status === 503 ||
+    raw.includes("503") ||
+    raw.toLowerCase().includes("high demand") ||
+    raw.toLowerCase().includes("unavailable")
+  ) {
+    return "Google Gemini Cloud is experiencing temporary peak demand. Real-time local biomedical engine & ML diagnostics remain fully operational.";
+  }
+
+  // Attempt JSON parsing if raw contains JSON object
   try {
-    const parsed = JSON.parse(raw);
-    if (parsed.error?.message) {
-      if (parsed.error.code === 503) {
-        return "Google Gemini model is experiencing high demand. Automatic local clinical telemetry synthesis engaged.";
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed?.error) {
+        if (
+          parsed.error.code === 503 ||
+          parsed.error.status === "UNAVAILABLE" ||
+          (parsed.error.message && parsed.error.message.includes("high demand"))
+        ) {
+          return "Google Gemini Cloud is experiencing temporary peak demand. Real-time local biomedical engine & ML diagnostics remain fully operational.";
+        }
+        if (parsed.error.message) {
+          return parsed.error.message;
+        }
       }
-      return parsed.error.message;
     }
   } catch {}
-  if (raw.includes("503") || raw.includes("high demand") || raw.includes("UNAVAILABLE")) {
-    return "Google Gemini model is experiencing high demand. Automatic local clinical telemetry synthesis engaged.";
-  }
+
   return raw;
 }
 

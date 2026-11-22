@@ -2,9 +2,10 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useSensorStore, buffers } from "@/store/sensorStore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Printer, ShieldCheck, Heart, Activity, Sparkles, Waves } from "lucide-react";
+import { FileText, Download, Printer, ShieldCheck, Heart, Activity, Sparkles, Waves, Loader2 } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { toast } from "sonner";
 import { extractEcgFeatures } from "@/services/analysis/features";
 import { runEdgeOfflineDiagnostics } from "@/services/analysis/edgeOfflineEngine";
 
@@ -98,28 +99,46 @@ export function ClinicalReportModal() {
   const reportDate = new Date().toLocaleString();
   const reportId = `ETH-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  // Download PDF using html2canvas & jsPDF
+  // Download PDF using html2canvas & jsPDF with high-fidelity rendering
   const downloadPdf = async () => {
-    if (!reportRef.current) return;
+    if (!reportRef.current) {
+      toast.error("Report content is not ready to capture.");
+      return;
+    }
     setGenerating(true);
+    const toastId = toast.loading("Rendering high-resolution medical PDF...");
     try {
-      const canvas = await html2canvas(reportRef.current, {
+      const el = reportRef.current;
+      const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: "#ffffff",
+        logging: false,
+        windowWidth: el.scrollWidth || 1024,
       });
-      const imgData = canvas.toDataURL("image/png");
+
+      const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
-      const imgWidth = 210; // A4 width
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const imgWidth = pageWidth - margin * 2;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save(`Cardiac_Diagnostic_Report_${reportId}.pdf`);
-    } catch (err) {
+
+      pdf.addImage(imgData, "PNG", margin, margin, imgWidth, Math.min(imgHeight, pageHeight - margin * 2));
+      const filename = `Cardiac_Diagnostic_Report_${reportId}.pdf`;
+      pdf.save(filename);
+      toast.success(`Report downloaded: ${filename}`, { id: toastId });
+    } catch (err: any) {
       console.error("PDF generation failed:", err);
+      toast.error("Direct PDF export encountered a browser limitation. Opening system print...", { id: toastId });
+      setTimeout(() => window.print(), 300);
     } finally {
       setGenerating(false);
     }
@@ -208,10 +227,19 @@ export function ClinicalReportModal() {
               size="sm"
               disabled={generating}
               onClick={downloadPdf}
-              className="gap-1.5 text-xs rounded-lg bg-primary text-primary-foreground font-semibold"
+              className="gap-1.5 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition-all"
             >
-              <Download className="h-3.5 w-3.5" />
-              {generating ? "Generating..." : "Download PDF"}
+              {generating ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Generating PDF...
+                </>
+              ) : (
+                <>
+                  <Download className="h-3.5 w-3.5" />
+                  Download PDF
+                </>
+              )}
             </Button>
           </div>
         </DialogHeader>
@@ -282,21 +310,20 @@ export function ClinicalReportModal() {
                 Speed: 25 mm/s | Calibration: 10 mm/mV | AD8232 ({ecgSampleRate || 100} Hz) | {realEcgSamples.length} Samples
               </span>
             </div>
-            <div
-              className="h-32 w-full rounded border border-rose-200 overflow-hidden relative"
-              style={{
-                backgroundColor: "#fff5f5",
-                backgroundImage: `
-                  linear-gradient(to right, rgba(244, 63, 94, 0.15) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(244, 63, 94, 0.15) 1px, transparent 1px),
-                  linear-gradient(to right, rgba(244, 63, 94, 0.3) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(244, 63, 94, 0.3) 1px, transparent 1px)
-                `,
-                backgroundSize: "4px 4px, 4px 4px, 20px 20px, 20px 20px",
-              }}
-            >
-              {realEcgSamples.length > 5 ? (
-                <svg className="w-full h-full" viewBox="0 0 1000 120" preserveAspectRatio="none">
+            <div className="h-32 w-full rounded border border-rose-300 overflow-hidden relative bg-[#fff5f5]">
+              <svg className="w-full h-full" viewBox="0 0 1000 120" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="ecg-small-grid" width="4" height="4" patternUnits="userSpaceOnUse">
+                    <path d="M 4 0 L 0 0 0 4" fill="none" stroke="#fecdd3" strokeWidth="0.5" />
+                  </pattern>
+                  <pattern id="ecg-large-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <rect width="20" height="20" fill="url(#ecg-small-grid)" />
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#fda4af" strokeWidth="1" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="#fff5f5" />
+                <rect width="100%" height="100%" fill="url(#ecg-large-grid)" />
+                {realEcgSamples.length > 5 ? (
                   <path
                     d={ecgSvgPath}
                     fill="none"
@@ -305,9 +332,18 @@ export function ClinicalReportModal() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                </svg>
-              ) : (
-                <div className="h-full w-full flex items-center justify-center font-mono text-[11px] text-zinc-500">
+                ) : (
+                  <path
+                    d="M 0,60 L 1000,60"
+                    fill="none"
+                    stroke="#94a3b8"
+                    strokeWidth="1.2"
+                    strokeDasharray="4 4"
+                  />
+                )}
+              </svg>
+              {realEcgSamples.length <= 5 && (
+                <div className="absolute inset-0 flex items-center justify-center font-mono text-[11px] text-zinc-500 bg-white/40">
                   {ecgLeadOff ? "AD8232 Leads Off: Connect ECG electrode probes to skin" : "Awaiting AD8232 ECG Telemetry..."}
                 </div>
               )}
@@ -326,20 +362,19 @@ export function ClinicalReportModal() {
                   Optical Pulsatile Volume ({ppgSampleRate || 100} Hz) | {realPpgSamples.length} Samples
                 </span>
               </div>
-              <div
-                className="h-20 w-full rounded border border-sky-200 overflow-hidden relative"
-                style={{
-                  backgroundColor: "#f0f9ff",
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(14, 165, 233, 0.12) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(14, 165, 233, 0.12) 1px, transparent 1px),
-                    linear-gradient(to right, rgba(14, 165, 233, 0.25) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(14, 165, 233, 0.25) 1px, transparent 1px)
-                  `,
-                  backgroundSize: "4px 4px, 4px 4px, 20px 20px, 20px 20px",
-                }}
-              >
+              <div className="h-20 w-full rounded border border-sky-300 overflow-hidden relative bg-[#f0f9ff]">
                 <svg className="w-full h-full" viewBox="0 0 1000 75" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="ppg-small-grid" width="4" height="4" patternUnits="userSpaceOnUse">
+                      <path d="M 4 0 L 0 0 0 4" fill="none" stroke="#bae6fd" strokeWidth="0.5" />
+                    </pattern>
+                    <pattern id="ppg-large-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <rect width="20" height="20" fill="url(#ppg-small-grid)" />
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#7dd3fc" strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="#f0f9ff" />
+                  <rect width="100%" height="100%" fill="url(#ppg-large-grid)" />
                   <path
                     d={ppgSvgPath}
                     fill="none"
