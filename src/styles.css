@@ -241,7 +241,21 @@
   --bg-noise-texture: url("/textures/matte-noise-dark.png");
 }
 
-/* Background canvas with authentic matte grain */
+/*
+ * ── AUTHENTIC PHYSICAL MATTE NOISE ON BACKGROUND CANVAS ONLY ──────────────
+ * Applied strictly to the outer backdrop / canvas.
+ * Small boxes, cards, widgets, inputs, dialogs, and media remain 100% CLEAN
+ * and smooth, displaying their normal, simple colors as per light and dark mode.
+ */
+:root {
+  --bg-noise-texture: url("/textures/matte-noise-light.png");
+}
+
+.dark {
+  --bg-noise-texture: url("/textures/matte-noise-dark.png");
+}
+
+/* Background canvas with silky gentle matte grain */
 html,
 body {
   background-color: var(--color-background);
@@ -251,47 +265,59 @@ body {
   background-attachment: fixed;
 }
 
-/* All background surfaces, cards, modals, sidebars, dialogs, drawers and panels carry the tactile matte noise grain */
-body,
-#root,
-.min-h-screen,
-main,
-header,
-footer,
-aside,
-section:not([class*="bg-gradient"]),
-.bg-background,
-[class*="bg-background"]:not([class*="bg-gradient"]),
+/* Ensure root layout allows fixed body background canvas to show through */
+.min-h-screen.bg-background {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Header subtle frosted glass surface */
+header {
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* 
+ * ── NORMAL SIMPLE COLORS FOR ALL CARDS, SMALL BOXES & CONTROLS ────────────
+ * User Requirement: Keep the small boxes normal simple colors as per dark
+ * and light mode with ZERO NOISE, so contents never mix or clash with texture.
+ */
 .bg-card,
-[class*="bg-card"]:not([class*="bg-gradient"]),
-.bg-muted,
-[class*="bg-muted"]:not([class*="bg-gradient"]),
-.bg-secondary,
-[class*="bg-secondary"]:not([class*="bg-gradient"]),
-.bg-accent,
-[class*="bg-accent"]:not([class*="bg-gradient"]),
+[class*="bg-card"],
+.card,
+[class*="card"],
+.luxury-card,
+.glass-card,
 .bg-popover,
-[class*="bg-popover"]:not([class*="bg-gradient"]),
 .bg-sidebar,
-[class*="bg-sidebar"]:not([class*="bg-gradient"]),
-.luxury-card:not([class*="bg-gradient"]),
-.glass-card:not([class*="bg-gradient"]),
-.card:not([class*="bg-gradient"]),
+.bg-muted,
+[class*="bg-muted"],
+.bg-secondary,
+[class*="bg-secondary"],
+.bg-accent,
+[class*="bg-accent"],
 [role="dialog"],
 .dialog-content,
+.popover-content,
 [class*="bg-slate-"],
 [class*="bg-zinc-"],
 [class*="bg-[#0D1526]"],
 [class*="bg-[#142033]"],
 [class*="bg-[#1A2639]"],
 [class*="bg-[#F3F6F9]"],
-[class*="bg-[#F7F9FC]"] {
-  background-image: var(--bg-noise-texture) !important;
-  background-repeat: repeat !important;
-  background-size: 180px 180px !important;
+[class*="bg-[#F7F9FC]"],
+section,
+article,
+fieldset,
+button,
+input,
+select,
+textarea {
+  background-image: none !important;
 }
 
-/* ── STRICT SAFEGUARD: ZERO NOISE ON IMAGES, VIDEOS, GRAPHS & CANVAS ──────── */
+/* ── BULLETPROOF SAFEGUARD: ZERO NOISE ON IMAGES, VIDEOS, GRAPHS & CANVAS ──── */
 img,
 video,
 canvas,
