@@ -296,17 +296,6 @@ I am your multi-lingual, voice-interactive medical telemetry assistant with swee
       {/* ── 1. FLOATING CHAT TRIGGER BUTTON ─────────────────────────────────── */}
       {!isOpen && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
-          {/* Quick Chime Button alongside Trigger */}
-          <button
-            onClick={handlePlaySweetChime}
-            aria-label="Play sweet chime"
-            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-[#1A221C] text-teal-600 dark:text-teal-400 border border-teal-500/30 shadow-lg hover:scale-110 active:scale-95 transition-all"
-            title="Play Sweet Satisfying Chime 🎵"
-          >
-            <Music className="h-5 w-5 stroke-[2] group-hover:rotate-12 transition-transform" />
-            <span className="sr-only">Sweet Chime</span>
-          </button>
-
           {/* Main Bot Button */}
           <button
             onClick={handleOpenChat}
