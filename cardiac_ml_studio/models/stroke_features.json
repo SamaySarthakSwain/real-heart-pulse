@@ -1,0 +1,20 @@
+[
+  "gender_num",
+  "age",
+  "hypertension",
+  "heart_disease",
+  "married_num",
+  "urban_num",
+  "avg_glucose_level",
+  "bmi",
+  "cardioneuro_risk_index",
+  "metabolic_stroke_index",
+  "high_risk_flag",
+  "work_Never_worked",
+  "work_Private",
+  "work_Self-employed",
+  "work_children",
+  "smoke_formerly smoked",
+  "smoke_never smoked",
+  "smoke_smokes"
+]

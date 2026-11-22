@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Ear to Heart</string>
+    <string name="title_activity_main">Ear to Heart</string>
+    <string name="package_name">com.aikyanova.eartoheart</string>
+    <string name="custom_url_scheme">com.aikyanova.eartoheart</string>
+</resources>

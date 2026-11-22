@@ -230,7 +230,7 @@ function ThemeToggle() {
 const NAV_LINKS = [
   { to: "/", label: "Home", icon: "🏠" },
   { to: "/dashboard", label: "Dashboard", icon: "📊" },
-  { to: "/analysis", label: "Risk Analysis", icon: "🔬" },
+  { to: "/analysis", label: "Gemini AI & Risk", icon: "✨" },
   { to: "/patient", label: "Patient Records", icon: "👤" },
   { to: "/hardware", label: "Device Hub", icon: "🔌" },
   { to: "/settings", label: "Settings", icon: "⚙️" },

@@ -25,9 +25,16 @@ function num(value: number | null, digits = 0, unit = "") {
 
 interface DLAnalysisResult {
   isOfflineFallback?: boolean;
+  model_architecture?: string;
   primary_diagnosis: string;
   confidence: number;
-  detailed_analysis: { class: string; description: string; probability: number }[];
+  detailed_analysis: {
+    class: string;
+    description: string;
+    probability: number;
+    optimal_operating_threshold?: number;
+    detected?: boolean;
+  }[];
   sqi_assessment?: {
     overall_sqi: number;
     decision: string;
@@ -157,22 +164,47 @@ export function RiskPanel() {
                 <ul className="space-y-3">
                   {dlAnalysis.detailed_analysis
                     .sort((a, b) => b.probability - a.probability)
-                    .map((c) => (
-                      <li key={c.class}>
-                        <div className="flex items-center justify-between gap-3 text-sm">
-                          <span className="font-medium">{c.description}</span>
-                          <span className="font-mono tabular-nums">
-                            {(c.probability * 100).toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className={`h-full rounded-full ${c.probability > 0.5 ? "bg-destructive" : "bg-primary"}`}
-                            style={{ width: `${Math.min(100, c.probability * 100)}%` }}
-                          />
-                        </div>
-                      </li>
-                    ))}
+                    .map((c) => {
+                      const th = c.optimal_operating_threshold ?? 0.5;
+                      const isPositive = c.detected ?? (c.probability >= th);
+                      return (
+                        <li key={c.class} className="rounded-lg border border-border/50 bg-background/50 p-2.5">
+                          <div className="flex items-center justify-between gap-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-xs tracking-wider px-1.5 py-0.5 rounded bg-muted font-mono">
+                                {c.class}
+                              </span>
+                              <span className="font-medium text-xs sm:text-sm">{c.description}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-mono text-muted-foreground">
+                                Thresh: {(th * 100).toFixed(0)}%
+                              </span>
+                              <span className="font-mono tabular-nums text-xs sm:text-sm font-bold">
+                                {(c.probability * 100).toFixed(1)}%
+                              </span>
+                              <span
+                                className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                  isPositive && c.class !== "NORM"
+                                    ? "bg-destructive/20 text-destructive border border-destructive/30"
+                                    : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                }`}
+                              >
+                                {isPositive && c.class !== "NORM" ? "DETECTED" : "NORMAL"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                            <div
+                              className={`h-full rounded-full ${
+                                isPositive && c.class !== "NORM" ? "bg-destructive" : "bg-primary"
+                              }`}
+                              style={{ width: `${Math.min(100, c.probability * 100)}%` }}
+                            />
+                          </div>
+                        </li>
+                      );
+                    })}
                 </ul>
               </div>
             )}
@@ -242,6 +274,11 @@ export function RiskPanel() {
               "ST deviation",
               ecg.stDeviation === null ? "--" : `${(ecg.stDeviation * 100).toFixed(1)} % of R`,
             ],
+            ["QT Interval", num(ecg.qtIntervalMs, 0, " ms")],
+            ["QTc (Bazett)", num(ecg.qtcBazettMs, 0, " ms")],
+            ["QTc (Fridericia)", num(ecg.qtcFridericiaMs, 0, " ms")],
+            ["PR Interval", num(ecg.prIntervalMs, 0, " ms")],
+            ["Baevsky Stress Index", num(ecg.stressIndex, 1, " SI")],
             ["Mean SpO₂", num(analysis.spo2.mean, 1, " %")],
             ["Mean BPM (firmware)", num(analysis.bpm.mean, 0, " bpm")],
             ["Mean temperature", num(analysis.temperature.mean, 1, " °C")],

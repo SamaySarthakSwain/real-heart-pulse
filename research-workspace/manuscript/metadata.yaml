@@ -1,0 +1,22 @@
+title: "Ear to Heart: Continuous Auricular Physiological Telemetry and Deep Multimodal Cardiopulmonary Diagnostic Architecture"
+short_title: "Ear to Heart: Continuous Auricular Diagnostic Architecture"
+authors:
+  - name: "Samay Sarthak Swain"
+    affiliation: "Department of Biomedical Engineering & Computer Science, Antigravity Autonomous Research Lab"
+    email: "samaysarthakswain@gmail.com"
+keywords:
+  - "Hearables"
+  - "Auricular Electrocardiography"
+  - "Photoplethysmography (PPG)"
+  - "Deep Learning"
+  - "SE-ResNet-1D"
+  - "BiGRU"
+  - "Arrhythmia Classification"
+  - "Gradient Boosting Stacking"
+  - "Conformal Prediction"
+  - "Signal Quality Index (SQI)"
+venue: "IEEE Transactions on Biomedical Engineering / EMBC Submission"
+year: 2026
+build:
+  engine: "tectonic"
+  format: "ieee"

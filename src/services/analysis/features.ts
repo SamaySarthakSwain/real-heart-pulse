@@ -25,6 +25,16 @@ export interface EcgFeatures {
   qrsDuration: number | null;
   /** Mean ST-segment level relative to the PQ baseline, ADC counts (+ elevation / − depression). */
   stDeviation: number | null;
+  /** Mean QT interval estimate, ms. */
+  qtIntervalMs: number | null;
+  /** Bazett's rate-corrected QT interval (QT / sqrt(RR_sec)), ms. */
+  qtcBazettMs: number | null;
+  /** Fridericia's rate-corrected QT interval (QT / cbrt(RR_sec)), ms. */
+  qtcFridericiaMs: number | null;
+  /** Mean PR interval estimate, ms (normal 120-200 ms). */
+  prIntervalMs: number | null;
+  /** Baevsky Autonomic Stress Index (sympathovagal balance index). */
+  stressIndex: number | null;
 }
 
 export interface VitalStats {
@@ -68,6 +78,11 @@ const EMPTY_ECG: EcgFeatures = {
   qrsAmplitude: null,
   qrsDuration: null,
   stDeviation: null,
+  qtIntervalMs: null,
+  qtcBazettMs: null,
+  qtcFridericiaMs: null,
+  prIntervalMs: null,
+  stressIndex: null,
 };
 
 /**
@@ -196,6 +211,104 @@ export function extractEcgFeatures(values: number[], times: number[]): EcgFeatur
   const widthStats = stats(widths);
   const stStats = stats(stLevels);
 
+  // 7. SOTA Electrophysiological Biomarkers: QT, QTc, PR, & Baevsky Stress Index
+  const rrSec = rrMean / 1000;
+  let meanQtMs: number | null = null;
+  let qtcBazett: number | null = null;
+  let qtcFridericia: number | null = null;
+  let meanPrMs: number | null = null;
+  let stressIndex: number | null = null;
+
+  if (peaks.length >= 3 && rrSec > 0.25 && rrSec < 2.5) {
+    const qtList: number[] = [];
+    const prList: number[] = [];
+
+    for (const p of peaks) {
+      // QT: From Q-wave onset (~30ms before R) to T-wave end (~250-450ms after R)
+      const qOnset = Math.max(0, p - Math.round(fs * 0.035));
+      const tSearchEnd = Math.min(n - 1, p + Math.round(fs * Math.min(0.48, rrSec * 0.55)));
+      
+      // Find T wave apex between +120ms and +350ms
+      let tApex = p + Math.round(fs * 0.18);
+      let tMaxVal = -Infinity;
+      const tSearchStart = Math.min(n - 1, p + Math.round(fs * 0.10));
+      for (let k = tSearchStart; k < tSearchEnd; k++) {
+        const val = values[k] as number;
+        if (val > tMaxVal) {
+          tMaxVal = val;
+          tApex = k;
+        }
+      }
+
+      // T wave end (tangent/inflection return to baseline)
+      let tEnd = tApex;
+      const baselineVal = values[qOnset] as number;
+      for (let k = tApex; k < tSearchEnd; k++) {
+        if (Math.abs((values[k] as number) - baselineVal) < 0.15 * Math.abs(tMaxVal - baselineVal)) {
+          tEnd = k;
+          break;
+        }
+      }
+      const beatQt = ((tEnd - qOnset) / fs) * 1000;
+      if (beatQt >= 220 && beatQt <= 600) {
+        qtList.push(beatQt);
+      }
+
+      // PR interval: P-wave onset (~160ms before R) to Q onset
+      const pSearchStart = Math.max(0, p - Math.round(fs * 0.22));
+      const pSearchEnd = Math.max(0, p - Math.round(fs * 0.06));
+      let pApex = pSearchStart;
+      let pMaxVal = -Infinity;
+      for (let k = pSearchStart; k < pSearchEnd; k++) {
+        const val = values[k] as number;
+        if (val > pMaxVal) {
+          pMaxVal = val;
+          pApex = k;
+        }
+      }
+      const beatPr = ((qOnset - (pApex - Math.round(fs * 0.03))) / fs) * 1000;
+      if (beatPr >= 90 && beatPr <= 320) {
+        prList.push(beatPr);
+      }
+    }
+
+    if (qtList.length > 0) {
+      meanQtMs = qtList.reduce((a, b) => a + b, 0) / qtList.length;
+      qtcBazett = meanQtMs / Math.sqrt(rrSec);
+      qtcFridericia = meanQtMs / Math.cbrt(rrSec);
+    }
+
+    if (prList.length > 0) {
+      meanPrMs = prList.reduce((a, b) => a + b, 0) / prList.length;
+    }
+
+    // Baevsky Stress Index: SI = AMo / (2 * Mo * MxDMn)
+    if (rr.length >= 5) {
+      const minRR = Math.min(...rr) / 1000;
+      const maxRR = Math.max(...rr) / 1000;
+      const mxDMn = Math.max(0.04, maxRR - minRR); // Variation range in seconds
+      
+      // Modal bin (50 ms resolution)
+      const binWidth = 50;
+      const binCounts: Record<number, number> = {};
+      for (const val of rr) {
+        const b = Math.round(val / binWidth) * binWidth;
+        binCounts[b] = (binCounts[b] || 0) + 1;
+      }
+      let maxCount = 0;
+      let modeBin = rrMean;
+      for (const [bStr, count] of Object.entries(binCounts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          modeBin = Number(bStr);
+        }
+      }
+      const mo = modeBin / 1000; // Mode in seconds
+      const aMo = (maxCount / rr.length) * 100; // Amplitude of mode in %
+      stressIndex = aMo / (2 * mo * mxDMn);
+    }
+  }
+
   return {
     sampleCount: n,
     samplingHz: fs,
@@ -209,5 +322,10 @@ export function extractEcgFeatures(values: number[], times: number[]): EcgFeatur
     qrsDuration: widthStats.mean,
     // Normalised to the R amplitude so it is comparable across gain settings.
     stDeviation: stStats.mean,
+    qtIntervalMs: meanQtMs,
+    qtcBazettMs: qtcBazett,
+    qtcFridericiaMs: qtcFridericia,
+    prIntervalMs: meanPrMs,
+    stressIndex: stressIndex,
   };
 }

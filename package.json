@@ -12,9 +12,17 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "dev:android": "node scripts/live-reload.mjs",
+    "watch:apk": "node scripts/watch-and-sync.mjs",
+    "build:mobile": "node scripts/prepare-mobile-dist.mjs && npx cap sync android",
+    "build:apk": "npm run build && npm run build:mobile && cd android && gradlew.bat assembleDebug"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@google/genai": "^3.3.0",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",

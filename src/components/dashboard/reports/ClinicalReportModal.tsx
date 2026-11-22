@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useSensorStore, buffers } from "@/store/sensorStore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Printer, ShieldCheck, Heart, Activity } from "lucide-react";
+import { FileText, Download, Printer, ShieldCheck, Heart, Activity, Sparkles } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -19,6 +19,7 @@ export function ClinicalReportModal() {
   const aiDetailedAnalysis = useSensorStore((s) => s.aiDetailedAnalysis);
   const sqiScore = useSensorStore((s) => s.sqiScore);
   const sqiStatus = useSensorStore((s) => s.sqiStatus);
+  const geminiSynthesis = useSensorStore((s) => s.geminiSynthesis);
 
   const reportDate = new Date().toLocaleString();
   const reportId = `ETH-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -228,6 +229,38 @@ export function ClinicalReportModal() {
               </div>
             </div>
           </div>
+
+          {/* Gemini AI Clinical Impression (if evaluated) */}
+          {geminiSynthesis && (
+            <div className="border border-indigo-200 rounded-lg p-4 bg-indigo-50/40 text-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <h2 className="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+                  Gemini 3.8 Flash Telemetry Synthesis & Clinical Impression
+                </h2>
+                <span className="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+                  Urgency: {geminiSynthesis.urgency}
+                </span>
+              </div>
+              <p className="text-zinc-700 leading-relaxed text-[11px]">
+                {geminiSynthesis.summary}
+              </p>
+              <div className="grid grid-cols-3 gap-2 text-[10px] bg-white/80 p-2 rounded border border-indigo-100">
+                <div>
+                  <span className="font-bold text-zinc-600">Rhythm: </span>
+                  <span className="text-zinc-900">{geminiSynthesis.hemodynamicStatus.rhythm}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-600">Perfusion: </span>
+                  <span className="text-zinc-900">{geminiSynthesis.hemodynamicStatus.perfusion}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-zinc-600">Autonomic Tone: </span>
+                  <span className="text-zinc-900">{geminiSynthesis.hemodynamicStatus.autonomicTone}</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Autonomic HRV Breakdown */}
           <div className="grid grid-cols-3 gap-3 border border-zinc-200 rounded-lg p-3 bg-zinc-50/30 text-center">

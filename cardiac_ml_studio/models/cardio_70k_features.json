@@ -1,0 +1,22 @@
+[
+  "age_years",
+  "gender",
+  "height",
+  "weight",
+  "bmi",
+  "ap_hi",
+  "ap_lo",
+  "pulse_pressure",
+  "mean_arterial_pressure",
+  "bp_ratio",
+  "arterial_stiffness_index",
+  "cholesterol",
+  "gluc",
+  "atherogenic_risk",
+  "smoke",
+  "alco",
+  "active",
+  "obesity_stage",
+  "hypertension_stage",
+  "cardiac_lifestyle_risk"
+]

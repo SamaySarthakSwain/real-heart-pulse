@@ -1,8 +1,17 @@
+import { useState } from "react";
 import { useSensorStore } from "@/store/sensorStore";
 import { MedicalDisclaimer } from "@/components/dashboard/MedicalDisclaimer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import {
+  getGeminiApiKey,
+  setGeminiApiKey,
+  testGeminiConnection,
+} from "@/services/gemini/geminiService";
+import { Sparkles, Key, CheckCircle2, ExternalLink, Loader2, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 const BAUD_RATES = [9600, 19200, 38400, 57600, 115200, 230400, 921600];
 
@@ -14,6 +23,32 @@ export function SettingsPage() {
   const settings = useSensorStore((s) => s.settings);
   const setSettings = useSensorStore((s) => s.setSettings);
   const connected = useSensorStore((s) => s.connectionState === "CONNECTED");
+
+  const [geminiKey, setLocalGeminiKey] = useState(getGeminiApiKey());
+  const [testingKey, setTestingKey] = useState(false);
+  const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  const handleSaveGeminiKey = () => {
+    setGeminiApiKey(geminiKey);
+    toast.success("Gemini API Key saved successfully");
+  };
+
+  const handleTestGeminiKey = async () => {
+    setTestingKey(true);
+    setTestResult(null);
+    try {
+      const res = await testGeminiConnection(geminiKey);
+      setTestResult(res);
+      if (res.success) {
+        setGeminiApiKey(geminiKey);
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } finally {
+      setTestingKey(false);
+    }
+  };
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -215,6 +250,115 @@ export function SettingsPage() {
               onCheckedChange={(checked) => setSettings({ rawConsoleEnabled: checked })}
             />
           </div>
+        </div>
+      </section>
+
+      {/* Google Gemini API Configuration Card */}
+      <section className="rounded-2xl border border-primary/20 bg-card p-5 space-y-4 shadow-sm">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-semibold text-foreground">
+                  Google Gemini API Configuration
+                </h2>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
+                  gemini-3.8-flash
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Powers the Gemini Cardiology Copilot, real-time clinical telemetry synthesis, and multimodal ECG vision diagnostics.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://aistudio.google.com/apikey"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20"
+          >
+            Get Free Key <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3 items-end pt-2">
+          <div className="space-y-1.5 md:col-span-2">
+            <Label
+              htmlFor="gemini-key-input"
+              className="text-xs font-semibold tracking-wide uppercase text-muted-foreground flex items-center gap-1.5"
+            >
+              <Key className="h-3.5 w-3.5" /> Gemini API Key
+            </Label>
+            <Input
+              id="gemini-key-input"
+              type="password"
+              placeholder="AIzaSy..."
+              value={geminiKey}
+              onChange={(e) => setLocalGeminiKey(e.target.value)}
+              className="rounded-xl font-mono text-xs"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleSaveGeminiKey}
+              className="rounded-xl text-xs bg-primary text-primary-foreground font-semibold flex-1"
+            >
+              Save Key
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={testingKey || !geminiKey.trim()}
+              onClick={handleTestGeminiKey}
+              className="rounded-xl text-xs gap-1.5 flex-1"
+            >
+              {testingKey ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Testing...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Test Key
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {testResult && (
+          <div
+            className={`p-3 rounded-xl border text-xs flex items-start gap-2 ${
+              testResult.success
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                : "bg-destructive/10 border-destructive/30 text-destructive"
+            }`}
+          >
+            {testResult.success ? (
+              <CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5" />
+            ) : (
+              <Key className="h-4 w-4 flex-shrink-0 mt-0.5" />
+            )}
+            <div>
+              <p className="font-semibold">{testResult.success ? "Connection Verified" : "Connection Error"}</p>
+              <p className="mt-0.5 text-[11px] opacity-90">{testResult.message}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-muted/30 p-3 rounded-xl border border-border text-[11px] text-muted-foreground flex flex-wrap items-center justify-between gap-2">
+          <span>
+            API keys are kept strictly local in client storage or loaded via <code className="font-mono text-foreground font-semibold">VITE_GEMINI_API_KEY</code>.
+          </span>
+          <span className="font-medium text-foreground">
+            Zero telemetry or sensor data is ever sent to third parties without your explicit trigger.
+          </span>
         </div>
       </section>
 

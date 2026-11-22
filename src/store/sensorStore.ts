@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { RingBuffer } from "@/utils/buffers";
+import type { ClinicalSynthesisResult } from "@/types/gemini";
 import {
   DEFAULT_PARSER_OPTIONS,
   parseLine,
@@ -142,6 +143,8 @@ export interface SensorState extends Counters {
   enableAiVision: boolean;
   toggleAiVision: () => void;
   setAiDiagnosisResult: (data: any) => void;
+  geminiSynthesis: ClinicalSynthesisResult | null;
+  setGeminiSynthesis: (synthesis: ClinicalSynthesisResult | null) => void;
 
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
@@ -227,6 +230,9 @@ export const useSensorStore = create<SensorState>((set, get) => ({
   sqiStatus: null,
   enableAiVision: true,
   toggleAiVision: () => set((s) => ({ enableAiVision: !s.enableAiVision })),
+  geminiSynthesis: null,
+  setGeminiSynthesis: (synthesis: ClinicalSynthesisResult | null) =>
+    set({ geminiSynthesis: synthesis }),
   setAiDiagnosisResult: (data: any) =>
     set({
       aiPrimaryDiagnosis: data?.primary_diagnosis ?? null,

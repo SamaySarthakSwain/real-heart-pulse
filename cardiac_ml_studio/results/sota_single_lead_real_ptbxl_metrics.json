@@ -1,0 +1,62 @@
+{
+  "NORM": {
+    "ROC-AUC": 0.8959,
+    "PR-AUC": 0.8368,
+    "Optimal_Threshold": 0.38,
+    "F1": 0.8009,
+    "Sensitivity": 0.9356,
+    "Specificity": 0.6874,
+    "True_Positives": 901,
+    "False_Negatives": 62,
+    "True_Negatives": 849,
+    "False_Positives": 386
+  },
+  "MI": {
+    "ROC-AUC": 0.8097,
+    "PR-AUC": 0.6117,
+    "Optimal_Threshold": 0.38,
+    "F1": 0.5843,
+    "Sensitivity": 0.6745,
+    "Specificity": 0.7882,
+    "True_Positives": 371,
+    "False_Negatives": 179,
+    "True_Negatives": 1299,
+    "False_Positives": 349
+  },
+  "STTC": {
+    "ROC-AUC": 0.8713,
+    "PR-AUC": 0.6841,
+    "Optimal_Threshold": 0.38,
+    "F1": 0.6306,
+    "Sensitivity": 0.6161,
+    "Specificity": 0.8951,
+    "True_Positives": 321,
+    "False_Negatives": 200,
+    "True_Negatives": 1501,
+    "False_Positives": 176
+  },
+  "CD": {
+    "ROC-AUC": 0.8475,
+    "PR-AUC": 0.7198,
+    "Optimal_Threshold": 0.44,
+    "F1": 0.6484,
+    "Sensitivity": 0.5968,
+    "Specificity": 0.9289,
+    "True_Positives": 296,
+    "False_Negatives": 200,
+    "True_Negatives": 1581,
+    "False_Positives": 121
+  },
+  "HYP": {
+    "ROC-AUC": 0.7557,
+    "PR-AUC": 0.3683,
+    "Optimal_Threshold": 0.26,
+    "F1": 0.3245,
+    "Sensitivity": 0.7901,
+    "Specificity": 0.5832,
+    "True_Positives": 207,
+    "False_Negatives": 55,
+    "True_Negatives": 1129,
+    "False_Positives": 807
+  }
+}

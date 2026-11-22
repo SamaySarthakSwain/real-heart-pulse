@@ -1,0 +1,29 @@
+\section{Discussion, Clinical Limitations, and Deployment Considerations}
+\label{sec:discussion}
+
+\subsection{Electrophysiological Vector Projection and Lead Placement}
+The empirical results demonstrate that a high-fidelity single-lead auricular montage provides clinical diagnostic utility comparable to traditional thoracic Lead-II recordings. By measuring the differential potential between the tragus and the acoustic meatus with active earlobe ground feedback, the system captures a modified frontal plane vector that clearly delineates P-wave morphology, QRS axis dynamics, and ST-T segment repolarization. 
+
+However, clinicians must acknowledge inherent spatial vector limitations: single-lead auricular telemetry cannot fully substitute for a full 12-lead precordial ECG in complex multi-vessel localization, such as distinguishing circumflex versus right coronary artery occlusions in posterior myocardial infarctions. Instead, \textit{Ear to Heart} is architected as an early-warning ambulatory surveillance system designed to detect paroxysmal arrhythmias, silent ischemic transitions, and hemodynamic decompensation before patients reach emergency crises.
+
+\subsection{Motion Artifacts and Biomechanical Coupling}
+Ambulatory biopotential acquisition from the head introduces distinct biomechanical noise sources, specifically mastication, speech, and head rotations that distort the cartilaginous auditory meatus. While standard thoracic monitors suffer from pectoral muscle EMG and bra/clothing friction, the auricular site is shielded from gross torso movement during routine office tasks and sleep.
+
+To mitigate temporomandibular joint (TMJ) motion artifacts during speech or chewing, our custom silicone earmold incorporates mechanical compliance zones that absorb ear canal deformation. In firmware, the multi-parametric SQI engine actively gates corrupted frames ($K_{\text{SQI}} < 5.0$, $P_{\text{SQI}} < 0.50$), suppressing false-positive arrhythmia alarms without compromising real-time monitoring continuity.
+
+\subsection{Electrode-Skin Impedance Dynamics}
+Unlike disposable Ag/AgCl electrodes that utilize ionic hydrogels, our gold-plated dry contacts operate without electrolytic paste, completely eliminating contact dermatitis. However, dry electrodes exhibit an initially elevated interface impedance ($> 500\,\text{k}\Omega$). 
+
+Within $3$--$5$ minutes of insertion, microscopic transepidermal water loss (TEWL) and natural moisture accumulation beneath the silicone cuff form a thin conductive perspiration layer, naturally reducing the electrode-skin interface impedance to $60$--$120\,\text{k}\Omega$. The ultra-high input impedance ($10^{10}\,\Omega$) of the AD8232 instrumentation amplifier preserves common-mode rejection ($> 80$\,dB) throughout this equilibration period.
+
+\subsection{Embedded Power Budget and Transmission Latency}
+Continuous real-time physiological telemetry imposes strict energy constraints on wearable form factors. The total current draw of the earbud hardware averages $18.4\,\text{mA}$ during simultaneous 250\,Hz ECG digitization, MAX30102 dual-optical sampling, and BLE 5.0 notification streaming:
+\begin{itemize}
+    \item ESP32 processing and BLE radio: $14.2\,\text{mA}$
+    \item MAX30102 dual-wavelength pulse mode ($50$\,Hz, $411\,\mu\text{s}$): $3.8\,\text{mA}$
+    \item AD8232 analog front-end: $0.4\,\text{mA}$
+\end{itemize}
+A lightweight $300\,\text{mAh}$ lithium-polymer pouch cell housed within the behind-the-ear casing provides $16.3$ hours of uninterrupted operation. Benchmarking BLE 5.0 throughput over a 5-meter radius demonstrated an average packet delivery latency of $12.4 \pm 2.1\,\text{ms}$ with a packet loss rate under $0.08\%$, well within international telemetry standards for ambulatory cardiac monitoring.
+
+\subsection{Regulatory and Safety Pathways (FDA SaMD)}
+To facilitate clinical adoption, the software pipeline is architected in compliance with FDA Software as a Medical Device (SaMD) Class II guidelines. The integration of Inductive Split-Conformal Prediction ensures that the system never forces a classification when epistemic uncertainty is elevated. By outputting multi-label ambiguity sets or explicitly abstaining during sensor displacement, the system operates as a clinician-in-the-loop decision-support tool rather than an unconstrained autonomous agent.

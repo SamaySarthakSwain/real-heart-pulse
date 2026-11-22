@@ -1,0 +1,8 @@
+\section{Conclusion and Future Directions}
+\label{sec:conclusion}
+
+In this work, we developed and validated \textit{Ear to Heart}, an autonomous, continuous auricular physiological telemetry and deep multimodal diagnostic system. By establishing a stable three-point dry-contact electrode montage across the tragus, ear canal, and earlobe alongside dual-wavelength photoplethysmography, the system captures clinical-grade cardiac biopotentials and pulsatile hemodynamics from an unobtrusive hearable form factor.
+
+Our architectural formulation systematically overcomes the prevalent failure modes of wearable cardiac artificial intelligence. By designing a native single-lead \mbox{SEResNet1D-BiGRU-Attn} network, we eliminated the catastrophic vector distortion caused by pseudo-12-lead channel cloning, completely resolving the Ventricular Hypertrophy (HYP) sensitivity collapse on $21,799$ authentic PTB-XL records while attaining $98.02\%$ accuracy on PVC detection across $47,432$ PhysioNet MIT-BIH test beats. In parallel, validating our multimodal stacking ensemble across $113,449$ real-world clinical patients established robust performance for heart failure ($95.76\%$ ROC-AUC) and population cardiovascular risk ($80.60\%$ ROC-AUC). Grounded by 1D ECG Grad-CAM feature attribution and Inductive Split-Conformal Prediction with distribution-free $95\%$ marginal coverage guarantees, the system demonstrates an end-to-end pathway for reliable, interpretable ambulatory cardiology.
+
+Future work will expand our validation into multi-site clinical trials across intensive care and post-operative surgical wards, alongside the migration of our neural architecture to ultra-low-power neuromorphic edge hardware for fully autonomous, zero-latency on-device inference.

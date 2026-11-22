@@ -1,0 +1,53 @@
+\section{Signal Conditioning and Real-Time SQI Pipeline}
+\label{sec:conditioning}
+
+\subsection{Digital Filter Cascade and Baseline Rectification}
+Raw auricular biopotentials captured in ambulatory settings are subject to non-stationary baseline drift, electromyographic artifacts from jaw movement, and electromagnetic line noise. The digital conditioning pipeline operates directly on streaming telemetry buffers using a multi-stage zero-phase filtering cascade:
+\begin{enumerate}
+    \item \textbf{Zero-Phase Bandpass Filtering:} A 4th-order Butterworth infinite impulse response (IIR) bandpass filter with corner frequencies at $0.5$\,Hz and $40$\,Hz isolates cardiac electrophysiological frequencies. Bidirectional filtering (forward-backward) is employed to guarantee zero phase distortion ($\phi(\omega) = 0$), preserving the critical morphology of the QRS complex, ST-segment, and T-wave:
+    \begin{equation}
+        y[n] = \sum_{k=0}^{M} b_k x[n-k] - \sum_{k=1}^{N} a_k y[n-k]
+    \end{equation}
+    \item \textbf{Narrowband Notch Filtering:} Persistent $50/60$\,Hz powerline interference is rejected using a 2nd-order IIR notch filter with a quality factor $Q = 30$:
+    \begin{equation}
+        H_{\text{notch}}(z) = \frac{1 - 2\cos(\omega_0)z^{-1} + z^{-2}}{1 - 2r\cos(\omega_0)z^{-1} + r^2 z^{-2}}
+    \end{equation}
+    where $\omega_0 = 2\pi f_{\text{line}} / f_s$, and the pole radius $r = 1 - \frac{\pi B}{f_s}$ sets the $-3$\,dB bandwidth to $B = 2$\,Hz.
+    \item \textbf{Morphological Baseline Elimination:} Severe baseline wander induced by deep respiration and postural shifts is removed using dual mathematical morphological operators. Consecutive opening and closing operations using flat structuring elements of lengths $L_1 = 200\,\text{ms}$ (smaller than the P-QRS duration) and $L_2 = 600\,\text{ms}$ (larger than the T-wave duration) isolate the underlying drift trajectory $\mathcal{B}[n]$, which is subtracted from the filtered signal:
+    \begin{align}
+        x_{\text{clean}}[n] = x_{\text{filt}}[n] - \frac{1}{2} [ & (x_{\text{filt}} \circ B_1 \bullet B_2)[n] \nonumber \\
+        & + (x_{\text{filt}} \bullet B_2 \circ B_1)[n] ]
+    \end{align}
+\end{enumerate}
+
+\subsection{Composite Multi-Parameter Signal Quality Index (SQI)}
+To prevent unconditioned motion artifacts from triggering spurious diagnostic classifications, the edge engine executes real-time Signal Quality Index (SQI) verification \cite{Clifford2012}. Every 2-second telemetry epoch is audited across statistical, spectral, and morphological dimensions:
+\begin{itemize}
+    \item \textbf{Sample Kurtosis ($K_{\text{SQI}}$):} Sharp, physiological QRS deflections produce a leptokurtic amplitude distribution ($K > 5.0$), whereas Gaussian-like electrode displacement noise yields mesokurtic distributions ($K \approx 3.0$):
+    \begin{equation}
+        K_{\text{SQI}} = \frac{\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x})^4}{\left(\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x})^2\right)^2}
+    \end{equation}
+    \item \textbf{Relative QRS Spectral Energy ($P_{\text{SQI}}$):} The ratio of energy concentrated within the ventricular depolarization band ($5$--$15$\,Hz) relative to the total physiological spectrum ($1$--$40$\,Hz) quantifies electrophysiological integrity:
+    \begin{equation}
+        P_{\text{SQI}} = \frac{\int_{5}^{15} S_{xx}(f) \, df}{\int_{1}^{40} S_{xx}(f) \, df}
+    \end{equation}
+    where $S_{xx}(f)$ is the power spectral density estimated via Welch periodograms.
+    \item \textbf{Morphological Template Correlation ($b_{\text{SQI}}$):} Consecutive segmented beats are cross-correlated against an exponential moving average (EMA) beat template $\bar{\mathcal{T}}$:
+    \begin{equation}
+        b_{\text{SQI}} = \frac{\sum_{j} (x_j - \bar{x})(\bar{\mathcal{T}}_j - \mu_{\mathcal{T}})}{\sqrt{\sum_j (x_j - \bar{x})^2 \sum_j (\bar{\mathcal{T}}_j - \mu_{\mathcal{T}})^2}}
+    \end{equation}
+\end{itemize}
+
+The composite index is formulated as:
+\begin{align}
+    \text{SQI}_{\text{ECG}} = & 0.35 \cdot \mathbb{I}(K_{\text{SQI}} \ge 5.0) \nonumber \\
+    & + 0.35 \cdot \mathbb{I}(P_{\text{SQI}} \ge 0.50) + 0.30 \cdot b_{\text{SQI}}
+\end{align}
+Epochs with $\text{SQI}_{\text{ECG}} < 0.65$ are flagged as clinically uninterpretable, suppressing inference and notifying the user to adjust the auricular earbud seating.
+
+\subsection{Photoplethysmographic SQI and Hemodynamic Cross-Validation}
+Concurrent with ECG auditing, the optical PPG waveform is validated using the Perfusion Index ($PI$) and pulse morphology skewness \cite{Elgendi2016}:
+\begin{equation}
+    PI = \frac{\max(x_{\text{PPG,AC}}) - \min(x_{\text{PPG,AC}})}{\text{mean}(x_{\text{PPG,DC}})} \times 100\%
+\end{equation}
+An optical trace is validated only when $PI \ge 0.15\%$ and pulse envelope regularity is maintained. Cross-correlation between ECG R-peak occurrences and optical systolic foot onsets calculates the real-time Pulse Transit Time (PTT), providing an independent physical verification that both biopotential and vascular sensors are co-registered to the same hemodynamic cardiac cycle.

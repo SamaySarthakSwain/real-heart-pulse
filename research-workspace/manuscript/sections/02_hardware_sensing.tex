@@ -1,0 +1,45 @@
+\section{Hardware Architecture and Auricular Sensing}
+\label{sec:hardware}
+
+\subsection{Auricular Electrophysiological Montage}
+The human ear offers a stable anatomical substrate for continuous biopotential and hemodynamic acquisition. However, the projection of cardiac dipole vectors onto cephalic structures yields signal amplitudes attenuated by an order of magnitude relative to standard thoracic Einthoven leads \cite{vonRosenberg2017}. To optimize the differential cardiac potential while maximizing user comfort, we formulate a three-point auricular electrode geometry:
+\begin{itemize}
+    \item \textbf{Tragus In-Ear Contact ($V_+$):} Positioned on the internal cartilaginous boundary of the tragus, acting as the primary non-inverting electrode.
+    \item \textbf{Canal/Antihelix Contact ($V_-$):} Positioned against the superior wall of the external acoustic meatus and antihelix, serving as the inverting reference.
+    \item \textbf{Earlobe Ground/RLD ($V_{\text{RLD}}$):} A spring-loaded dry contact on the lobule, providing an active Right Leg Drive (RLD) feedback path to cancel common-mode mains interference ($50/60$\,Hz).
+\end{itemize}
+
+Unlike conventional clinical electrodes that rely on electrolytic hydrogels prone to dehydration and skin irritation during multi-day wear, our prototype utilizes biocompatible gold-plated beryllium-copper dry contacts encased in medical-grade silicone earmolds.
+
+\subsection{Analog Front-End Conditioning (AD8232)}
+Due to the diminished amplitude of auricular biopotentials ($20$--$100\,\mu\text{V}$ peak-to-peak), the analog front-end (AFE) must exhibit an ultra-high input impedance, exceptional common-mode rejection, and sharp out-of-band roll-off. We employ the Analog Devices AD8232 single-lead heart-rate monitor front-end IC. 
+
+The AFE implements an instrumentation amplifier core with a Common Mode Rejection Ratio ($\text{CMRR}$) exceeding $80$\,dB at $60$\,Hz. Baseline wander resulting from respiration and cutaneous half-cell polarization is eliminated via a two-pole high-pass filter:
+\begin{equation}
+    f_{c,\text{HP}} = \frac{1}{2\pi \sqrt{R_1 R_2 C_1 C_2}} \approx 0.5\,\text{Hz}
+\end{equation}
+High-frequency electromyographic noise and electromagnetic interference are suppressed by a two-pole active Sallen-Key low-pass filter with a cutoff frequency:
+\begin{equation}
+    f_{c,\text{LP}} = \frac{1}{2\pi \sqrt{R_3 R_4 C_3 C_4}} \approx 40\,\text{Hz}
+\end{equation}
+The overall analog gain is configured to $G = 100\,\text{V/V}$, amplifying microvolt cardiac signals to a dynamic range of $0$--$3.3$\,V compatible with microcontroller analog-to-digital converters (ADCs). An integrated fast-restore circuit automatically re-establishes baseline stability within $15$\,ms following electrode disconnection or violent motion artifacts.
+
+\subsection{Optical Hemodynamic Sensing (MAX30102)}
+Hemodynamic pulsatile perfusion is acquired simultaneously from the auricular capillary bed using a Maxim Integrated MAX30102 high-sensitivity pulse oximetry module positioned against the antihelix or earlobe. The module features:
+\begin{itemize}
+    \item Dual optical emitters: Red LED ($\lambda_1 = 660\,\text{nm}$) and Infrared LED ($\lambda_2 = 880\,\text{nm}$).
+    \item Integrated photodetector with optical ambient light cancellation ($> 60$\,dB suppression).
+    \item High-resolution 18-bit $\Sigma\Delta$ ADC with programmable full-scale current ($0$--$50$\,mA) and pulse widths ($69$--$411\,\mu\text{s}$).
+\end{itemize}
+
+An opaque optical barrier prevents direct optical crosstalk between the LEDs and the photodiode. By tracking both red and infrared pulsatile (AC) and continuous (DC) components, the optical subsystem captures microvascular blood volume shifts concurrent with ventricular depolarization, providing synchronous ground truth for pulse transit time (PTT) calculations.
+
+\subsection{Edge Microcontroller and BLE 5.0 Telemetry}
+The sensor subsystems interface directly with an Espressif ESP32 system-on-chip (SoC) equipped with a 32-bit dual-core Xtensa LX6 microprocessor operating at $240$\,MHz. The analog ECG output is digitized at $250$\,Hz using the ESP32 internal 12-bit SAR ADC. To overcome ADC non-linearity, a piece-wise polynomial calibration lookup table (LUT) derived from precision Keithley voltage standards is applied in firmware.
+
+The optical sensor communicates via an $I^2C$ bus at $400$\,kHz. Real-time telemetry is broadcast via Bluetooth Low Energy (BLE 5.0) under a custom GATT profile. Samples are packed into 20-byte payload frames:
+\begin{align}
+    \mathcal{F} = [ & t_{\text{seq}} \, (2\,\text{B}) \mid \text{ECG} \, (2\,\text{B}) \mid \text{PPG}_{\text{Red}} \, (3\,\text{B}) \nonumber \\
+    & \mid \text{PPG}_{\text{IR}} \, (3\,\text{B}) \mid \text{SQI} \, (1\,\text{B}) \mid V_{\text{batt}} \, (1\,\text{B}) ]
+\end{align}
+The device draws an average current of $18.4\,\text{mA}$ during active dual-modal streaming, providing over 16.3 hours of continuous recording when powered by a lightweight $300\,\text{mAh}$ rechargeable lithium-polymer battery.

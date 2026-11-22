@@ -1,0 +1,19 @@
+{
+  "roc_auc": 65.35,
+  "pr_auc": 26.2,
+  "accuracy": 70.75,
+  "precision": 24.02,
+  "recall_sensitivity": 42.64,
+  "specificity": 75.8,
+  "f1_score": 30.73,
+  "brier_score": 0.1247,
+  "optimal_threshold": 0.2,
+  "confusion_matrix": {
+    "tn": 545,
+    "fp": 174,
+    "fn": 74,
+    "tp": 55
+  },
+  "training_time_seconds": 17.8,
+  "cohort_size": 4240
+}

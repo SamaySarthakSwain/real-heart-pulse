@@ -1,0 +1,62 @@
+{
+  "model_name": "SOTA PhysioNet Lead-II SE-ResNet-1D + BiGRU + Attention (Inter-Patient)",
+  "dataset": "PhysioNet MIT-BIH Arrhythmia Database (Authentic 48 Records, AAMI DS1/DS2 Split)",
+  "train_beats_ds1": 51002,
+  "test_beats_ds2": 47432,
+  "macro_roc_auc": 72.86,
+  "macro_f1": 38.21,
+  "weighted_f1": 77.71,
+  "accuracy": 71.63,
+  "class_breakdown": {
+    "Normal": {
+      "precision": 94.39,
+      "recall_sensitivity": 73.28,
+      "f1_score": 82.51,
+      "support": 42244
+    },
+    "Supraventricular_PAC": {
+      "precision": 3.65,
+      "recall_sensitivity": 14.59,
+      "f1_score": 5.84,
+      "support": 1837
+    },
+    "Ventricular_PVC": {
+      "precision": 48.8,
+      "recall_sensitivity": 92.58,
+      "f1_score": 63.91,
+      "support": 2964
+    },
+    "Fusion": {
+      "precision": 0.36,
+      "recall_sensitivity": 1.55,
+      "f1_score": 0.59,
+      "support": 387
+    }
+  },
+  "confusion_matrix": [
+    [
+      30958,
+      7017,
+      2668,
+      1601
+    ],
+    [
+      1420,
+      268,
+      134,
+      15
+    ],
+    [
+      128,
+      50,
+      2744,
+      42
+    ],
+    [
+      293,
+      11,
+      77,
+      6
+    ]
+  ]
+}

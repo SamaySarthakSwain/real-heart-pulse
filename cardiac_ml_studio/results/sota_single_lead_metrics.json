@@ -1,0 +1,62 @@
+{
+    "NORM": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.41,
+        "F1": 0.999083409715857,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9960784274663591,
+        "True_Positives": 545,
+        "False_Negatives": 0,
+        "True_Negatives": 254,
+        "False_Positives": 1
+    },
+    "MI": {
+        "ROC-AUC": 0.9799843014128728,
+        "PR-AUC": 0.9091374282445878,
+        "Optimal_Threshold": 0.33,
+        "F1": 0.7982062780269058,
+        "Sensitivity": 0.9081632653061225,
+        "Specificity": 0.9487179473664986,
+        "True_Positives": 89,
+        "False_Negatives": 9,
+        "True_Negatives": 666,
+        "False_Positives": 36
+    },
+    "STTC": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.47,
+        "F1": 0.9853658536585366,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9957081530819626,
+        "True_Positives": 101,
+        "False_Negatives": 0,
+        "True_Negatives": 696,
+        "False_Positives": 3
+    },
+    "CD": {
+        "ROC-AUC": 0.9968747780382129,
+        "PR-AUC": 0.9735513091952348,
+        "Optimal_Threshold": 0.35,
+        "F1": 0.8654970760233918,
+        "Sensitivity": 0.9487179487179487,
+        "Specificity": 0.9736842091777227,
+        "True_Positives": 74,
+        "False_Negatives": 4,
+        "True_Negatives": 703,
+        "False_Positives": 19
+    },
+    "HYP": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.53,
+        "F1": 0.9914529914529915,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9986522897592287,
+        "True_Positives": 58,
+        "False_Negatives": 0,
+        "True_Negatives": 741,
+        "False_Positives": 1
+    }
+}

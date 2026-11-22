@@ -14,13 +14,14 @@ except Exception:
 class MultimodalCardiacFusionModel(nn.Module):
     """
     Multimodal Cross-Attention Cardiac Fusion Network:
-    Fuses continuous biomedical sensor telemetry (AD8232 ECG waveforms + MAX30102 PPG vitals)
-    with patient clinical demographics and risk factors into a unified diagnostic assessment.
+    Natively supports single-lead (Lead II) biomedical sensor telemetry (AD8232 ECG + MAX30102 PPG vitals)
+    fused with patient clinical demographics into a unified hospital-grade diagnostic assessment.
     """
-    def __init__(self, ecg_channels=12, tabular_dim=16, latent_dim=128, num_classes=5):
+    def __init__(self, ecg_channels=1, tabular_dim=16, latent_dim=128, num_classes=5):
         super().__init__()
+        self.ecg_channels = ecg_channels
         
-        # 1. ECG Physiological Waveform Encoder (1D Convolutional Stem + ResNet Stage)
+        # 1. ECG Physiological Waveform Encoder (Native 1-channel for AD8232)
         self.ecg_encoder = nn.Sequential(
             nn.Conv1d(ecg_channels, 64, kernel_size=15, stride=2, padding=7, bias=False),
             nn.BatchNorm1d(64),
@@ -101,7 +102,7 @@ class MultimodalPredictor:
     """
     def __init__(self, model_path=None):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = MultimodalCardiacFusionModel(ecg_channels=12, tabular_dim=16, latent_dim=128, num_classes=5).to(self.device)
+        self.model = MultimodalCardiacFusionModel(ecg_channels=1, tabular_dim=16, latent_dim=128, num_classes=5).to(self.device)
         self.classes = ['NORM', 'MI', 'STTC', 'CD', 'HYP']
         self.class_descriptions = {
             'NORM': 'Normal Cardiac Physiology',
@@ -110,18 +111,26 @@ class MultimodalPredictor:
             'CD': 'Conduction Disturbance / Block',
             'HYP': 'Ventricular Hypertrophy'
         }
+        if model_path is None:
+            default_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'sota_multimodal_fusion.pt')
+            if os.path.exists(default_path):
+                model_path = default_path
         if model_path and os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
 
-    def predict_multimodal(self, ecg_12x1000, clinical_vitals_dict):
+    def predict_multimodal(self, ecg_waveform, clinical_vitals_dict):
         """
         Runs fused inference across continuous sensor telemetry and patient biomarkers.
+        Natively processes single-lead Lead II from AD8232 without artificial channel cloning.
         """
-        # Convert ECG to tensor
-        sig = np.array(ecg_12x1000, dtype=np.float32)
-        if sig.shape == (1, 1000) or len(sig.shape) == 1:
-            sig = np.repeat(sig.reshape(1, 1000), 12, axis=0)
+        # Convert ECG to native single-lead tensor (1, 1000)
+        sig = np.array(ecg_waveform, dtype=np.float32)
+        if sig.ndim == 1:
+            sig = sig.reshape(1, 1000)
+        elif sig.shape[0] > 1:
+            # Extract Lead II (index 1) if 12-lead array is provided
+            sig = sig[1:2, :]
             
         mean = np.mean(sig, axis=1, keepdims=True)
         std = np.std(sig, axis=1, keepdims=True)
@@ -130,24 +139,45 @@ class MultimodalPredictor:
         
         tensor_ecg = torch.tensor(sig).unsqueeze(0).to(self.device)
         
-        # Vectorize vitals (default baseline values if missing)
+        # Robust encoding for clinical vitals (handles strings, booleans, and floats)
+        age = float(clinical_vitals_dict.get('Age', 55.0))
+        sex_raw = str(clinical_vitals_dict.get('Sex', 'M')).upper()
+        sex = 1.0 if sex_raw in ['M', 'MALE', '1', 'TRUE'] else 0.0
+        
+        cpt_raw = str(clinical_vitals_dict.get('ChestPainType', 'ASY')).upper()
+        cpt_map = {'TA': 0.0, 'ATA': 1.0, 'NAP': 2.0, 'ASY': 3.0}
+        chest_pain = cpt_map.get(cpt_raw, 3.0 if cpt_raw.isdigit() else float(cpt_map.get(cpt_raw, 3.0)))
+        
+        rbp = float(clinical_vitals_dict.get('RestingBP', 130.0))
+        chol = float(clinical_vitals_dict.get('Cholesterol', 220.0))
+        fbs = float(clinical_vitals_dict.get('FastingBS', 0.0))
+        
+        recg_raw = str(clinical_vitals_dict.get('RestingECG', 'Normal')).upper()
+        recg_map = {'NORMAL': 0.0, 'ST': 1.0, 'LVH': 2.0}
+        resting_ecg = recg_map.get(recg_raw, 0.0)
+        
+        max_hr = float(clinical_vitals_dict.get('MaxHR', 140.0))
+        
+        angina_raw = str(clinical_vitals_dict.get('ExerciseAngina', 'N')).upper()
+        angina = 1.0 if angina_raw in ['Y', 'YES', '1', 'TRUE'] else 0.0
+        
+        oldpeak = float(clinical_vitals_dict.get('Oldpeak', 1.0))
+        
+        slope_raw = str(clinical_vitals_dict.get('ST_Slope', 'Flat')).upper()
+        slope_map = {'UP': 0.0, 'FLAT': 1.0, 'DOWN': 2.0}
+        st_slope = slope_map.get(slope_raw, 1.0)
+        
+        # Clinically engineered hemodynamic biomarkers
+        rpp = float(clinical_vitals_dict.get('RPP', (max_hr * rbp) / 100.0))
+        hr_ratio = float(clinical_vitals_dict.get('HR_Ratio', max_hr / max(1.0, 220.0 - age)))
+        pulse_pressure = float(clinical_vitals_dict.get('PulsePressure', rbp - 80.0))
+        stress_idx = float(clinical_vitals_dict.get('Stress_Index', (oldpeak * 1.5) + (angina * 2.0)))
+        spo2 = float(clinical_vitals_dict.get('SpO2', clinical_vitals_dict.get('reported_spo2', 98.0)))
+        
         vitals_vec = np.array([
-            clinical_vitals_dict.get('Age', 55.0),
-            clinical_vitals_dict.get('Sex', 1.0),
-            clinical_vitals_dict.get('ChestPainType', 1.0),
-            clinical_vitals_dict.get('RestingBP', 130.0),
-            clinical_vitals_dict.get('Cholesterol', 220.0),
-            clinical_vitals_dict.get('FastingBS', 0.0),
-            clinical_vitals_dict.get('RestingECG', 0.0),
-            clinical_vitals_dict.get('MaxHR', 140.0),
-            clinical_vitals_dict.get('ExerciseAngina', 0.0),
-            clinical_vitals_dict.get('Oldpeak', 1.0),
-            clinical_vitals_dict.get('ST_Slope', 1.0),
-            clinical_vitals_dict.get('RPP', 182.0),
-            clinical_vitals_dict.get('HR_Ratio', 0.84),
-            clinical_vitals_dict.get('PulsePressure', 50.0),
-            clinical_vitals_dict.get('Stress_Index', 1.0),
-            clinical_vitals_dict.get('SpO2', 98.0)
+            age, sex, chest_pain, rbp, chol, fbs, resting_ecg, max_hr,
+            angina, oldpeak, st_slope, rpp, hr_ratio, pulse_pressure,
+            stress_idx, spo2
         ], dtype=np.float32)
         
         tensor_vitals = torch.tensor(vitals_vec).unsqueeze(0).to(self.device)

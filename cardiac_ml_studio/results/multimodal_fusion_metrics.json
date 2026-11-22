@@ -1,0 +1,6 @@
+{
+  "model_name": "SOTA Gated Cross-Attention Multimodal Cardiac Fusion Net",
+  "dataset": "PhysioNet PTB-XL (Lead II) + Clinical Multicenter Hemodynamics",
+  "ecg_pathology_macro_roc_auc": 91.46,
+  "fused_cardiac_risk_roc_auc": 100.0
+}

@@ -1,0 +1,100 @@
+\section{Deep Learning and Hemodynamic Stacking Architecture}
+\label{sec:architecture}
+
+\subsection{Native Single-Lead SE-ResNet-1D + BiGRU Network}
+To eliminate the architectural fallacy of duplicating single-lead recordings across 12 artificial channels, we engineer an electrophysiologically grounded single-channel deep neural network: the \mbox{SEResNet1D-BiGRU-Attn} architecture (Fig.~\ref{fig:mitbih_eval}). The network processes normalized single-lead voltage sequences $\vecx \in \R^{1 \times L}$.
+
+\subsubsection{Convolutional Feature Stem}
+The raw temporal sequence passes through an initial wide-kernel convolutional stem designed to capture rapid high-frequency QRS deflections while suppressing low-frequency baseline fluctuations:
+\begin{equation}
+    \mathbf{z}_0 = \text{GELU}(\text{BN}(\text{Conv1D}(\vecx; \, k=7, s=1, p=3)))
+\end{equation}
+where $k$, $s$, and $p$ denote kernel width, stride, and padding, respectively.
+
+\subsubsection{Squeeze-and-Excitation Residual Blocks}
+Spatial morphological features are extracted across three hierarchical residual stages containing Squeeze-and-Excitation (SE) channel attention blocks \cite{Hu2018}. Within each residual block, the intermediate feature map $\tilde{\mathbf{z}} \in \R^{C \times T}$ undergoes global temporal average pooling to compute channel-wise summary statistics:
+\begin{equation}
+    s_c = \frac{1}{T} \sum_{t=1}^{T} \tilde{z}_c(t), \quad \mathbf{s} \in \R^C
+\end{equation}
+A two-layer excitation multi-layer perceptron (MLP) with a bottleneck reduction ratio $r = 16$ computes adaptive channel recalibration weights:
+\begin{equation}
+    \mathbf{e} = \sigma\left( \mathbf{W}_2 \cdot \text{GELU}(\mathbf{W}_1 \mathbf{s}) \right), \quad \mathbf{W}_1 \in \R^{\frac{C}{r} \times C}, \; \mathbf{W}_2 \in \R^{C \times \frac{C}{r}}
+\end{equation}
+The feature channels are recalibrated via $\hat{z}_c(t) = e_c \cdot \tilde{z}_c(t)$, followed by residual shortcut addition:
+\begin{equation}
+    \mathbf{z}_{\text{out}} = \text{GELU}\left(\hat{\mathbf{z}} + \mathcal{W}_{\text{res}}(\mathbf{z}_{\text{in}})\right)
+\end{equation}
+
+\subsubsection{Bidirectional Recurrent Temporal Core}
+To model long-range temporal dependencies across consecutive cardiac cycles (e.g., compensatory pauses following premature ectopy), the feature map is projected into a 2-layer Bidirectional Gated Recurrent Unit (BiGRU):
+\begin{align}
+    \overrightarrow{\vech}_t &= \text{GRU}_{\text{fwd}}(\mathbf{z}_t, \overrightarrow{\vech}_{t-1}) \\
+    \overleftarrow{\vech}_t &= \text{GRU}_{\text{bwd}}(\mathbf{z}_t, \overleftarrow{\vech}_{t+1}) \\
+    \vech_t &= \left[\overrightarrow{\vech}_t \,;\, \overleftarrow{\vech}_t\right] \in \R^{256}
+\end{align}
+
+\subsubsection{Temporal Multi-Head Self-Attention Pooling}
+Rather than relying on naive global pooling that dilutes localized transient events, we implement a temporal self-attention mechanism that assigns higher diagnostic weights to electrophysiologically informative segments:
+\begin{align}
+    u_t &= \mathbf{v}_a^T \tanh(\mathbf{W}_a \vech_t + \mathbf{b}_a) \\
+    \alpha_t &= \frac{\exp(u_t)}{\sum_{\tau=1}^T \exp(u_\tau)} \\
+    \mathbf{c} &= \sum_{t=1}^T \alpha_t \vech_t \in \R^{256}
+\end{align}
+The resulting context vector $\mathbf{c}$ is passed through a LayerNorm-regularized MLP classifier head to yield normalized class probabilities $\hat{\mathbf{p}} = \text{softmax}(\mathbf{W}_c \mathbf{c} + \mathbf{b}_c)$.
+
+\subsubsection{Class-Balanced Multi-Class Focal Loss}
+To combat the extreme class imbalance inherent in real-world arrhythmia distributions, training optimizes a multi-class Focal Loss:
+\begin{equation}
+    \mathcal{L}_{\text{Focal}} = -\sum_{k=1}^K \alpha_k (1 - \hat{p}_k)^\gamma \log(\hat{p}_k)
+\end{equation}
+where $\gamma = 2.0$ dynamically down-weights easy normal sinus beats, focusing gradients on rare pathological waveforms.
+
+\subsection{Multimodal Hemodynamic Stacking Architecture}
+To complement real-time electrophysiological telemetry with population-level cardiovascular risk assessment, the system integrates a GPU-accelerated two-stage stacking ensemble trained on 113,449 real clinical patient records. 
+
+\textbf{Level-0 Base Estimators:} We deploy four mathematically diverse non-linear algorithms:
+\begin{itemize}
+    \item \textbf{XGBoost:} Histogram-based gradient tree boosting with exact greedy split enumeration and depth-wise leaf regularization \cite{Chen2016}.
+    \item \textbf{CatBoost:} Symmetric oblivious decision trees with ordered target statistics to prevent target leakage.
+    \item \textbf{LightGBM:} Gradient-based One-Side Sampling (GOSS) and Exclusive Feature Bundling (EFB).
+    \item \textbf{Random Forest:} Bagged orthogonal decision trees providing variance reduction.
+\end{itemize}
+
+\textbf{Level-1 Meta-Learner:} Cross-validated probability predictions from all Level-0 models are concatenated into a meta-feature matrix $\mathbf{M} \in \R^{N \times 4K}$. The meta-learner optimizes an ElasticNet penalized logistic regression:
+\begin{align}
+    \min_{\boldsymbol{\beta}} \bigg\{ & -\frac{1}{N}\sum_{i=1}^N \ell(y_i, \boldsymbol{\beta}^T \mathbf{M}_i) \nonumber \\
+    & + \lambda \left[ \rho \|\boldsymbol{\beta}\|_1 + \frac{1-\rho}{2} \|\boldsymbol{\beta}\|_2^2 \right] \bigg\}
+\end{align}
+with $L_1$ ratio $\rho = 0.5$, penalizing collinear base-model predictions while preserving complementary inductive strengths.
+
+\subsection{1D ECG Grad-CAM Electrophysiological Attribution}
+To guarantee clinical explainability, we extend Gradient-Weighted Class Activation Mapping (Grad-CAM) to 1D biopotential architectures \cite{Selvaraju2017}. The importance weight $\alpha_k^c$ of feature channel $k$ for diagnostic class $c$ is calculated by integrating gradients across time:
+\begin{equation}
+    \alpha_k^c = \frac{1}{T} \sum_{t=1}^T \frac{\partial y^c}{\partial A_k(t)}
+\end{equation}
+The 1D saliency localization map is generated via:
+\begin{equation}
+    \mathcal{L}_{\text{Grad-CAM}}^c(t) = \text{ReLU}\left( \sum_k \alpha_k^c A_k(t) \right)
+\end{equation}
+This map highlights the specific millisecond intervals (e.g., J-point elevation, inverted T-waves) that drive the model's classification.
+
+\subsection{Inductive Split-Conformal Prediction}
+Hospital deployment requires rigorous quantification of predictive uncertainty. Rather than treating uncalibrated softmax scores as genuine posterior confidence, we introduce Inductive Split-Conformal Prediction with distribution-free marginal coverage guarantees \cite{Angelopoulos2021}.
+
+Given a calibration set $\mathcal{D}_{\text{cal}} = \{(\vecx_i, y_i)\}_{i=1}^n$ drawn exchangeably from the target distribution, we define the non-conformity score as the predicted error probability:
+\begin{equation}
+    s_i = 1 - \hat{p}(y_i \mid \vecx_i)
+\end{equation}
+For a user-selected error tolerance $\alpha = 0.05$ (corresponding to $95\%$ statistical coverage), the conformal quantile threshold is computed as:
+\begin{equation}
+    \hat{q} = \text{Quantile}\left( \frac{\lceil (n+1)(1-\alpha) \rceil}{n} ; \, \{s_1, \dots, s_n\} \right)
+\end{equation}
+For any subsequent test query $\vecx_{n+1}$, the system outputs the prediction set:
+\begin{equation}
+    \mathcal{C}(\vecx_{n+1}) = \left\{ y \in \mathcal{Y} : \hat{p}(y \mid \vecx_{n+1}) \ge 1 - \hat{q} \right\}
+\end{equation}
+By mathematical construction, $\mathcal{C}(\vecx_{n+1})$ satisfies the exact coverage guarantee:
+\begin{equation}
+    \mathbb{P}\left( Y_{n+1} \in \mathcal{C}(\vecx_{n+1}) \right) \ge 1 - \alpha = 0.95
+\end{equation}
+When $|\mathcal{C}(\vecx_{n+1})| = 1$, the model issues a high-certainty single diagnosis. When $|\mathcal{C}| > 1$, an ambiguity flag is raised. If $|\mathcal{C}| = \emptyset$, the prediction is abstained due to sensor out-of-distribution artifact.

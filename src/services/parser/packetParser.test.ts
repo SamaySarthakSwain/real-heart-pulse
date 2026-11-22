@@ -41,7 +41,8 @@ describe("packet parser", () => {
   });
 
   it("parses the SpO2 firmware plotter line and rescales BPM/SpO2", () => {
-    const result = parseLine("IR_Signal:120, Threshold:80, Beat:0, BPM:38, SpO2:49");
+    const scale2 = { ...DEFAULT_PARSER_OPTIONS, plotterScaleBpm: 2, plotterScaleSpo2: 2 };
+    const result = parseLine("IR_Signal:120, Threshold:80, Beat:0, BPM:38, SpO2:49", scale2);
     expect(result.packet?.bpm).toBe(76);
     expect(result.packet?.spo2).toBe(98);
     expect(result.packet?.beat).toBe(false);

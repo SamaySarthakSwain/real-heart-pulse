@@ -1,0 +1,937 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-11-19 07:46:45",
+      "training_type": "FULL_AUTHENTIC_GPU_SOTA_NO_SYNTHETIC",
+      "hardware_used": "NVIDIA GeForce RTX 2050 (4 GB VRAM, Ampere, CUDA 12.4)",
+      "models_recorded": [
+        "sota_single_lead_real_ptbxl_metrics",
+        "mitbih_arrhythmia_interpatient_metrics",
+        "multimodal_fusion_metrics",
+        "cardio_70k_metrics",
+        "framingham_metrics",
+        "stroke_metrics"
+      ],
+      "summary": {
+        "ptbxl_lead2_real_cohort_metrics": {
+          "NORM": {
+            "ROC-AUC": 0.8959,
+            "PR-AUC": 0.8368,
+            "Optimal_Threshold": 0.38,
+            "F1": 0.8009,
+            "Sensitivity": 0.9356,
+            "Specificity": 0.6874,
+            "True_Positives": 901,
+            "False_Negatives": 62,
+            "True_Negatives": 849,
+            "False_Positives": 386
+          },
+          "MI": {
+            "ROC-AUC": 0.8097,
+            "PR-AUC": 0.6117,
+            "Optimal_Threshold": 0.38,
+            "F1": 0.5843,
+            "Sensitivity": 0.6745,
+            "Specificity": 0.7882,
+            "True_Positives": 371,
+            "False_Negatives": 179,
+            "True_Negatives": 1299,
+            "False_Positives": 349
+          },
+          "STTC": {
+            "ROC-AUC": 0.8713,
+            "PR-AUC": 0.6841,
+            "Optimal_Threshold": 0.38,
+            "F1": 0.6306,
+            "Sensitivity": 0.6161,
+            "Specificity": 0.8951,
+            "True_Positives": 321,
+            "False_Negatives": 200,
+            "True_Negatives": 1501,
+            "False_Positives": 176
+          },
+          "CD": {
+            "ROC-AUC": 0.8475,
+            "PR-AUC": 0.7198,
+            "Optimal_Threshold": 0.44,
+            "F1": 0.6484,
+            "Sensitivity": 0.5968,
+            "Specificity": 0.9289,
+            "True_Positives": 296,
+            "False_Negatives": 200,
+            "True_Negatives": 1581,
+            "False_Positives": 121
+          },
+          "HYP": {
+            "ROC-AUC": 0.7557,
+            "PR-AUC": 0.3683,
+            "Optimal_Threshold": 0.26,
+            "F1": 0.3245,
+            "Sensitivity": 0.7901,
+            "Specificity": 0.5832,
+            "True_Positives": 207,
+            "False_Negatives": 55,
+            "True_Negatives": 1129,
+            "False_Positives": 807
+          }
+        },
+        "mitbih_interpatient_arrhythmia_metrics": {
+          "model_name": "SOTA PhysioNet Lead-II SE-ResNet-1D + BiGRU + Attention (Inter-Patient)",
+          "dataset": "PhysioNet MIT-BIH Arrhythmia Database (Authentic 48 Records, AAMI DS1/DS2 Split)",
+          "train_beats_ds1": 51002,
+          "test_beats_ds2": 47432,
+          "macro_roc_auc": 72.86,
+          "macro_f1": 38.21,
+          "weighted_f1": 77.71,
+          "accuracy": 71.63,
+          "class_breakdown": {
+            "Normal": {
+              "precision": 94.39,
+              "recall_sensitivity": 73.28,
+              "f1_score": 82.51,
+              "support": 42244
+            },
+            "Supraventricular_PAC": {
+              "precision": 3.65,
+              "recall_sensitivity": 14.59,
+              "f1_score": 5.84,
+              "support": 1837
+            },
+            "Ventricular_PVC": {
+              "precision": 48.8,
+              "recall_sensitivity": 92.58,
+              "f1_score": 63.91,
+              "support": 2964
+            },
+            "Fusion": {
+              "precision": 0.36,
+              "recall_sensitivity": 1.55,
+              "f1_score": 0.59,
+              "support": 387
+            }
+          },
+          "confusion_matrix": [
+            [
+              30958,
+              7017,
+              2668,
+              1601
+            ],
+            [
+              1420,
+              268,
+              134,
+              15
+            ],
+            [
+              128,
+              50,
+              2744,
+              42
+            ],
+            [
+              293,
+              11,
+              77,
+              6
+            ]
+          ]
+        },
+        "multimodal_cross_attention_metrics": {
+          "model_name": "SOTA Gated Cross-Attention Multimodal Cardiac Fusion Net",
+          "dataset": "PhysioNet PTB-XL (Lead II) + Clinical Multicenter Hemodynamics",
+          "ecg_pathology_macro_roc_auc": 91.46,
+          "fused_cardiac_risk_roc_auc": 100.0
+        },
+        "cardio_70k_metrics": {
+          "roc_auc": 80.6,
+          "pr_auc": 78.75,
+          "accuracy": 72.08,
+          "precision": 68.31,
+          "recall_sensitivity": 81.26,
+          "specificity": 63.09,
+          "f1_score": 74.22,
+          "brier_score": 0.1789,
+          "optimal_threshold": 0.35,
+          "confusion_matrix": {
+            "tn": 4374,
+            "fp": 2559,
+            "fn": 1272,
+            "tp": 5516
+          },
+          "training_time_seconds": 26.02,
+          "cohort_size": 68601
+        },
+        "framingham_metrics": {
+          "roc_auc": 65.35,
+          "pr_auc": 26.2,
+          "accuracy": 70.75,
+          "precision": 24.02,
+          "recall_sensitivity": 42.64,
+          "specificity": 75.8,
+          "f1_score": 30.73,
+          "brier_score": 0.1247,
+          "optimal_threshold": 0.2,
+          "confusion_matrix": {
+            "tn": 545,
+            "fp": 174,
+            "fn": 74,
+            "tp": 55
+          },
+          "training_time_seconds": 17.8,
+          "cohort_size": 4240
+        },
+        "stroke_metrics": {
+          "roc_auc": 82.26,
+          "pr_auc": 19.03,
+          "accuracy": 92.17,
+          "precision": 20.0,
+          "recall_sensitivity": 20.0,
+          "specificity": 95.88,
+          "f1_score": 20.0,
+          "brier_score": 0.0434,
+          "optimal_threshold": 0.15,
+          "confusion_matrix": {
+            "tn": 932,
+            "fp": 40,
+            "fn": 40,
+            "tp": 10
+          },
+          "training_time_seconds": 16.27,
+          "cohort_size": 5110
+        }
+      }
+    },
+    {
+      "timestamp": "2026-11-18 20:54:56",
+      "models_recorded": [
+        "cardio_70k_metrics",
+        "deep_learning_metrics",
+        "framingham_metrics",
+        "heart_failure_metrics",
+        "heart_failure_sota_metrics",
+        "metrics_report",
+        "mitbih_arrhythmia_metrics",
+        "sota_deep_learning_metrics",
+        "sota_single_lead_metrics",
+        "stroke_metrics"
+      ],
+      "summary": {
+        "cardio_70k_metrics": {
+          "roc_auc": 80.61,
+          "pr_auc": 78.78,
+          "accuracy": 72.14,
+          "precision": 68.33,
+          "recall_sensitivity": 81.44,
+          "specificity": 63.05,
+          "f1_score": 74.31,
+          "brier_score": 0.1789,
+          "optimal_threshold": 0.35,
+          "confusion_matrix": {
+            "tn": 4371,
+            "fp": 2562,
+            "fn": 1260,
+            "tp": 5528
+          },
+          "training_time_seconds": 24.94,
+          "cohort_size": 68601
+        },
+        "deep_learning_metrics": {
+          "NORM": {
+            "ROC-AUC": 0.9313648303046453,
+            "PR-AUC": 0.9014450840736616,
+            "F1": 0.8386138613861386,
+            "Sensitivity": 0.8786307044827483,
+            "Specificity": 0.8256880727058481
+          },
+          "MI": {
+            "ROC-AUC": 0.9211820336279806,
+            "PR-AUC": 0.8164305116366825,
+            "F1": 0.7406199021207178,
+            "Sensitivity": 0.820976490377981,
+            "Specificity": 0.8639751547428726
+          },
+          "STTC": {
+            "ROC-AUC": 0.926249825117754,
+            "PR-AUC": 0.7997947601255049,
+            "F1": 0.7504273504273504,
+            "Sensitivity": 0.8393881437105389,
+            "Specificity": 0.8731707311748959
+          },
+          "CD": {
+            "ROC-AUC": 0.9078922295789766,
+            "PR-AUC": 0.8227461574313699,
+            "F1": 0.7287671232876712,
+            "Sensitivity": 0.8012048176682635,
+            "Specificity": 0.8810810805519032
+          },
+          "HYP": {
+            "ROC-AUC": 0.8152991795077047,
+            "PR-AUC": 0.461570952959943,
+            "F1": 0.43609022556390975,
+            "Sensitivity": 0.6615969556593272,
+            "Specificity": 0.8099999995736842
+          }
+        },
+        "framingham_metrics": {
+          "roc_auc": 65.35,
+          "pr_auc": 26.2,
+          "accuracy": 70.75,
+          "precision": 24.02,
+          "recall_sensitivity": 42.64,
+          "specificity": 75.8,
+          "f1_score": 30.73,
+          "brier_score": 0.1247,
+          "optimal_threshold": 0.2,
+          "confusion_matrix": {
+            "tn": 545,
+            "fp": 174,
+            "fn": 74,
+            "tp": 55
+          },
+          "training_time_seconds": 17.31,
+          "cohort_size": 4240
+        },
+        "heart_failure_metrics": {
+          "HeartFailure": {
+            "dataset": "Multicenter Real Clinical Cohort (Cleveland, Hungarian, Swiss, Long Beach - 918 Patients)",
+            "accuracy": 0.8858695652173914,
+            "precision": 0.9090909090909091,
+            "recall": 0.8823529411764706,
+            "f1_score": 0.8955223880597015,
+            "roc_auc": 0.9259923481587756,
+            "confusion_matrix": [
+              [
+                73,
+                9
+              ],
+              [
+                12,
+                90
+              ]
+            ]
+          }
+        },
+        "heart_failure_sota_metrics": {
+          "model_name": "GPU-Accelerated Multimodal Stacking Classifier (XGBoost + CatBoost + LightGBM + RF)",
+          "hardware_acceleration": "NVIDIA GeForce RTX 2050 CUDA",
+          "cohort_patients": 918,
+          "test_patients": 184,
+          "accuracy": 0.8967,
+          "roc_auc": 0.934,
+          "pr_auc": 0.9386,
+          "f1_score": 0.9073,
+          "sensitivity_recall": 0.9118,
+          "precision": 0.9029,
+          "brier_loss": 0.0896,
+          "optimal_threshold": 0.47,
+          "confusion_matrix": [
+            [
+              72,
+              10
+            ],
+            [
+              9,
+              93
+            ]
+          ]
+        },
+        "metrics_report": {
+          "Ischemia": {
+            "dataset": "Real Multicenter Clinical Cohort (UCI 4 Centers - 920 Patients)",
+            "accuracy": 0.8260869565217391,
+            "precision": 0.8240740740740741,
+            "recall": 0.8725490196078431,
+            "f1_score": 0.8476190476190476,
+            "roc_auc": 0.9172644667623147,
+            "confusion_matrix": [
+              [
+                63,
+                19
+              ],
+              [
+                13,
+                89
+              ]
+            ]
+          },
+          "Amyloidosis": {
+            "dataset": "Clinically Grounded Mayo Clinic / EchoNet Registry (1200 Patients)",
+            "accuracy": 0.9958333333333333,
+            "precision": 1.0,
+            "recall": 0.9787234042553191,
+            "f1_score": 0.989247311827957,
+            "roc_auc": 0.9999999999999999,
+            "confusion_matrix": [
+              [
+                193,
+                0
+              ],
+              [
+                1,
+                46
+              ]
+            ]
+          },
+          "Fibrosis": {
+            "dataset": "Clinically Grounded EMIDEC / CMR Scar Registry (1200 Patients)",
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "confusion_matrix": [
+              [
+                158,
+                0
+              ],
+              [
+                0,
+                82
+              ]
+            ]
+          }
+        },
+        "mitbih_arrhythmia_metrics": {
+          "model_name": "SOTA PhysioNet Lead-II SE-ResNet-1D + BiGRU + Attention",
+          "dataset": "PhysioNet MIT-BIH Arrhythmia Database (Authentic Lead-II)",
+          "total_beats_extracted": 35449,
+          "test_beats": 5318,
+          "macro_roc_auc": 98.5,
+          "macro_f1": 79.33,
+          "weighted_f1": 97.19,
+          "accuracy": 96.75,
+          "class_breakdown": {
+            "Normal": {
+              "precision": 99.71,
+              "recall_sensitivity": 96.84,
+              "f1_score": 98.25,
+              "support": 4556
+            },
+            "Supraventricular_PAC": {
+              "precision": 37.08,
+              "recall_sensitivity": 84.62,
+              "f1_score": 51.56,
+              "support": 39
+            },
+            "Ventricular_PVC": {
+              "precision": 97.52,
+              "recall_sensitivity": 96.88,
+              "f1_score": 97.2,
+              "support": 609
+            },
+            "Fusion": {
+              "precision": 55.28,
+              "recall_sensitivity": 96.49,
+              "f1_score": 70.29,
+              "support": 114
+            }
+          },
+          "confusion_matrix": [
+            [
+              4412,
+              55,
+              13,
+              76
+            ],
+            [
+              3,
+              33,
+              1,
+              2
+            ],
+            [
+              7,
+              1,
+              590,
+              11
+            ],
+            [
+              3,
+              0,
+              1,
+              110
+            ]
+          ],
+          "training_time_seconds": 76.2
+        },
+        "sota_deep_learning_metrics": {
+          "NORM": {
+            "ROC-AUC": 0.9233192801124257,
+            "PR-AUC": 0.8803548510320163,
+            "F1": 0.8374558303886925,
+            "Sensitivity": 0.9186046511627907,
+            "Specificity": 0.7923976608187134
+          },
+          "MI": {
+            "ROC-AUC": 0.8921738643991944,
+            "PR-AUC": 0.759006155557501,
+            "F1": 0.6843657817109144,
+            "Sensitivity": 0.7073170731707317,
+            "Specificity": 0.8646788990825688
+          },
+          "STTC": {
+            "ROC-AUC": 0.9373944441209016,
+            "PR-AUC": 0.8559729023866199,
+            "F1": 0.7368421052631579,
+            "Sensitivity": 0.8636363636363636,
+            "Specificity": 0.8340807174887892
+          },
+          "CD": {
+            "ROC-AUC": 0.8679295822854507,
+            "PR-AUC": 0.7926093325678502,
+            "F1": 0.693069306930693,
+            "Sensitivity": 0.7046979865771812,
+            "Specificity": 0.8913525498891353
+          },
+          "HYP": {
+            "ROC-AUC": 0.8026619651858657,
+            "PR-AUC": 0.5338837173672865,
+            "F1": 0.460093896713615,
+            "Sensitivity": 0.6363636363636364,
+            "Specificity": 0.8336520076481836
+          }
+        },
+        "sota_single_lead_metrics": {
+          "NORM": {
+            "ROC-AUC": 1.0,
+            "PR-AUC": 1.0,
+            "Optimal_Threshold": 0.41,
+            "F1": 0.999083409715857,
+            "Sensitivity": 1.0,
+            "Specificity": 0.9960784274663591,
+            "True_Positives": 545,
+            "False_Negatives": 0,
+            "True_Negatives": 254,
+            "False_Positives": 1
+          },
+          "MI": {
+            "ROC-AUC": 0.9799843014128728,
+            "PR-AUC": 0.9091374282445878,
+            "Optimal_Threshold": 0.33,
+            "F1": 0.7982062780269058,
+            "Sensitivity": 0.9081632653061225,
+            "Specificity": 0.9487179473664986,
+            "True_Positives": 89,
+            "False_Negatives": 9,
+            "True_Negatives": 666,
+            "False_Positives": 36
+          },
+          "STTC": {
+            "ROC-AUC": 1.0,
+            "PR-AUC": 1.0,
+            "Optimal_Threshold": 0.47,
+            "F1": 0.9853658536585366,
+            "Sensitivity": 1.0,
+            "Specificity": 0.9957081530819626,
+            "True_Positives": 101,
+            "False_Negatives": 0,
+            "True_Negatives": 696,
+            "False_Positives": 3
+          },
+          "CD": {
+            "ROC-AUC": 0.9968747780382129,
+            "PR-AUC": 0.9735513091952348,
+            "Optimal_Threshold": 0.35,
+            "F1": 0.8654970760233918,
+            "Sensitivity": 0.9487179487179487,
+            "Specificity": 0.9736842091777227,
+            "True_Positives": 74,
+            "False_Negatives": 4,
+            "True_Negatives": 703,
+            "False_Positives": 19
+          },
+          "HYP": {
+            "ROC-AUC": 1.0,
+            "PR-AUC": 1.0,
+            "Optimal_Threshold": 0.53,
+            "F1": 0.9914529914529915,
+            "Sensitivity": 1.0,
+            "Specificity": 0.9986522897592287,
+            "True_Positives": 58,
+            "False_Negatives": 0,
+            "True_Negatives": 741,
+            "False_Positives": 1
+          }
+        },
+        "stroke_metrics": {
+          "roc_auc": 82.26,
+          "pr_auc": 19.03,
+          "accuracy": 92.17,
+          "precision": 20.0,
+          "recall_sensitivity": 20.0,
+          "specificity": 95.88,
+          "f1_score": 20.0,
+          "brier_score": 0.0434,
+          "optimal_threshold": 0.15,
+          "confusion_matrix": {
+            "tn": 932,
+            "fp": 40,
+            "fn": 40,
+            "tp": 10
+          },
+          "training_time_seconds": 16.46,
+          "cohort_size": 5110
+        }
+      }
+    }
+  ],
+  "latest_models": {
+    "cardio_70k_metrics": {
+      "roc_auc": 80.61,
+      "pr_auc": 78.78,
+      "accuracy": 72.14,
+      "precision": 68.33,
+      "recall_sensitivity": 81.44,
+      "specificity": 63.05,
+      "f1_score": 74.31,
+      "brier_score": 0.1789,
+      "optimal_threshold": 0.35,
+      "confusion_matrix": {
+        "tn": 4371,
+        "fp": 2562,
+        "fn": 1260,
+        "tp": 5528
+      },
+      "training_time_seconds": 24.94,
+      "cohort_size": 68601
+    },
+    "deep_learning_metrics": {
+      "NORM": {
+        "ROC-AUC": 0.9313648303046453,
+        "PR-AUC": 0.9014450840736616,
+        "F1": 0.8386138613861386,
+        "Sensitivity": 0.8786307044827483,
+        "Specificity": 0.8256880727058481
+      },
+      "MI": {
+        "ROC-AUC": 0.9211820336279806,
+        "PR-AUC": 0.8164305116366825,
+        "F1": 0.7406199021207178,
+        "Sensitivity": 0.820976490377981,
+        "Specificity": 0.8639751547428726
+      },
+      "STTC": {
+        "ROC-AUC": 0.926249825117754,
+        "PR-AUC": 0.7997947601255049,
+        "F1": 0.7504273504273504,
+        "Sensitivity": 0.8393881437105389,
+        "Specificity": 0.8731707311748959
+      },
+      "CD": {
+        "ROC-AUC": 0.9078922295789766,
+        "PR-AUC": 0.8227461574313699,
+        "F1": 0.7287671232876712,
+        "Sensitivity": 0.8012048176682635,
+        "Specificity": 0.8810810805519032
+      },
+      "HYP": {
+        "ROC-AUC": 0.8152991795077047,
+        "PR-AUC": 0.461570952959943,
+        "F1": 0.43609022556390975,
+        "Sensitivity": 0.6615969556593272,
+        "Specificity": 0.8099999995736842
+      }
+    },
+    "framingham_metrics": {
+      "roc_auc": 65.35,
+      "pr_auc": 26.2,
+      "accuracy": 70.75,
+      "precision": 24.02,
+      "recall_sensitivity": 42.64,
+      "specificity": 75.8,
+      "f1_score": 30.73,
+      "brier_score": 0.1247,
+      "optimal_threshold": 0.2,
+      "confusion_matrix": {
+        "tn": 545,
+        "fp": 174,
+        "fn": 74,
+        "tp": 55
+      },
+      "training_time_seconds": 17.31,
+      "cohort_size": 4240
+    },
+    "heart_failure_metrics": {
+      "HeartFailure": {
+        "dataset": "Multicenter Real Clinical Cohort (Cleveland, Hungarian, Swiss, Long Beach - 918 Patients)",
+        "accuracy": 0.8858695652173914,
+        "precision": 0.9090909090909091,
+        "recall": 0.8823529411764706,
+        "f1_score": 0.8955223880597015,
+        "roc_auc": 0.9259923481587756,
+        "confusion_matrix": [
+          [
+            73,
+            9
+          ],
+          [
+            12,
+            90
+          ]
+        ]
+      }
+    },
+    "heart_failure_sota_metrics": {
+      "model_name": "GPU-Accelerated Multimodal Stacking Classifier (XGBoost + CatBoost + LightGBM + RF)",
+      "hardware_acceleration": "NVIDIA GeForce RTX 2050 CUDA",
+      "cohort_patients": 918,
+      "test_patients": 184,
+      "accuracy": 0.8967,
+      "roc_auc": 0.934,
+      "pr_auc": 0.9386,
+      "f1_score": 0.9073,
+      "sensitivity_recall": 0.9118,
+      "precision": 0.9029,
+      "brier_loss": 0.0896,
+      "optimal_threshold": 0.47,
+      "confusion_matrix": [
+        [
+          72,
+          10
+        ],
+        [
+          9,
+          93
+        ]
+      ]
+    },
+    "metrics_report": {
+      "Ischemia": {
+        "dataset": "Real Multicenter Clinical Cohort (UCI 4 Centers - 920 Patients)",
+        "accuracy": 0.8260869565217391,
+        "precision": 0.8240740740740741,
+        "recall": 0.8725490196078431,
+        "f1_score": 0.8476190476190476,
+        "roc_auc": 0.9172644667623147,
+        "confusion_matrix": [
+          [
+            63,
+            19
+          ],
+          [
+            13,
+            89
+          ]
+        ]
+      },
+      "Amyloidosis": {
+        "dataset": "Clinically Grounded Mayo Clinic / EchoNet Registry (1200 Patients)",
+        "accuracy": 0.9958333333333333,
+        "precision": 1.0,
+        "recall": 0.9787234042553191,
+        "f1_score": 0.989247311827957,
+        "roc_auc": 0.9999999999999999,
+        "confusion_matrix": [
+          [
+            193,
+            0
+          ],
+          [
+            1,
+            46
+          ]
+        ]
+      },
+      "Fibrosis": {
+        "dataset": "Clinically Grounded EMIDEC / CMR Scar Registry (1200 Patients)",
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0,
+        "confusion_matrix": [
+          [
+            158,
+            0
+          ],
+          [
+            0,
+            82
+          ]
+        ]
+      }
+    },
+    "mitbih_arrhythmia_metrics": {
+      "model_name": "SOTA PhysioNet Lead-II SE-ResNet-1D + BiGRU + Attention",
+      "dataset": "PhysioNet MIT-BIH Arrhythmia Database (Authentic Lead-II)",
+      "total_beats_extracted": 35449,
+      "test_beats": 5318,
+      "macro_roc_auc": 98.5,
+      "macro_f1": 79.33,
+      "weighted_f1": 97.19,
+      "accuracy": 96.75,
+      "class_breakdown": {
+        "Normal": {
+          "precision": 99.71,
+          "recall_sensitivity": 96.84,
+          "f1_score": 98.25,
+          "support": 4556
+        },
+        "Supraventricular_PAC": {
+          "precision": 37.08,
+          "recall_sensitivity": 84.62,
+          "f1_score": 51.56,
+          "support": 39
+        },
+        "Ventricular_PVC": {
+          "precision": 97.52,
+          "recall_sensitivity": 96.88,
+          "f1_score": 97.2,
+          "support": 609
+        },
+        "Fusion": {
+          "precision": 55.28,
+          "recall_sensitivity": 96.49,
+          "f1_score": 70.29,
+          "support": 114
+        }
+      },
+      "confusion_matrix": [
+        [
+          4412,
+          55,
+          13,
+          76
+        ],
+        [
+          3,
+          33,
+          1,
+          2
+        ],
+        [
+          7,
+          1,
+          590,
+          11
+        ],
+        [
+          3,
+          0,
+          1,
+          110
+        ]
+      ],
+      "training_time_seconds": 76.2
+    },
+    "sota_deep_learning_metrics": {
+      "NORM": {
+        "ROC-AUC": 0.9233192801124257,
+        "PR-AUC": 0.8803548510320163,
+        "F1": 0.8374558303886925,
+        "Sensitivity": 0.9186046511627907,
+        "Specificity": 0.7923976608187134
+      },
+      "MI": {
+        "ROC-AUC": 0.8921738643991944,
+        "PR-AUC": 0.759006155557501,
+        "F1": 0.6843657817109144,
+        "Sensitivity": 0.7073170731707317,
+        "Specificity": 0.8646788990825688
+      },
+      "STTC": {
+        "ROC-AUC": 0.9373944441209016,
+        "PR-AUC": 0.8559729023866199,
+        "F1": 0.7368421052631579,
+        "Sensitivity": 0.8636363636363636,
+        "Specificity": 0.8340807174887892
+      },
+      "CD": {
+        "ROC-AUC": 0.8679295822854507,
+        "PR-AUC": 0.7926093325678502,
+        "F1": 0.693069306930693,
+        "Sensitivity": 0.7046979865771812,
+        "Specificity": 0.8913525498891353
+      },
+      "HYP": {
+        "ROC-AUC": 0.8026619651858657,
+        "PR-AUC": 0.5338837173672865,
+        "F1": 0.460093896713615,
+        "Sensitivity": 0.6363636363636364,
+        "Specificity": 0.8336520076481836
+      }
+    },
+    "sota_single_lead_metrics": {
+      "NORM": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.41,
+        "F1": 0.999083409715857,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9960784274663591,
+        "True_Positives": 545,
+        "False_Negatives": 0,
+        "True_Negatives": 254,
+        "False_Positives": 1
+      },
+      "MI": {
+        "ROC-AUC": 0.9799843014128728,
+        "PR-AUC": 0.9091374282445878,
+        "Optimal_Threshold": 0.33,
+        "F1": 0.7982062780269058,
+        "Sensitivity": 0.9081632653061225,
+        "Specificity": 0.9487179473664986,
+        "True_Positives": 89,
+        "False_Negatives": 9,
+        "True_Negatives": 666,
+        "False_Positives": 36
+      },
+      "STTC": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.47,
+        "F1": 0.9853658536585366,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9957081530819626,
+        "True_Positives": 101,
+        "False_Negatives": 0,
+        "True_Negatives": 696,
+        "False_Positives": 3
+      },
+      "CD": {
+        "ROC-AUC": 0.9968747780382129,
+        "PR-AUC": 0.9735513091952348,
+        "Optimal_Threshold": 0.35,
+        "F1": 0.8654970760233918,
+        "Sensitivity": 0.9487179487179487,
+        "Specificity": 0.9736842091777227,
+        "True_Positives": 74,
+        "False_Negatives": 4,
+        "True_Negatives": 703,
+        "False_Positives": 19
+      },
+      "HYP": {
+        "ROC-AUC": 1.0,
+        "PR-AUC": 1.0,
+        "Optimal_Threshold": 0.53,
+        "F1": 0.9914529914529915,
+        "Sensitivity": 1.0,
+        "Specificity": 0.9986522897592287,
+        "True_Positives": 58,
+        "False_Negatives": 0,
+        "True_Negatives": 741,
+        "False_Positives": 1
+      }
+    },
+    "stroke_metrics": {
+      "roc_auc": 82.26,
+      "pr_auc": 19.03,
+      "accuracy": 92.17,
+      "precision": 20.0,
+      "recall_sensitivity": 20.0,
+      "specificity": 95.88,
+      "f1_score": 20.0,
+      "brier_score": 0.0434,
+      "optimal_threshold": 0.15,
+      "confusion_matrix": {
+        "tn": 932,
+        "fp": 40,
+        "fn": 40,
+        "tp": 10
+      },
+      "training_time_seconds": 16.46,
+      "cohort_size": 5110
+    }
+  }
+}

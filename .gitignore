@@ -34,3 +34,7 @@ dist-ssr
 
 # Graphify AST cache
 graphify-out/cache/
+.spacefast/state.json
+/.spacefast-*
+.spacefast/.spacefast-*
+.spacefast/.space-link-*.tmp
