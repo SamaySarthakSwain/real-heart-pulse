@@ -113,13 +113,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ESP32 Health Monitor — AikyaNova Labs" },
+      { title: "HEART — Real-Time Health Monitor & Telemetry" },
       {
         name: "description",
-        content: "Real-time ESP32 ECG, PPG, BPM and SpO₂ monitoring over Web Serial.",
+        content: "HEART: Real-time biomedical monitoring dashboard for ESP32 biopotential streams.",
       },
       { name: "author", content: "AikyaNova Labs" },
-      { property: "og:title", content: "ESP32 Health Monitor" },
+      { property: "og:title", content: "HEART" },
       {
         property: "og:description",
         content: "Hardware-only biomedical monitoring dashboard for ESP32 sensor streams.",
@@ -334,11 +334,11 @@ function AppLayout() {
                   AikyaNova Labs
                 </p>
                 <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-medium rounded-full gold-badge leading-none">
-                  REC CLEAN-TECH
+                  REC NIST
                 </span>
               </div>
-              <h1 className="text-sm font-semibold text-foreground tracking-tight truncate leading-tight mt-0.5">
-                Ear to Heart <span className="text-muted-foreground font-normal text-xs">· Telemetry & Edge AI</span>
+              <h1 className="text-base font-bold font-mono tracking-widest text-foreground uppercase leading-none mt-1">
+                HEART
               </h1>
             </div>
           </div>
@@ -402,10 +402,10 @@ function AppLayout() {
       <footer className="border-t border-border mt-8">
         <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            © 2025 AikyaNova Labs — Research & monitoring use only.
+            © 2025 HEART · AikyaNova Labs — Clinical telemetry & research monitoring.
           </p>
           <p className="font-mono text-[10px] text-muted-foreground/60 tracking-widest uppercase">
-            ESP32 Real-Time Health Monitor
+            HEART — Real-Time Health Monitor
           </p>
         </div>
       </footer>

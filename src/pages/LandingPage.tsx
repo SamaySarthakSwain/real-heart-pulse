@@ -109,7 +109,7 @@ export function LandingPage() {
               </div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.08]">
-                Ear to Heart <br />
+                HEART <br />
                 <span className="gradient-text-primary">Clinical Edge AI</span>
               </h1>
 
@@ -321,8 +321,7 @@ export function LandingPage() {
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">See The Process In Action</h2>
             <p className="text-muted-foreground text-lg">
-              Watch how the real-time health monitor captures, processes, and analyzes data
-              seamlessly.
+              Watch how HEART captures, processes, and analyzes data seamlessly.
             </p>
           </div>
         </ScrollReveal>

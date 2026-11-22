@@ -227,33 +227,64 @@
 }
 
 /*
- * ── AUTHENTIC PHYSICAL MATTE NOISE GRAIN OVERLAY ──────────────────────────
- * High-definition procedural Gaussian noise grain adhering to REC NIST specs:
+ * ── AUTHENTIC PHYSICAL MATTE NOISE TEXTURE ON ALL BACKGROUND COLORS ────────
+ * High-definition multi-frequency Gaussian noise grain adhering to REC NIST specs:
  * Light mode: Artisanal Cold-Pressed Washi (σ = 7.2)
  * Dark mode:  Velvety Obsidian Carbon tooth (σ = 6.4)
+ * Strictly applied to background colors only — NEVER over images, videos, or graphs!
  */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='recNistNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23recNistNoise)' opacity='0.75'/%3E%3C/svg%3E");
+:root {
+  --bg-noise-texture: url("/textures/matte-noise-light.png");
+}
+
+.dark {
+  --bg-noise-texture: url("/textures/matte-noise-dark.png");
+}
+
+/* Background canvas with authentic matte grain */
+body {
+  background-color: var(--color-background);
+  background-image: var(--bg-noise-texture);
   background-repeat: repeat;
-  background-size: 160px 160px;
-  transition: opacity 0.35s ease;
+  background-size: 200px 200px;
+  background-attachment: fixed;
 }
 
-:root:not(.dark) body::before {
-  opacity: 0.038;
-  mix-blend-mode: multiply;
+/* All background surfaces, cards, modals, sidebars, dialogs and panels carry the tactile matte noise grain */
+.bg-card,
+[class*="bg-card"],
+.bg-background,
+[class*="bg-background"],
+.luxury-card,
+.glass-card,
+.bg-popover,
+.bg-sidebar,
+[role="dialog"],
+.dialog-content {
+  background-image: var(--bg-noise-texture) !important;
+  background-repeat: repeat !important;
+  background-size: 180px 180px !important;
 }
 
-.dark body::before {
-  opacity: 0.052;
-  mix-blend-mode: screen;
+header {
+  background-image: var(--bg-noise-texture) !important;
+  background-repeat: repeat !important;
+  background-size: 180px 180px !important;
+}
+
+/* ── STRICT SAFEGUARD: ZERO NOISE ON IMAGES, VIDEOS, GRAPHS & CANVAS ──────── */
+img,
+video,
+canvas,
+picture,
+svg:not(.bg-noise),
+.recharts-wrapper,
+.aspect-video,
+[data-no-noise="true"] {
+  background-image: none !important;
+  isolation: isolate;
+  position: relative;
+  z-index: 1;
 }
 
 /*

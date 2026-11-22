@@ -4,10 +4,11 @@ import { PatientProfilePage } from "@/pages/PatientProfilePage";
 export const Route = createFileRoute("/patient")({
   head: () => ({
     meta: [
-      { title: "Patient Records & Clinical History — Ear-to-Heart" },
+      { title: "HEART — Patient Records & Clinical History" },
+      { property: "og:title", content: "HEART — Patient Records" },
       {
         name: "description",
-        content: "Patient telemetry records, personal medical profile, and historical testing logs.",
+        content: "HEART: Patient telemetry records, personal medical profile, and historical testing logs.",
       },
     ],
   }),

@@ -4,13 +4,13 @@ import { Analysis } from "@/pages/Analysis";
 export const Route = createFileRoute("/analysis")({
   head: () => ({
     meta: [
-      { title: "Heart Risk Analysis — ESP32 ECG, PPG & IMU" },
+      { title: "HEART — AI & Risk Analysis" },
       {
         name: "description",
         content:
-          "Live heart disease risk estimation from real ESP32 ECG, PPG, SpO₂, LM35 temperature and BMI323 motion measurements.",
+          "HEART: Live heart disease risk estimation from real ESP32 ECG, PPG, SpO₂, LM35 temperature and BMI323 motion measurements.",
       },
-      { property: "og:title", content: "Heart Risk Analysis — ESP32 ECG, PPG & IMU" },
+      { property: "og:title", content: "HEART — AI & Risk Analysis" },
       {
         property: "og:description",
         content:
