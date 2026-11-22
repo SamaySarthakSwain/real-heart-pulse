@@ -21,6 +21,11 @@ import {
   Loader2,
   Stethoscope,
   RefreshCw,
+  Music,
+  Bell,
+  Sliders,
+  Play,
+  Heart,
 } from "lucide-react";
 import { useSensorStore } from "@/store/sensorStore";
 import {
@@ -32,10 +37,13 @@ import {
 } from "@/services/chatbot/chatbotService";
 import {
   SUPPORTED_LANGUAGES,
+  VOICE_PROFILES,
   voiceController,
+  type VoicePersonality,
   isSpeechRecognitionSupported,
   isSpeechSynthesisSupported,
 } from "@/services/chatbot/voiceService";
+import { soundFx } from "@/services/audio/soundFx";
 import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from "@/services/gemini/geminiService";
 import { toast } from "sonner";
 
@@ -48,10 +56,17 @@ export function GlobalChatBot() {
   // Multi-lingual state (Default English)
   const [selectedLanguage, setSelectedLanguage] = useState(SUPPORTED_LANGUAGES[0]);
 
-  // Voice-to-voice states
+  // Voice-to-voice & Personality states
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(true);
+  const [voicePersonality, setVoicePersonality] = useState<VoicePersonality>(voiceController.getPersonality());
+  const [isTestingVoice, setIsTestingVoice] = useState(false);
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
+
+  // Acoustic Sound FX state
+  const [soundMuted, setSoundMuted] = useState(soundFx.getMuted());
+  const [isPlayingChime, setIsPlayingChime] = useState(false);
 
   // Gemini API Key config dialog
   const [showKeyModal, setShowKeyModal] = useState(false);
@@ -79,12 +94,13 @@ export function GlobalChatBot() {
           role: "bot",
           text: `👋 **Welcome to HEART AI Copilot!**
 
-I am your multi-lingual, voice-interactive medical telemetry assistant.
+I am your multi-lingual, voice-interactive medical telemetry assistant with sweet acoustic sound & natural neural voice.
 
-🔒 **Clinical Grounding & Integrity**:
-- I automatically read live biometric telemetry directly from your **ESP32 hardware** (AD8232 ECG, MAX30102 PPG, LM35 Temp, BMI323 Motion).
-- **Strict Rule: Zero Synthetic Data**. I will never fabricate or invent fake vitals.
-- You can tap the 🎙️ **Microphone** for voice-to-voice chat, select from 9 languages, or generate an **Easy-to-Understand Patient Health Report**.`,
+🌸 **Acoustic & Voice Highlights**:
+- **Sweet Harmonic Chime**: Tap 🎵 in the header to enjoy an ultra-satisfying celestial chime.
+- **Natural Neural Voice**: Soothing, caring human prosody with 4 tailored voice personalities.
+- **Zero Synthetic Data**: I read live telemetry directly from your physical **ESP32 hardware** (AD8232 ECG, MAX30102 PPG, LM35 Temp, BMI323 Motion).
+- Tap 🎙️ for instant voice-to-voice conversation or generate an **Easy-to-Understand Patient Health Report**.`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -95,14 +111,58 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // Open chatbot with gentle greeting chime
+  const handleOpenChat = () => {
+    setIsOpen(true);
+    soundFx.playGreetingChime();
+  };
+
+  // Trigger Sweet Harmonic Chime test
+  const handlePlaySweetChime = () => {
+    setIsPlayingChime(true);
+    soundFx.playSweetChime();
+    toast.success("Playing sweet harmonic chime 🌸", {
+      description: "Celestial E-major 9th acoustic resonance",
+      duration: 2500,
+    });
+    setTimeout(() => setIsPlayingChime(false), 1600);
+  };
+
+  // Preview sweet neural voice
+  const handleTestSweetVoice = () => {
+    setIsTestingVoice(true);
+    soundFx.playSatisfyingPop();
+    voiceController.previewSweetVoice(selectedLanguage.speechLang, () => {
+      setIsTestingVoice(false);
+    });
+    toast.info("Speaking with sweet neural voice...", {
+      description: `Language: ${selectedLanguage.name} • Personality: ${voicePersonality}`,
+      duration: 3000,
+    });
+  };
+
+  // Toggle Sound FX Mute
+  const handleToggleSoundFx = () => {
+    const newMuted = soundFx.toggleMuted();
+    setSoundMuted(newMuted);
+    if (!newMuted) {
+      soundFx.playSatisfyingPop();
+      toast.success("Sound effects enabled");
+    } else {
+      toast.info("Sound effects muted");
+    }
+  };
+
   // Handle Voice Listening Toggle
   const toggleListening = () => {
     if (isListening) {
       voiceController.stopListening();
       setIsListening(false);
+      soundFx.playSatisfyingPop();
       return;
     }
 
+    soundFx.playSatisfyingPop();
     const started = voiceController.startListening(
       selectedLanguage.speechLang,
       (transcript, isFinal) => {
@@ -131,6 +191,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
     const text = (textToSend || inputValue).trim();
     if (!text || isLoading) return;
 
+    soundFx.playSatisfyingPop();
     setInputValue("");
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -154,13 +215,17 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
 
       setMessages((prev) => [...prev, botMsg]);
 
+      // Play sweet harmonic chime when AI answers
+      soundFx.playSweetChime();
+
       // Voice-to-voice audio output if enabled
       if (voiceOutputEnabled) {
         voiceController.speak(
           botResponse,
           selectedLanguage.speechLang,
           () => setIsSpeaking(true),
-          () => setIsSpeaking(false)
+          () => setIsSpeaking(false),
+          voicePersonality
         );
       }
     } catch (err: any) {
@@ -172,6 +237,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
 
   // Generate Easy-to-Understand Report
   const handleGenerateReport = () => {
+    soundFx.playSuccessChime();
     const reportText = generatePlainLanguageReport(selectedLanguage.name);
     const reportMsg: ChatMessage = {
       id: `report-${Date.now()}`,
@@ -187,7 +253,8 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
         "Here is your easy-to-understand heart health summary based on your real hardware readings.",
         selectedLanguage.speechLang,
         () => setIsSpeaking(true),
-        () => setIsSpeaking(false)
+        () => setIsSpeaking(false),
+        voicePersonality
       );
     }
   };
@@ -218,17 +285,28 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
       </html>
     `);
     printWindow.document.close();
-    printWindow.focus();
     printWindow.print();
   };
 
   return (
     <>
-      {/* ── 1. FLOATING CHATBOT TRIGGER BUTTON ─────────────────────────────── */}
+      {/* ── 1. FLOATING CHAT TRIGGER BUTTON ─────────────────────────────────── */}
       {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-40 animate-in fade-in duration-300">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+          {/* Quick Chime Button alongside Trigger */}
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={handlePlaySweetChime}
+            aria-label="Play sweet chime"
+            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-[#1A221C] text-teal-600 dark:text-teal-400 border border-teal-500/30 shadow-lg hover:scale-110 active:scale-95 transition-all"
+            title="Play Sweet Satisfying Chime 🎵"
+          >
+            <Music className="h-5 w-5 stroke-[2] group-hover:rotate-12 transition-transform" />
+            <span className="sr-only">Sweet Chime</span>
+          </button>
+
+          {/* Main Bot Button */}
+          <button
+            onClick={handleOpenChat}
             aria-label="Open HEART AI Copilot"
             className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-teal-500 via-[#00B496] to-emerald-600 p-3.5 sm:px-5 sm:py-3.5 text-white shadow-xl shadow-teal-500/25 hover:shadow-2xl hover:shadow-teal-500/40 hover:scale-105 active:scale-95 transition-all"
           >
@@ -249,7 +327,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
                 />
               </div>
               <span className="text-[10px] text-white/80 font-mono mt-0.5">
-                {telemetry.isConnected ? "Hardware Live" : "Voice & Multi-lingual"}
+                {telemetry.isConnected ? "Hardware Live" : "Sweet Voice & Telemetry"}
               </span>
             </div>
           </button>
@@ -261,7 +339,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
         <div
           role="dialog"
           aria-label="HEART AI Assistant"
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[440px] h-[640px] max-h-[88vh] rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111512] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[450px] h-[650px] max-h-[88vh] rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111512] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200"
           style={{
             boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 180, 150, 0.15)",
           }}
@@ -284,7 +362,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
                     HEART Copilot
                   </h3>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-teal-500/10 text-teal-600 dark:text-teal-400">
-                    AI Voice
+                    Sweet Audio
                   </span>
                 </div>
                 <p className="text-[10px] text-[#667085] dark:text-slate-400">
@@ -293,8 +371,43 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
               </div>
             </div>
 
-            {/* Header Controls: Language, TTS Toggle, API Key, Close */}
+            {/* Header Controls: Sweet Chime, Voice Test, Voice Settings, Language, TTS Toggle, API Key, Close */}
             <div className="flex items-center gap-1">
+              {/* Play Sweet Chime Button */}
+              <button
+                onClick={handlePlaySweetChime}
+                className={`p-1.5 rounded-lg text-teal-600 dark:text-teal-400 hover:bg-teal-500/15 transition-all ${
+                  isPlayingChime ? "scale-125 bg-teal-500/20" : ""
+                }`}
+                title="Play Sweet Harmonic Chime 🌸 (E Major 9th)"
+              >
+                <Music className="h-4 w-4" />
+              </button>
+
+              {/* Sound FX Mute/Unmute */}
+              <button
+                onClick={handleToggleSoundFx}
+                className={`p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ${
+                  !soundMuted ? "text-teal-600 dark:text-teal-400 bg-teal-500/10" : ""
+                }`}
+                title={soundMuted ? "Unmute Sound Effects" : "Mute Sound Effects"}
+              >
+                <Bell className={`h-4 w-4 ${soundMuted ? "opacity-40" : ""}`} />
+              </button>
+
+              {/* Voice Personality Settings Toggle */}
+              <button
+                onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  showVoiceSettings
+                    ? "bg-teal-500/20 text-teal-600 dark:text-teal-400"
+                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"
+                }`}
+                title="Choose Sweet Voice Personality"
+              >
+                <Sliders className="h-4 w-4" />
+              </button>
+
               {/* Language Selector */}
               <div className="relative group">
                 <select
@@ -324,18 +437,9 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
                 className={`p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ${
                   voiceOutputEnabled ? "text-teal-600 dark:text-teal-400 bg-teal-500/10" : ""
                 }`}
-                title={voiceOutputEnabled ? "Voice output enabled (click to mute)" : "Voice output muted (click to enable)"}
+                title={voiceOutputEnabled ? "Voice speech enabled (click to mute)" : "Voice speech muted (click to enable)"}
               >
                 {voiceOutputEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-              </button>
-
-              {/* API Key Modal Button */}
-              <button
-                onClick={() => setShowKeyModal(true)}
-                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-                title="Configure Gemini API Key"
-              >
-                <Key className="h-4 w-4" />
               </button>
 
               {/* Close Button */}
@@ -351,6 +455,67 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
               </button>
             </div>
           </header>
+
+          {/* Voice Personality Settings Drawer (if toggled) */}
+          {showVoiceSettings && (
+            <div className="bg-slate-50 dark:bg-[#161D18] p-3.5 border-b border-slate-200 dark:border-slate-800 space-y-2.5 animate-in slide-in-from-top-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[#142033] dark:text-white flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-teal-500" />
+                  Sweet Voice & Acoustic Settings
+                </span>
+                <button
+                  onClick={() => setShowVoiceSettings(false)}
+                  className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {VOICE_PROFILES.map((profile) => (
+                  <button
+                    key={profile.id}
+                    onClick={() => {
+                      setVoicePersonality(profile.id);
+                      voiceController.setPersonality(profile.id);
+                      soundFx.playSatisfyingPop();
+                    }}
+                    className={`p-2 rounded-xl text-left border transition-all ${
+                      voicePersonality === profile.id
+                        ? "bg-teal-500/15 border-teal-500 text-teal-800 dark:text-teal-200 font-semibold shadow-sm"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-teal-500/40"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-[11px]">
+                      <span>{profile.emoji}</span>
+                      <span className="truncate">{profile.label}</span>
+                    </div>
+                    <p className="text-[9px] opacity-75 mt-0.5 line-clamp-1">{profile.description}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  onClick={handleTestSweetVoice}
+                  disabled={isTestingVoice}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium text-[11px] shadow-sm transition-all"
+                >
+                  <Play className="h-3 w-3 fill-current" />
+                  <span>{isTestingVoice ? "Speaking..." : "Test Sweet Voice 🗣️"}</span>
+                </button>
+
+                <button
+                  onClick={handlePlaySweetChime}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-[#142033] dark:text-slate-200 text-[11px] hover:bg-slate-300 dark:hover:bg-slate-700 transition-all font-medium"
+                >
+                  <Music className="h-3 w-3 text-teal-500" />
+                  <span>Test Chime 🎵</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Real Hardware Data Status Ribbon */}
           <div className="bg-slate-100/70 dark:bg-slate-900/60 px-3.5 py-1.5 border-b border-slate-200/50 dark:border-slate-800 text-[10px] flex items-center justify-between text-[#667085] dark:text-slate-400">
@@ -369,6 +534,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
             <button
               onClick={() => {
                 setTelemetry(extractRealHardwareTelemetry());
+                soundFx.playSatisfyingPop();
                 toast.success("Synchronized with physical hardware buffers.");
               }}
               className="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 hover:underline"
@@ -399,44 +565,45 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
 
                   {/* Actions on Bot Messages */}
                   {msg.role === "bot" && (
-                    <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-200/50 dark:border-slate-800/80 text-[10px] text-slate-500 dark:text-slate-400">
-                      <span>{msg.timestamp}</span>
-                      <div className="flex items-center gap-2">
-                        {/* Audio Speak Again */}
+                    <div className="mt-2.5 pt-2 border-t border-slate-200/40 dark:border-slate-700/40 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                      <span className="text-[10px] opacity-70">{msg.timestamp}</span>
+                      <div className="flex items-center gap-1.5">
+                        {/* Listen with sweet voice */}
                         <button
-                          onClick={() =>
+                          onClick={() => {
                             voiceController.speak(
                               msg.text,
                               selectedLanguage.speechLang,
                               () => setIsSpeaking(true),
-                              () => setIsSpeaking(false)
-                            )
-                          }
-                          className="hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1"
-                          title="Listen aloud"
+                              () => setIsSpeaking(false),
+                              voicePersonality
+                            );
+                          }}
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-[10px]"
+                          title="Listen with sweet neural voice"
                         >
-                          <Volume2 className="h-3 w-3" />
-                          <span>Voice</span>
+                          <Volume2 className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                          <span>Listen</span>
                         </button>
 
-                        {/* Copy Text */}
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(msg.text);
-                            toast.success("Copied to clipboard!");
+                            soundFx.playSatisfyingPop();
+                            toast.success("Copied to clipboard");
                           }}
-                          className="hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1"
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-[10px]"
                           title="Copy text"
                         >
                           <Copy className="h-3 w-3" />
                           <span>Copy</span>
                         </button>
 
-                        {/* Print Report Option */}
                         {msg.isReport && (
                           <button
                             onClick={() => handlePrintReport(msg.text)}
-                            className="text-teal-600 dark:text-teal-400 font-semibold hover:underline flex items-center gap-1"
+                            className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold hover:bg-teal-500/20 transition-colors text-[10px]"
+                            title="Print or save as PDF"
                           >
                             <Printer className="h-3 w-3" />
                             <span>Print PDF</span>
@@ -484,11 +651,11 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
               🫁 Blood Oxygen
             </button>
             <button
-              onClick={() => handleSendMessage("Analyze my active ECG samples")}
-              disabled={isLoading}
-              className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+              onClick={handlePlaySweetChime}
+              className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 transition-colors font-medium"
             >
-              📈 ECG Waveform
+              <Music className="h-3 w-3" />
+              <span>Sweet Chime</span>
             </button>
           </div>
 
@@ -525,7 +692,7 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
                     ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400"
                 }`}
-                title={isListening ? "Stop listening" : "Click to speak (Voice-to-Voice)"}
+                title={isListening ? "Stop listening" : "Click to speak with sweet voice"}
               >
                 {isListening ? (
                   <MicOff className="h-5 w-5 animate-pulse" />
@@ -539,20 +706,16 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={
-                  isListening
-                    ? "Transcribing your speech..."
-                    : `Ask about readings in ${selectedLanguage.name}...`
-                }
-                disabled={isLoading}
-                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/80 px-3.5 py-2.5 text-xs text-[#142033] dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                placeholder={`Ask about heart vitals (${selectedLanguage.name})...`}
+                className="flex-1 h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161D18] text-[#142033] dark:text-slate-100 placeholder:text-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
               />
 
               {/* Send Button */}
               <button
                 type="submit"
-                disabled={isLoading || !inputValue.trim()}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all"
+                disabled={!inputValue.trim() || isLoading}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all"
+                title="Send message"
               >
                 <Send className="h-4 w-4" />
               </button>
@@ -561,57 +724,59 @@ I am your multi-lingual, voice-interactive medical telemetry assistant.
         </div>
       )}
 
-      {/* ── 3. GEMINI API KEY CONFIG MODAL ─────────────────────────────────── */}
+      {/* ── 3. GEMINI API KEY CONFIG MODAL ───────────────────────────────────── */}
       {showKeyModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
-        >
-          <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#141A16] p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#141A16] p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Key className="h-5 w-5 text-teal-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                  <Key className="h-4 w-4" />
+                </div>
                 <h3 className="text-sm font-bold text-[#142033] dark:text-white">
-                  Gemini API Key Setup
+                  Gemini API Configuration
                 </h3>
               </div>
               <button
                 onClick={() => setShowKeyModal(false)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-600"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#667085] dark:text-slate-400 my-3 leading-relaxed">
-              Connect your Gemini API key to activate Gemini 2.5 Flash clinical reasoning.
-              If no key is entered, HEART automatically utilizes the verified built-in local
-              clinical telemetry reasoning engine.
+            <p className="text-xs text-[#667085] dark:text-slate-400 leading-relaxed">
+              HEART AI Copilot uses <strong>Google Gemini</strong> to provide conversational multi-lingual telemetry explanations with sweet natural voice.
             </p>
 
-            <input
-              type="password"
-              value={apiKeyInput}
-              onChange={(e) => setApiKeyInput(e.target.value)}
-              placeholder="AIzaSy..."
-              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3.5 py-2.5 text-xs text-[#142033] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-[#142033] dark:text-slate-300">
+                API Key
+              </label>
+              <input
+                type="password"
+                value={apiKeyInput}
+                onChange={(e) => setApiKeyInput(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-xs font-mono text-[#142033] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+              />
+            </div>
 
-            <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setShowKeyModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => {
                   setGeminiApiKey(apiKeyInput);
-                  toast.success("Gemini API Key updated successfully.");
+                  toast.success("Gemini API Key saved successfully");
                   setShowKeyModal(false);
+                  soundFx.playSatisfyingPop();
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 hover:bg-teal-500 text-white transition-all shadow-md shadow-teal-500/20"
               >
                 Save Key
               </button>

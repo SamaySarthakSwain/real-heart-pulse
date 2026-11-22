@@ -10,7 +10,25 @@ import {
   setGeminiApiKey,
   testGeminiConnection,
 } from "@/services/gemini/geminiService";
-import { Sparkles, Key, CheckCircle2, ExternalLink, Loader2, RefreshCw } from "lucide-react";
+import { soundFx } from "@/services/audio/soundFx";
+import {
+  voiceController,
+  VOICE_PROFILES,
+  type VoicePersonality,
+} from "@/services/chatbot/voiceService";
+import {
+  Sparkles,
+  Key,
+  CheckCircle2,
+  ExternalLink,
+  Loader2,
+  RefreshCw,
+  Music,
+  Bell,
+  Volume2,
+  Play,
+  Heart,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const BAUD_RATES = [9600, 19200, 38400, 57600, 115200, 230400, 921600];
@@ -27,6 +45,12 @@ export function SettingsPage() {
   const [geminiKey, setLocalGeminiKey] = useState(getGeminiApiKey());
   const [testingKey, setTestingKey] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Acoustic & Sweet Voice states
+  const [soundMuted, setSoundMuted] = useState(soundFx.getMuted());
+  const [voicePersonality, setVoicePersonality] = useState<VoicePersonality>(voiceController.getPersonality());
+  const [isPlayingChime, setIsPlayingChime] = useState(false);
+  const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   const handleSaveGeminiKey = () => {
     setGeminiApiKey(geminiKey);
@@ -359,6 +383,141 @@ export function SettingsPage() {
           <span className="font-medium text-foreground">
             Zero telemetry or sensor data is ever sent to third parties without your explicit trigger.
           </span>
+        </div>
+      </section>
+
+      {/* Acoustic Audio & Sweet Voice Experience */}
+      <section className="rounded-2xl border bg-card p-5 space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xl">
+              🎵
+            </div>
+            <div>
+              <h2 className="text-base font-semibold tracking-tight">Acoustic Audio & Sweet Voice Experience</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Harmonic celestial chimes, satisfying acoustic feedback, and comforting natural neural AI voices.
+              </p>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+            Web Audio Studio
+          </span>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 pt-1">
+          {/* Sweet Chime Preview */}
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Music className="h-4 w-4 text-teal-500" />
+                <span className="text-xs font-semibold">Sweet Harmonic Chime</span>
+              </div>
+              <span className="text-[10px] text-muted-foreground font-mono">E Major 9th</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              A celestial 4-tone acoustic chord with gentle exponential decay, tuned for psychological calm and delight.
+            </p>
+            <Button
+              size="sm"
+              onClick={() => {
+                setIsPlayingChime(true);
+                soundFx.playSweetChime();
+                toast.success("Playing sweet harmonic chime 🌸");
+                setTimeout(() => setIsPlayingChime(false), 1600);
+              }}
+              className="w-full rounded-xl text-xs gap-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-medium hover:opacity-95 shadow-sm"
+            >
+              <Music className={`h-3.5 w-3.5 ${isPlayingChime ? "animate-bounce" : ""}`} />
+              <span>{isPlayingChime ? "Ringing Sweetly..." : "Play Sweet Chime 🌸"}</span>
+            </Button>
+          </div>
+
+          {/* Sound FX Mute Toggle */}
+          <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-teal-500" />
+                <span className="text-xs font-semibold">Tactile Acoustic Feedback</span>
+              </div>
+              <Switch
+                checked={!soundMuted}
+                onCheckedChange={() => {
+                  const m = soundFx.toggleMuted();
+                  setSoundMuted(m);
+                  if (!m) soundFx.playSatisfyingPop();
+                }}
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Delightful micro-pops on messages, buttons, and telemetry sync. Zero latency via Web Audio API.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                soundFx.playSatisfyingPop();
+                toast.success("Popped! 🫧");
+              }}
+              className="w-full rounded-xl text-xs gap-2"
+            >
+              <span>Test Dewdrop Pop 🫧</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Voice Personality Selector */}
+        <div className="pt-2 space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+              Sweet Neural Voice Personality
+            </Label>
+            <span className="text-[10px] text-teal-600 dark:text-teal-400 font-medium">
+              High-Fidelity Neural Ranking
+            </span>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            {VOICE_PROFILES.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => {
+                  setVoicePersonality(p.id);
+                  voiceController.setPersonality(p.id);
+                  soundFx.playSatisfyingPop();
+                  toast.success(`Voice set to: ${p.label}`);
+                }}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  voicePersonality === p.id
+                    ? "bg-teal-500/10 border-teal-500 text-teal-900 dark:text-teal-100 font-semibold shadow-sm"
+                    : "bg-card border-border text-muted-foreground hover:border-teal-500/40"
+                }`}
+              >
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-base">{p.emoji}</span>
+                  <span className="text-foreground">{p.label}</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1 pl-6">{p.description}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="pt-2 flex justify-end">
+            <Button
+              size="sm"
+              onClick={() => {
+                setIsTestingVoice(true);
+                soundFx.playSatisfyingPop();
+                voiceController.previewSweetVoice("en-US", () => setIsTestingVoice(false));
+                toast.info("Speaking with sweet neural voice...");
+              }}
+              disabled={isTestingVoice}
+              className="rounded-xl text-xs gap-2 bg-teal-600 hover:bg-teal-500 text-white font-medium shadow-sm"
+            >
+              <Play className="h-3.5 w-3.5 fill-current" />
+              <span>{isTestingVoice ? "Speaking Comfortably..." : "Test Sweet Voice 🗣️"}</span>
+            </Button>
+          </div>
         </div>
       </section>
 
