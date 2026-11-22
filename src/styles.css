@@ -356,6 +356,12 @@ canvas *,
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 24px rgba(0, 0, 0, 0.35);
 }
+:root:not(.dark) .tex-photovoltaic {
+  background-color: #ffffff !important;
+  color: var(--foreground) !important;
+  border: 1px solid rgba(16, 44, 92, 0.12) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05) !important;
+}
 
 /* 02. Artisanal Cold-Pressed Washi (.tex-washi) */
 .tex-washi {

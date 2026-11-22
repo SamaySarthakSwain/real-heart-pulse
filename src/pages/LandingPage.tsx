@@ -176,15 +176,15 @@ export function LandingPage() {
         <div className="grid md:grid-cols-3 gap-8 relative z-10">
           <ScrollReveal
             delay={100}
-            className="tex-anodized rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1"
+            className="bg-card border border-border rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="w-14 h-14 bg-background/80 rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl border border-primary/20 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:scale-105 transition-transform">
               🔌
             </div>
             <div className="flex items-center gap-2 mb-2">
               <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 01</span>
             </div>
-            <h3 className="text-xl font-semibold mb-3">Hardware Capture</h3>
+            <h3 className="text-xl font-semibold mb-3 text-foreground">Hardware Capture</h3>
             <p className="text-muted-foreground leading-relaxed text-sm">
               Tragus-earlobe-canal montage acquires differential biopotentials via AD8232 (G=100) and pulsatile capillary volume via dual-wavelength MAX30102.
             </p>
@@ -192,31 +192,31 @@ export function LandingPage() {
 
           <ScrollReveal
             delay={200}
-            className="tex-photovoltaic rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 text-white"
+            className="bg-card border border-border rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="w-14 h-14 bg-black/40 rounded-2xl border border-primary/30 flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl border border-primary/20 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:scale-105 transition-transform">
               ⚡
             </div>
             <div className="flex items-center gap-2 mb-2">
               <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 02</span>
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-white">ESP32 Edge Processing</h3>
-            <p className="text-white/80 leading-relaxed text-sm">
+            <h3 className="text-xl font-semibold mb-3 text-foreground">ESP32 Edge Processing</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
               Zero-phase 4th-order Butterworth bandpass (0.5–40 Hz), 2nd-order notch filtering, and multi-parameter SQI gating (K_SQI, P_SQI) on dual-core Xtensa.
             </p>
           </ScrollReveal>
 
           <ScrollReveal
             delay={300}
-            className="tex-frosted-glass rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1"
+            className="bg-card border border-border rounded-3xl p-8 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
-            <div className="w-14 h-14 bg-background/80 rounded-2xl border flex items-center justify-center text-2xl mb-6 shadow-sm">
+            <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl border border-primary/20 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:scale-105 transition-transform">
               💻
             </div>
             <div className="flex items-center gap-2 mb-2">
               <span className="font-mono text-[10px] text-primary tracking-widest uppercase font-semibold">STAGE 03</span>
             </div>
-            <h3 className="text-xl font-semibold mb-3">Web Serial UI & Edge AI</h3>
+            <h3 className="text-xl font-semibold mb-3 text-foreground">Web Serial UI & Edge AI</h3>
             <p className="text-muted-foreground leading-relaxed text-sm">
               Browser-native 115200 baud streaming renders 60fps waveforms with SE-ResNet-BiGRU arrhythmia detection and inductive conformal uncertainty safety bounds.
             </p>
