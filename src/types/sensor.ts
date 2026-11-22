@@ -7,6 +7,7 @@ export interface SensorPacket {
   timestamp?: number;
   ecg?: number;
   ecgLeadOff?: boolean;
+  fingerPresent?: boolean;
   ppgIR?: number;
   ppgRed?: number;
   ppgWave?: number;

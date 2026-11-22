@@ -67,6 +67,10 @@ export function validatePacket(packet: SensorPacket | undefined): ValidationResu
     if (typeof packet.ecgLeadOff === "boolean") clean.ecgLeadOff = packet.ecgLeadOff;
     else errors.push("ecgLeadOff is not a boolean");
   }
+  if (packet.fingerPresent !== undefined) {
+    if (typeof packet.fingerPresent === "boolean") clean.fingerPresent = packet.fingerPresent;
+    else errors.push("fingerPresent is not a boolean");
+  }
   if (packet.threshold !== undefined) {
     if (typeof packet.threshold === "number" && Number.isFinite(packet.threshold)) {
       clean.threshold = packet.threshold;

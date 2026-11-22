@@ -58,10 +58,10 @@ function Divider() {
 export function Dashboard() {
   const s = useSensorStore();
   const live = s.connectionState === "CONNECTED";
-  const ecgLive = useFreshness(s.lastEcgTime) && live;
-  const ppgLive = useFreshness(s.lastPpgTime) && live;
-  const bpmFresh = useFreshness(s.lastBpmTime, 8000) && live;
-  const spo2Fresh = useFreshness(s.lastSpo2Time, 8000) && live;
+  const ecgLive = useFreshness(s.lastEcgTime) && live && !s.ecgLeadOff;
+  const ppgLive = useFreshness(s.lastPpgTime) && live && s.fingerPresent;
+  const bpmFresh = useFreshness(s.lastBpmTime, 8000) && live && s.fingerPresent;
+  const spo2Fresh = useFreshness(s.lastSpo2Time, 8000) && live && s.fingerPresent;
   const tempFresh = useFreshness(s.lastTemperatureTime, 8000) && live;
   const imuFresh = useFreshness(s.lastImuTime, 4000) && live;
 
@@ -84,11 +84,25 @@ export function Dashboard() {
           <div className="animate-slide-in-up stagger-2">
             <MetricCard
               label="Heart Rate"
-              value={bpmFresh ? s.bpm : null}
+              value={s.fingerPresent && bpmFresh && s.bpm && s.bpm > 0 ? s.bpm : null}
               unit="BPM"
-              waitingText={live ? "Waiting for BPM data" : "ESP32 disconnected"}
-              statusText={bpmFresh ? "LIVE" : live ? "WAITING" : "NO DATA"}
-              tone={signalTone(bpmFresh)}
+              waitingText={
+                live
+                  ? !s.fingerPresent
+                    ? "Place finger on MAX30102"
+                    : "Computing pulse rhythm..."
+                  : "ESP32 disconnected"
+              }
+              statusText={
+                s.fingerPresent && bpmFresh && s.bpm && s.bpm > 0
+                  ? "LIVE"
+                  : live
+                    ? !s.fingerPresent
+                      ? "NO FINGER"
+                      : "WAITING"
+                    : "NO DATA"
+              }
+              tone={signalTone(s.fingerPresent && bpmFresh && (s.bpm ?? 0) > 0)}
               accentClass="text-signal-ecg"
               footnote="Computed on the ESP32 firmware"
               icon="🫀"
@@ -97,11 +111,25 @@ export function Dashboard() {
           <div className="animate-slide-in-up stagger-3">
             <MetricCard
               label="Blood Oxygen"
-              value={spo2Fresh ? s.spo2 : null}
+              value={s.fingerPresent && spo2Fresh && s.spo2 && s.spo2 >= 50 ? s.spo2 : null}
               unit="%"
-              waitingText={live ? "Waiting for SpO₂ data" : "ESP32 disconnected"}
-              statusText={spo2Fresh ? "LIVE" : live ? "WAITING" : "NO DATA"}
-              tone={signalTone(spo2Fresh)}
+              waitingText={
+                live
+                  ? !s.fingerPresent
+                    ? "Place finger on MAX30102"
+                    : "Calibrating SpO₂ ratio..."
+                  : "ESP32 disconnected"
+              }
+              statusText={
+                s.fingerPresent && spo2Fresh && s.spo2 && s.spo2 >= 50
+                  ? "LIVE"
+                  : live
+                    ? !s.fingerPresent
+                      ? "NO FINGER"
+                      : "WAITING"
+                    : "NO DATA"
+              }
+              tone={signalTone(s.fingerPresent && spo2Fresh && (s.spo2 ?? 0) >= 50)}
               accentClass="text-signal-ir"
               footnote="MAX30102 ratio-of-ratios on ESP32"
               icon="🩸"
@@ -124,13 +152,17 @@ export function Dashboard() {
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span className="text-base">📈</span> ECG (AD8232)
                 </h3>
-                <StatusPill tone={signalTone(ecgLive)}>{signalText(ecgLive)}</StatusPill>
+                <StatusPill tone={!s.ecgLeadOff && ecgLive ? "ok" : live ? "warn" : "idle"}>
+                  {!s.ecgLeadOff && ecgLive ? "LIVE" : live ? "LEADS OFF" : "NO SIGNAL"}
+                </StatusPill>
               </header>
               <p className="mt-4 font-mono text-4xl font-bold tabular-nums leading-none text-signal-ecg">
-                {s.ecgCurrent === null ? "——" : s.ecgCurrent}
+                {!s.ecgLeadOff && s.ecgCurrent !== null ? s.ecgCurrent : "LEADS OFF"}
               </p>
               <p className="mt-3 font-mono text-xs text-muted-foreground/70">
-                {s.ecgSampleRate} samples/s · {s.ecgSamples.toLocaleString()} samples
+                {!s.ecgLeadOff && ecgLive
+                  ? `${s.ecgSampleRate} samples/s · ${s.ecgSamples.toLocaleString()} samples`
+                  : "Attach AD8232 electrodes (RA, LA, RL)"}
               </p>
             </section>
           </div>
@@ -151,13 +183,19 @@ export function Dashboard() {
                 <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   <span className="text-base">🔴</span> PPG (MAX30102)
                 </h3>
-                <StatusPill tone={signalTone(ppgLive)}>{signalText(ppgLive)}</StatusPill>
+                <StatusPill tone={s.fingerPresent && ppgLive ? "ok" : live ? "warn" : "idle"}>
+                  {s.fingerPresent && ppgLive ? "LIVE" : live ? "NO FINGER" : "NO SIGNAL"}
+                </StatusPill>
               </header>
               <p className="mt-4 font-mono text-lg tabular-nums font-bold text-signal-ir">
-                IR {s.ppgIRCurrent ?? "——"} · RED {s.ppgRedCurrent ?? "——"}
+                {s.fingerPresent && s.ppgIRCurrent !== null && s.ppgRedCurrent !== null
+                  ? `IR ${s.ppgIRCurrent} · RED ${s.ppgRedCurrent}`
+                  : "NO FINGER DETECTED"}
               </p>
               <p className="mt-3 font-mono text-xs text-muted-foreground/70">
-                {s.ppgSampleRate} samples/s · {s.ppgSamples.toLocaleString()} samples
+                {s.fingerPresent && ppgLive
+                  ? `${s.ppgSampleRate} samples/s · ${s.ppgSamples.toLocaleString()} samples`
+                  : "Place finger firmly on MAX30102 sensor"}
               </p>
             </section>
           </div>
@@ -308,14 +346,18 @@ export function Dashboard() {
           buffer={buffers.ecg}
           color="--signal-ecg"
           label="ECG"
-          hasData={s.ecgSamples > 0}
+          hasData={!s.ecgLeadOff && ecgLive && s.ecgSamples > 0}
           paused={s.paused}
           windowSeconds={s.settings.timeWindowSeconds}
           height={220}
           gradcamAttribution={s.gradcamAttribution}
           enableAiVision={s.enableAiVision}
           emptyMessage={
-            live ? "Waiting for ECG samples from the AD8232" : "ECG: no signal — ESP32 disconnected"
+            live
+              ? s.ecgLeadOff
+                ? "AD8232 Leads Off: Connect ECG electrode probes to skin"
+                : "Waiting for AD8232 ECG samples"
+              : "ECG: no signal — ESP32 disconnected"
           }
         />
       </section>
@@ -330,10 +372,16 @@ export function Dashboard() {
             buffer={buffers.ppgIR}
             color="--signal-ir"
             label="PPG IR"
-            hasData={s.ppgSamples > 0}
+            hasData={s.fingerPresent && ppgLive && s.ppgSamples > 0}
             paused={s.paused}
             windowSeconds={s.settings.timeWindowSeconds}
-            emptyMessage={live ? "Waiting for MAX30102 IR data" : "PPG IR: no signal"}
+            emptyMessage={
+              live
+                ? !s.fingerPresent
+                  ? "Place finger firmly on MAX30102 sensor"
+                  : "Acquiring MAX30102 IR pulse wave..."
+                : "PPG IR: no signal"
+            }
           />
         </section>
         <section className="rounded-2xl border bg-card p-5 transition-all duration-300 hover:shadow-lg">
@@ -344,10 +392,16 @@ export function Dashboard() {
             buffer={buffers.ppgRed}
             color="--signal-red"
             label="PPG RED"
-            hasData={s.ppgRedCurrent !== null}
+            hasData={s.fingerPresent && ppgLive && s.ppgRedCurrent !== null}
             paused={s.paused}
             windowSeconds={s.settings.timeWindowSeconds}
-            emptyMessage={live ? "Waiting for MAX30102 RED data" : "PPG RED: no signal"}
+            emptyMessage={
+              live
+                ? !s.fingerPresent
+                  ? "Place finger firmly on MAX30102 sensor"
+                  : "Acquiring MAX30102 RED pulse wave..."
+                : "PPG RED: no signal"
+            }
           />
         </section>
       </div>
@@ -362,11 +416,17 @@ export function Dashboard() {
               buffer={buffers.bpm}
               color="--signal-ecg"
               label="BPM trend"
-              hasData={s.bpmUpdates > 0}
+              hasData={s.fingerPresent && (s.bpm ?? 0) > 0 && s.bpmUpdates > 0}
               paused={s.paused}
               windowSeconds={120}
               height={140}
-              emptyMessage="Waiting for BPM data"
+              emptyMessage={
+                live
+                  ? !s.fingerPresent
+                    ? "Place finger on MAX30102 to track BPM"
+                    : "Waiting for BPM data"
+                  : "BPM: no signal"
+              }
               fillWidth={true}
             />
           </section>
@@ -376,11 +436,17 @@ export function Dashboard() {
               buffer={buffers.spo2}
               color="--signal-ir"
               label="SpO2 trend"
-              hasData={s.spo2Updates > 0}
+              hasData={s.fingerPresent && (s.spo2 ?? 0) >= 50 && s.spo2Updates > 0}
               paused={s.paused}
               windowSeconds={120}
               height={140}
-              emptyMessage="Waiting for SpO₂ data"
+              emptyMessage={
+                live
+                  ? !s.fingerPresent
+                    ? "Place finger on MAX30102 to track SpO₂"
+                    : "Waiting for SpO₂ data"
+                  : "SpO2: no signal"
+              }
               fillWidth={true}
             />
           </section>

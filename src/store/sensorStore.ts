@@ -116,6 +116,8 @@ export interface SensorState extends Counters {
   ecgCurrent: number | null;
   ppgIRCurrent: number | null;
   ppgRedCurrent: number | null;
+  fingerPresent: boolean;
+  ecgLeadOff: boolean;
   signalQuality: number | null;
   temperature: number | null;
   accel: { x: number; y: number; z: number } | null;
@@ -204,6 +206,8 @@ export const useSensorStore = create<SensorState>((set, get) => ({
   ecgCurrent: null,
   ppgIRCurrent: null,
   ppgRedCurrent: null,
+  fingerPresent: false,
+  ecgLeadOff: true,
   signalQuality: null,
   temperature: null,
   accel: null,
@@ -264,6 +268,8 @@ export const useSensorStore = create<SensorState>((set, get) => ({
             ecgCurrent: null,
             ppgIRCurrent: null,
             ppgRedCurrent: null,
+            fingerPresent: false,
+            ecgLeadOff: true,
             signalQuality: null,
             temperature: null,
             accel: null,
@@ -347,42 +353,83 @@ export const useSensorStore = create<SensorState>((set, get) => ({
     recentPacketTimes.push(now);
     patch.packetsPerSecond = rate(recentPacketTimes, now);
 
-    if (packet.ecg !== undefined) {
+    // -----------------------------------------------------------------
+    // Physical contact verification: Finger detection & Leads-off gating
+    // -----------------------------------------------------------------
+    const hasFinger =
+      packet.fingerPresent !== undefined
+        ? packet.fingerPresent
+        : packet.ppgIR !== undefined
+          ? packet.ppgIR >= 20000
+          : state.fingerPresent;
+
+    patch.fingerPresent = hasFinger;
+
+    const isLeadsOff =
+      packet.ecgLeadOff !== undefined
+        ? packet.ecgLeadOff
+        : (packet.ecg === undefined || packet.ecg === 0);
+
+    patch.ecgLeadOff = isLeadsOff;
+
+    // ECG: gatekeep against leads-off
+    if (!isLeadsOff && packet.ecg !== undefined && packet.ecg > 0) {
       buffers.ecg.push(packet.ecg, now);
       recentEcgTimes.push(now);
       patch.ecgCurrent = packet.ecg;
       patch.ecgSamples = state.ecgSamples + 1;
       patch.ecgSampleRate = rate(recentEcgTimes, now);
       patch.lastEcgTime = now;
+    } else {
+      patch.ecgCurrent = null;
+      if (isLeadsOff) {
+        patch.lastEcgTime = null;
+      }
     }
-    if (packet.ppgIR !== undefined) {
+
+    // PPG (MAX30102): gatekeep against absent finger / ambient light
+    if (hasFinger && packet.ppgIR !== undefined && packet.ppgIR >= 20000) {
       buffers.ppgIR.push(packet.ppgIR, now);
       recentPpgTimes.push(now);
       patch.ppgIRCurrent = packet.ppgIR;
       patch.ppgSamples = state.ppgSamples + 1;
       patch.ppgSampleRate = rate(recentPpgTimes, now);
       patch.lastPpgTime = now;
+
+      if (packet.ppgRed !== undefined && packet.ppgRed > 0) {
+        buffers.ppgRed.push(packet.ppgRed, now);
+        patch.ppgRedCurrent = packet.ppgRed;
+      }
+      if (packet.ppgWave !== undefined) {
+        buffers.ppgWave.push(packet.ppgWave, now);
+      }
+    } else {
+      patch.ppgIRCurrent = null;
+      patch.ppgRedCurrent = null;
+      if (!hasFinger) {
+        patch.lastPpgTime = null;
+      }
     }
-    if (packet.ppgRed !== undefined) {
-      buffers.ppgRed.push(packet.ppgRed, now);
-      patch.ppgRedCurrent = packet.ppgRed;
-      patch.lastPpgTime = now;
-    }
-    if (packet.ppgWave !== undefined) {
-      buffers.ppgWave.push(packet.ppgWave, now);
-      patch.lastPpgTime = now;
-    }
-    if (packet.bpm !== undefined) {
+
+    // Vitals (BPM & SpO2): only valid when finger is placed
+    if (hasFinger && packet.bpm !== undefined && packet.bpm >= 20) {
       buffers.bpm.push(packet.bpm, now);
       patch.bpm = packet.bpm;
       patch.bpmUpdates = state.bpmUpdates + 1;
       patch.lastBpmTime = now;
+    } else if (!hasFinger) {
+      patch.bpm = null;
+      patch.lastBpmTime = null;
     }
-    if (packet.spo2 !== undefined) {
+
+    if (hasFinger && packet.spo2 !== undefined && packet.spo2 >= 50) {
       buffers.spo2.push(packet.spo2, now);
       patch.spo2 = packet.spo2;
       patch.spo2Updates = state.spo2Updates + 1;
       patch.lastSpo2Time = now;
+    } else if (!hasFinger) {
+      patch.spo2 = null;
+      patch.lastSpo2Time = null;
     }
     if (packet.signalQuality !== undefined) patch.signalQuality = packet.signalQuality;
 

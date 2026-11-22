@@ -1753,13 +1753,20 @@ void sendDashboardPacket()
   // ECG
   // ------------------------------------------------
   packet += "ECG:";
-  packet += String(ecgValue);
+  if (ecgLeadsOff)
+  {
+    packet += "0";
+  }
+  else
+  {
+    packet += String(ecgValue);
+  }
 
   // ------------------------------------------------
-  // PPG IR
+  // PPG IR (only transmit when finger is present)
   // ------------------------------------------------
   packet += ", IR_Signal:";
-  if (bufferIndex > 0)
+  if (fingerPresent && bufferIndex > 0)
   {
     packet += String(irBuffer[bufferIndex - 1]);
   }
@@ -1769,10 +1776,10 @@ void sendDashboardPacket()
   }
 
   // ------------------------------------------------
-  // PPG RED
+  // PPG RED (only transmit when finger is present)
   // ------------------------------------------------
   packet += ", Red_Signal:";
-  if (bufferIndex > 0)
+  if (fingerPresent && bufferIndex > 0)
   {
     packet += String(redBuffer[bufferIndex - 1]);
   }
@@ -2057,12 +2064,12 @@ void setup()
 
   pinMode(
     ECG_LO_PLUS,
-    INPUT
+    INPUT_PULLUP
   );
 
   pinMode(
     ECG_LO_MINUS,
-    INPUT
+    INPUT_PULLUP
   );
 
   pinMode(

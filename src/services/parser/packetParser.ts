@@ -50,7 +50,14 @@ const FIELD_ALIASES: Record<string, keyof SensorPacket> = {
   beatmarker: "beat",
   quality: "signalQuality",
   signalquality: "signalQuality",
+  finger: "fingerPresent",
+  fingerpresent: "fingerPresent",
+  finger_present: "fingerPresent",
+  fingerdetected: "fingerPresent",
+  finger_detected: "fingerPresent",
   leadoff: "ecgLeadOff",
+  leadsoff: "ecgLeadOff",
+  leads_off: "ecgLeadOff",
   lo: "ecgLeadOff",
   temp: "temperature",
   temperature: "temperature",
@@ -120,11 +127,22 @@ function assign(
     packet.ecgLeadOff = n > 0;
     return true;
   }
+  if (field === "fingerPresent") {
+    const n = toNumber(rawValue);
+    if (n === undefined) return false;
+    packet.fingerPresent = n > 0;
+    return true;
+  }
   const n = toNumber(rawValue);
   if (n === undefined) return false;
   if (field === "bpm") packet.bpm = n * options.plotterScaleBpm;
   else if (field === "spo2") packet.spo2 = n * options.plotterScaleSpo2;
   else (packet as Record<string, number>)[field] = n;
+
+  // Infer finger presence if not explicitly tagged
+  if (field === "ppgIR" && packet.fingerPresent === undefined) {
+    packet.fingerPresent = n >= 20000;
+  }
   return true;
 }
 
