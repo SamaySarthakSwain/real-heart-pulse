@@ -83,8 +83,8 @@ export function GoogleAccountChooserModal({
     }
   };
 
-  const handleCustomSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCustomSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setCustomError(null);
 
     const emailTrimmed = customEmail.trim();
@@ -213,7 +213,7 @@ export function GoogleAccountChooserModal({
 
         {/* Custom Account Input Form */}
         {!isSigningIn && showCustomForm && (
-          <form onSubmit={handleCustomSubmit} className="space-y-3.5 animate-in fade-in duration-150">
+          <div className="space-y-3.5 animate-in fade-in duration-150">
             <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
               <span className="text-xs font-semibold text-[#142033] dark:text-slate-200">
                 Enter your Google Account
@@ -255,18 +255,25 @@ export function GoogleAccountChooserModal({
                 type="email"
                 value={customEmail}
                 onChange={(e) => setCustomEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleCustomSubmit();
+                  }
+                }}
                 placeholder="name@gmail.com"
                 className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/80 px-3.5 py-2 text-xs text-[#142033] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
             </div>
 
             <button
-              type="submit"
+              type="button"
+              onClick={handleCustomSubmit}
               className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 transition-colors shadow-sm mt-2"
             >
               Continue with this account
             </button>
-          </form>
+          </div>
         )}
 
         {/* Security & Disclaimer Footer */}
