@@ -183,7 +183,8 @@ export class VoiceController {
 
       // Bonus for natural neural sweet voices
       for (let i = 0; i < sweetKeywords.length; i++) {
-        if (name.includes(sweetKeywords[i])) {
+        const kw = sweetKeywords[i];
+        if (kw && name.includes(kw)) {
           score += 100 - i * 4;
           break;
         }
@@ -302,7 +303,15 @@ export class VoiceController {
 
     // Apply active personality acoustics
     const profileId = customPersonality || this.activePersonality;
-    const profile = VOICE_PROFILES.find((p) => p.id === profileId) || VOICE_PROFILES[0];
+    const defaultProfile: VoiceProfileConfig = VOICE_PROFILES[0] ?? {
+      id: "sweet-calm",
+      label: "Sweet & Calming (Recommended)",
+      description: "Ultra-soothing, warm feminine intonation with relaxed pacing",
+      emoji: "🌸",
+      pitch: 1.05,
+      rate: 0.94,
+    };
+    const profile = VOICE_PROFILES.find((p) => p.id === profileId) ?? defaultProfile;
     utterance.pitch = profile.pitch;
     utterance.rate = profile.rate;
 
@@ -342,7 +351,8 @@ export class VoiceController {
     };
 
     const prefix = langCode.slice(0, 2).toLowerCase();
-    const phrase = samplePhrases[prefix] || samplePhrases.en;
+    const fallbackText = samplePhrases["en"] ?? "Hello! I am HEART, your personal clinical companion. How is your heart feeling today?";
+    const phrase = samplePhrases[prefix] || fallbackText;
 
     this.speak(phrase, langCode, undefined, onEnd);
   }

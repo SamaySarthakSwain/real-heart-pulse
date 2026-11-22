@@ -145,29 +145,29 @@ export interface TelemetryContextPayload {
     qtIntervalMs?: number | null;
     qtcBazettMs?: number | null;
     qtcFridericiaMs?: number | null;
-    prIntervalMs?: number | null;
-    stressIndex?: number | null;
-    subjectState: string;
+    prIntervalMs?: number | null | undefined;
+    stressIndex?: number | null | undefined;
+    subjectState?: string | undefined;
   };
   dlDiagnosis?: {
-    primary_diagnosis?: string;
-    confidence?: number;
-    detailed_analysis?: Array<{ class: string; description: string; probability: number }>;
+    primary_diagnosis?: string | undefined;
+    confidence?: number | undefined;
+    detailed_analysis?: Array<{ class: string; description: string; probability: number }> | undefined;
     sqi_assessment?: {
       overall_sqi: number;
       decision: string;
       message: string;
-    };
-  } | null;
+    } | undefined;
+  } | null | undefined;
   patient?: {
-    id?: string;
-    name?: string;
-    age?: number;
-    gender?: string;
-    condition?: string;
-    medications?: string[];
-    bloodType?: string;
-  } | null;
+    id?: string | undefined;
+    name?: string | undefined;
+    age?: number | undefined;
+    gender?: string | undefined;
+    condition?: string | undefined;
+    medications?: string[] | undefined;
+    bloodType?: string | undefined;
+  } | null | undefined;
 }
 
 /**

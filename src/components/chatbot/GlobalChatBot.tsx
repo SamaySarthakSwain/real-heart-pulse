@@ -39,11 +39,20 @@ import {
   VOICE_PROFILES,
   voiceController,
   type VoicePersonality,
+  type SupportedLanguage,
   isSpeechRecognitionSupported,
   isSpeechSynthesisSupported,
 } from "@/services/chatbot/voiceService";
 import { soundFx } from "@/services/audio/soundFx";
 import { toast } from "sonner";
+
+const DEFAULT_CHAT_LANGUAGE: SupportedLanguage = SUPPORTED_LANGUAGES[0] ?? {
+  code: "en",
+  speechLang: "en-US",
+  name: "English",
+  nativeName: "English",
+  flag: "🇺🇸",
+};
 
 export function GlobalChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +61,7 @@ export function GlobalChatBot() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Multi-lingual state (Default English)
-  const [selectedLanguage, setSelectedLanguage] = useState(SUPPORTED_LANGUAGES[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(DEFAULT_CHAT_LANGUAGE);
 
   // Voice-to-voice & Personality states
   const [isListening, setIsListening] = useState(false);

@@ -68,8 +68,8 @@ export function LongitudinalTrajectoryPanel({
   }, [patientId]);
 
   const timeline = data?.longitudinal_timeline || [];
-  const latestRisk = timeline.length > 0 ? timeline[timeline.length - 1].risk_percent : null;
-  const previousRisk = timeline.length > 1 ? timeline[timeline.length - 2].risk_percent : null;
+  const latestRisk = timeline.length > 0 ? (timeline[timeline.length - 1]?.risk_percent ?? null) : null;
+  const previousRisk = timeline.length > 1 ? (timeline[timeline.length - 2]?.risk_percent ?? null) : null;
   const riskDelta = latestRisk !== null && previousRisk !== null ? latestRisk - previousRisk : null;
 
   return (

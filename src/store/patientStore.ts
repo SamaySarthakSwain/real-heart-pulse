@@ -388,7 +388,8 @@ export const usePatientStore = create<PatientState>()(
         await new Promise((r) => setTimeout(r, 600));
 
         const emailClean = payload.email.trim().toLowerCase();
-        const usernamePrefix = emailClean.split("@")[0].replace(/[^a-zA-Z0-9_.-]/g, "");
+        const rawPrefix = emailClean.split("@")[0] ?? "user";
+        const usernamePrefix = rawPrefix.replace(/[^a-zA-Z0-9_.-]/g, "") || "user";
 
         // 1. Check if patient already exists by email or username
         const existing = get().patients.find(
@@ -415,7 +416,7 @@ export const usePatientStore = create<PatientState>()(
               ...existing.profileData,
               fullName: existing.profileData?.fullName || existing.name,
               gender: existing.profileData?.gender || existing.gender,
-              bloodGroup: existing.profileData?.bloodGroup || existing.bloodType,
+              bloodGroup: existing.profileData?.bloodGroup || existing.bloodType || "O+",
               profilePhoto: payload.avatar || existing.profileData?.profilePhoto,
             },
           };

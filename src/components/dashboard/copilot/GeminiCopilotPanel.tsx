@@ -151,7 +151,7 @@ export function GeminiCopilotPanel() {
         qtcFridericiaMs: analysis.ecg.qtcFridericiaMs,
         prIntervalMs: analysis.ecg.prIntervalMs,
         stressIndex: analysis.ecg.stressIndex,
-        subjectState: analysis.subjectState,
+        subjectState: analysis.restingLikely ? "Resting" : ((s.motionMagnitude ?? 0) > 0.3 ? "Active Motion" : "Resting"),
       },
       dlDiagnosis: {
         primary_diagnosis: s.aiPrimaryDiagnosis || "Normal Sinus Rhythm",
@@ -307,7 +307,8 @@ Current Hardware Telemetry:
       for (let i = 0; i < ecgSamples.length; i++) {
         const x = (i / (ecgSamples.length - 1)) * canvas.width;
         // Invert Y because canvas Y increases downwards
-        const norm = (ecgSamples[i] - minVal) / range;
+        const sampleVal = ecgSamples[i] ?? minVal;
+        const norm = (sampleVal - minVal) / range;
         const y = baselineY + (0.5 - norm) * (canvas.height * 0.7);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
