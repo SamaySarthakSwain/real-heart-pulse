@@ -156,8 +156,8 @@ export function Dashboard() {
                   {!s.ecgLeadOff && ecgLive ? "LIVE" : live ? "LEADS OFF" : "NO SIGNAL"}
                 </StatusPill>
               </header>
-              <p className="mt-4 font-mono text-4xl font-bold tabular-nums leading-none text-signal-ecg">
-                {!s.ecgLeadOff && s.ecgCurrent !== null ? s.ecgCurrent : "LEADS OFF"}
+              <p className="mt-4 font-mono text-lg font-bold tabular-nums text-signal-ecg">
+                {!s.ecgLeadOff && s.ecgCurrent !== null ? `${s.ecgCurrent} ADC` : "LEADS OFF"}
               </p>
               <p className="mt-3 font-mono text-xs text-muted-foreground/70">
                 {!s.ecgLeadOff && ecgLive
