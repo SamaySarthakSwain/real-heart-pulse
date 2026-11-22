@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider, useTheme, themeInitScript } from "../lib/theme";
 import { PatientHeaderButton } from "@/components/patient/PatientHeaderButton";
 import { Toaster } from "sonner";
+import { GlobalChatBot } from "@/components/chatbot/GlobalChatBot";
 
 /* ── 404 ─────────────────────────────────────────────────────────────────── */
 function NotFoundComponent() {
@@ -397,6 +398,7 @@ function AppLayout() {
         <Outlet />
       </main>
       <Toaster position="top-right" richColors />
+      <GlobalChatBot />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="border-t border-border mt-8">

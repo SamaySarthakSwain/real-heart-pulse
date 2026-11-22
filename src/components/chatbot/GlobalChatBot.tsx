@@ -1,0 +1,624 @@
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Sparkles,
+  Bot,
+  Send,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  FileText,
+  Printer,
+  Copy,
+  Check,
+  X,
+  Minimize2,
+  Key,
+  Globe,
+  Radio,
+  Activity,
+  AlertCircle,
+  Loader2,
+  Stethoscope,
+  RefreshCw,
+} from "lucide-react";
+import { useSensorStore } from "@/store/sensorStore";
+import {
+  askChatbot,
+  generatePlainLanguageReport,
+  extractRealHardwareTelemetry,
+  type ChatMessage,
+  type HardwareTelemetrySummary,
+} from "@/services/chatbot/chatbotService";
+import {
+  SUPPORTED_LANGUAGES,
+  voiceController,
+  isSpeechRecognitionSupported,
+  isSpeechSynthesisSupported,
+} from "@/services/chatbot/voiceService";
+import { getGeminiApiKey, setGeminiApiKey, hasGeminiApiKey } from "@/services/gemini/geminiService";
+import { toast } from "sonner";
+
+export function GlobalChatBot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Multi-lingual state (Default English)
+  const [selectedLanguage, setSelectedLanguage] = useState(SUPPORTED_LANGUAGES[0]);
+
+  // Voice-to-voice states
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(true);
+
+  // Gemini API Key config dialog
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState(getGeminiApiKey());
+
+  // Real Hardware telemetry state
+  const [telemetry, setTelemetry] = useState<HardwareTelemetrySummary>(extractRealHardwareTelemetry());
+  const packetsReceived = useSensorStore((s) => s.packetsReceived);
+  const connectionState = useSensorStore((s) => s.connectionState);
+
+  // Auto-scroll ref
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-ingest hardware data when new packets arrive
+  useEffect(() => {
+    setTelemetry(extractRealHardwareTelemetry());
+  }, [packetsReceived, connectionState]);
+
+  // Initial greeting
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([
+        {
+          id: "welcome-1",
+          role: "bot",
+          text: `👋 **Welcome to HEART AI Copilot!**
+
+I am your multi-lingual, voice-interactive medical telemetry assistant.
+
+🔒 **Clinical Grounding & Integrity**:
+- I automatically read live biometric telemetry directly from your **ESP32 hardware** (AD8232 ECG, MAX30102 PPG, LM35 Temp, BMI323 Motion).
+- **Strict Rule: Zero Synthetic Data**. I will never fabricate or invent fake vitals.
+- You can tap the 🎙️ **Microphone** for voice-to-voice chat, select from 9 languages, or generate an **Easy-to-Understand Patient Health Report**.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    }
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+  // Handle Voice Listening Toggle
+  const toggleListening = () => {
+    if (isListening) {
+      voiceController.stopListening();
+      setIsListening(false);
+      return;
+    }
+
+    const started = voiceController.startListening(
+      selectedLanguage.speechLang,
+      (transcript, isFinal) => {
+        setInputValue(transcript);
+        if (isFinal) {
+          handleSendMessage(transcript);
+        }
+      },
+      (error) => {
+        toast.error(error);
+        setIsListening(false);
+      },
+      () => {
+        setIsListening(false);
+      }
+    );
+
+    if (started) {
+      setIsListening(true);
+      toast.info(`Listening in ${selectedLanguage.name}... Speak now`);
+    }
+  };
+
+  // Handle Sending Chat Message
+  const handleSendMessage = async (textToSend?: string) => {
+    const text = (textToSend || inputValue).trim();
+    if (!text || isLoading) return;
+
+    setInputValue("");
+    const userMsg: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setIsLoading(true);
+
+    try {
+      const botResponse = await askChatbot(text, [...messages, userMsg], selectedLanguage.name);
+
+      const botMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        role: "bot",
+        text: botResponse,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+
+      setMessages((prev) => [...prev, botMsg]);
+
+      // Voice-to-voice audio output if enabled
+      if (voiceOutputEnabled) {
+        voiceController.speak(
+          botResponse,
+          selectedLanguage.speechLang,
+          () => setIsSpeaking(true),
+          () => setIsSpeaking(false)
+        );
+      }
+    } catch (err: any) {
+      toast.error("Failed to generate response. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Generate Easy-to-Understand Report
+  const handleGenerateReport = () => {
+    const reportText = generatePlainLanguageReport(selectedLanguage.name);
+    const reportMsg: ChatMessage = {
+      id: `report-${Date.now()}`,
+      role: "bot",
+      text: reportText,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isReport: true,
+    };
+    setMessages((prev) => [...prev, reportMsg]);
+
+    if (voiceOutputEnabled) {
+      voiceController.speak(
+        "Here is your easy-to-understand heart health summary based on your real hardware readings.",
+        selectedLanguage.speechLang,
+        () => setIsSpeaking(true),
+        () => setIsSpeaking(false)
+      );
+    }
+  };
+
+  // Print/Save Report
+  const handlePrintReport = (reportText: string) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>HEART - Patient Health Report</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; }
+            h3, h4 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+            ul { padding-left: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .brand { color: #00B496; font-size: 24px; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="brand">HEART Health Hub</div>
+            <p>Plain-Language Patient Telemetry Report</p>
+          </div>
+          <div>${reportText.replace(/\n/g, "<br/>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
+  return (
+    <>
+      {/* ── 1. FLOATING CHATBOT TRIGGER BUTTON ─────────────────────────────── */}
+      {!isOpen && (
+        <div className="fixed bottom-6 right-6 z-40 animate-in fade-in duration-300">
+          <button
+            onClick={() => setIsOpen(true)}
+            aria-label="Open HEART AI Copilot"
+            className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-teal-500 via-[#00B496] to-emerald-600 p-3.5 sm:px-5 sm:py-3.5 text-white shadow-xl shadow-teal-500/25 hover:shadow-2xl hover:shadow-teal-500/40 hover:scale-105 active:scale-95 transition-all"
+          >
+            {/* Pulsing Aura */}
+            <span className="absolute -inset-1 rounded-full bg-teal-400 opacity-25 blur-sm group-hover:opacity-40 animate-pulse pointer-events-none" />
+
+            <div className="relative flex items-center justify-center">
+              <Bot className="h-6 w-6 stroke-[2.2] animate-bounce" />
+            </div>
+
+            <div className="hidden sm:flex flex-col text-left">
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="text-xs font-bold tracking-tight">HEART Copilot</span>
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    telemetry.isConnected ? "bg-emerald-300 animate-ping" : "bg-white/60"
+                  }`}
+                />
+              </div>
+              <span className="text-[10px] text-white/80 font-mono mt-0.5">
+                {telemetry.isConnected ? "Hardware Live" : "Voice & Multi-lingual"}
+              </span>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* ── 2. FULL CHATBOT DRAWER / MODAL ─────────────────────────────────── */}
+      {isOpen && (
+        <div
+          role="dialog"
+          aria-label="HEART AI Assistant"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[440px] h-[640px] max-h-[88vh] rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111512] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200"
+          style={{
+            boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 180, 150, 0.15)",
+          }}
+        >
+          {/* Header */}
+          <header className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-[#141A16]/90 backdrop-blur-md">
+            <div className="flex items-center gap-2.5">
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#00B496] to-emerald-500 text-white shadow-sm">
+                <Bot className="h-5 w-5" />
+                {isSpeaking && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500" />
+                  </span>
+                )}
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-xs font-bold text-[#142033] dark:text-white uppercase tracking-wider">
+                    HEART Copilot
+                  </h3>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                    AI Voice
+                  </span>
+                </div>
+                <p className="text-[10px] text-[#667085] dark:text-slate-400">
+                  {telemetry.isConnected ? "Reading ESP32 hardware" : "Awaiting hardware readings"}
+                </p>
+              </div>
+            </div>
+
+            {/* Header Controls: Language, TTS Toggle, API Key, Close */}
+            <div className="flex items-center gap-1">
+              {/* Language Selector */}
+              <div className="relative group">
+                <select
+                  value={selectedLanguage.code}
+                  onChange={(e) => {
+                    const l = SUPPORTED_LANGUAGES.find((lang) => lang.code === e.target.value);
+                    if (l) setSelectedLanguage(l);
+                  }}
+                  className="appearance-none bg-slate-200/60 dark:bg-slate-800 text-[11px] font-semibold text-[#142033] dark:text-slate-200 rounded-lg pl-2 pr-5 py-1 focus:outline-none cursor-pointer"
+                  title="Select AI Language"
+                >
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <option key={lang.code} value={lang.code} className="dark:bg-slate-900">
+                      {lang.flag} {lang.name}
+                    </option>
+                  ))}
+                </select>
+                <Globe className="h-3 w-3 text-slate-500 pointer-events-none absolute right-1.5 top-2" />
+              </div>
+
+              {/* Text-to-Speech Mute/Unmute */}
+              <button
+                onClick={() => {
+                  if (isSpeaking) voiceController.stopSpeaking();
+                  setVoiceOutputEnabled(!voiceOutputEnabled);
+                }}
+                className={`p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ${
+                  voiceOutputEnabled ? "text-teal-600 dark:text-teal-400 bg-teal-500/10" : ""
+                }`}
+                title={voiceOutputEnabled ? "Voice output enabled (click to mute)" : "Voice output muted (click to enable)"}
+              >
+                {voiceOutputEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              </button>
+
+              {/* API Key Modal Button */}
+              <button
+                onClick={() => setShowKeyModal(true)}
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                title="Configure Gemini API Key"
+              >
+                <Key className="h-4 w-4" />
+              </button>
+
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  voiceController.stopSpeaking();
+                  voiceController.stopListening();
+                  setIsOpen(false);
+                }}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </header>
+
+          {/* Real Hardware Data Status Ribbon */}
+          <div className="bg-slate-100/70 dark:bg-slate-900/60 px-3.5 py-1.5 border-b border-slate-200/50 dark:border-slate-800 text-[10px] flex items-center justify-between text-[#667085] dark:text-slate-400">
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  telemetry.isConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+                }`}
+              />
+              <span className="font-medium text-[#142033] dark:text-slate-200">
+                {telemetry.isConnected
+                  ? `Hardware Live (${telemetry.packetsReceived.toLocaleString()} pkts • ${telemetry.vitals.bpm ?? "--"} BPM • ${telemetry.vitals.spo2 ?? "--"}% SpO2)`
+                  : "ESP32 Disconnected (Strictly zero fake data)"}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setTelemetry(extractRealHardwareTelemetry());
+                toast.success("Synchronized with physical hardware buffers.");
+              }}
+              className="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 hover:underline"
+              title="Sync latest readings"
+            >
+              <RefreshCw className="h-2.5 w-2.5" />
+              <span>Sync</span>
+            </button>
+          </div>
+
+          {/* Messages Scroll View */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex flex-col ${
+                  msg.role === "user" ? "items-end" : "items-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[85%] rounded-2xl p-3.5 shadow-sm leading-relaxed ${
+                    msg.role === "user"
+                      ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-br-none"
+                      : "bg-slate-100/90 dark:bg-[#1A221C] text-[#142033] dark:text-slate-100 border border-slate-200/60 dark:border-slate-800 rounded-bl-none"
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap">{msg.text}</div>
+
+                  {/* Actions on Bot Messages */}
+                  {msg.role === "bot" && (
+                    <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-200/50 dark:border-slate-800/80 text-[10px] text-slate-500 dark:text-slate-400">
+                      <span>{msg.timestamp}</span>
+                      <div className="flex items-center gap-2">
+                        {/* Audio Speak Again */}
+                        <button
+                          onClick={() =>
+                            voiceController.speak(
+                              msg.text,
+                              selectedLanguage.speechLang,
+                              () => setIsSpeaking(true),
+                              () => setIsSpeaking(false)
+                            )
+                          }
+                          className="hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1"
+                          title="Listen aloud"
+                        >
+                          <Volume2 className="h-3 w-3" />
+                          <span>Voice</span>
+                        </button>
+
+                        {/* Copy Text */}
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.text);
+                            toast.success("Copied to clipboard!");
+                          }}
+                          className="hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1"
+                          title="Copy text"
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span>Copy</span>
+                        </button>
+
+                        {/* Print Report Option */}
+                        {msg.isReport && (
+                          <button
+                            onClick={() => handlePrintReport(msg.text)}
+                            className="text-teal-600 dark:text-teal-400 font-semibold hover:underline flex items-center gap-1"
+                          >
+                            <Printer className="h-3 w-3" />
+                            <span>Print PDF</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {isLoading && (
+              <div className="flex items-center gap-2 text-slate-500 text-xs py-2">
+                <Loader2 className="h-4 w-4 animate-spin text-teal-600" />
+                <span>Reading hardware telemetry & synthesizing...</span>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Quick Suggestions & Easy Report Action */}
+          <div className="px-3 pt-2 pb-1 border-t border-slate-100 dark:border-slate-800/60 bg-white/50 dark:bg-[#111512]/50 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+            <button
+              onClick={handleGenerateReport}
+              disabled={isLoading}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 font-semibold hover:bg-teal-500/20 transition-all"
+            >
+              <FileText className="h-3.5 w-3.5 text-teal-600" />
+              <span>Generate Easy Report</span>
+            </button>
+            <button
+              onClick={() => handleSendMessage("What is my live heart rate and rhythm?")}
+              disabled={isLoading}
+              className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+            >
+              💓 Live Heart Rate
+            </button>
+            <button
+              onClick={() => handleSendMessage("Check my blood oxygen level")}
+              disabled={isLoading}
+              className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+            >
+              🫁 Blood Oxygen
+            </button>
+            <button
+              onClick={() => handleSendMessage("Analyze my active ECG samples")}
+              disabled={isLoading}
+              className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+            >
+              📈 ECG Waveform
+            </button>
+          </div>
+
+          {/* Voice & Text Input Section */}
+          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#111512]">
+            {isListening && (
+              <div className="mb-2 p-2 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-700 dark:text-teal-300 flex items-center justify-between animate-pulse">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-teal-500 animate-ping" />
+                  <span>Listening in {selectedLanguage.name}... Speak naturally</span>
+                </div>
+                <button
+                  onClick={toggleListening}
+                  className="text-[10px] text-teal-800 dark:text-teal-200 font-semibold underline"
+                >
+                  Done
+                </button>
+              </div>
+            )}
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendMessage();
+              }}
+              className="flex items-center gap-2"
+            >
+              {/* Mic Button for Voice Interaction */}
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all ${
+                  isListening
+                    ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400"
+                }`}
+                title={isListening ? "Stop listening" : "Click to speak (Voice-to-Voice)"}
+              >
+                {isListening ? (
+                  <MicOff className="h-5 w-5 animate-pulse" />
+                ) : (
+                  <Mic className="h-5 w-5" />
+                )}
+              </button>
+
+              {/* Text Input */}
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={
+                  isListening
+                    ? "Transcribing your speech..."
+                    : `Ask about readings in ${selectedLanguage.name}...`
+                }
+                disabled={isLoading}
+                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/80 px-3.5 py-2.5 text-xs text-[#142033] dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+              />
+
+              {/* Send Button */}
+              <button
+                type="submit"
+                disabled={isLoading || !inputValue.trim()}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 3. GEMINI API KEY CONFIG MODAL ─────────────────────────────────── */}
+      {showKeyModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+        >
+          <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#141A16] p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <Key className="h-5 w-5 text-teal-600" />
+                <h3 className="text-sm font-bold text-[#142033] dark:text-white">
+                  Gemini API Key Setup
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-slate-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#667085] dark:text-slate-400 my-3 leading-relaxed">
+              Connect your Gemini API key to activate Gemini 2.5 Flash clinical reasoning.
+              If no key is entered, HEART automatically utilizes the verified built-in local
+              clinical telemetry reasoning engine.
+            </p>
+
+            <input
+              type="password"
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+              placeholder="AIzaSy..."
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3.5 py-2.5 text-xs text-[#142033] dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+
+            <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setGeminiApiKey(apiKeyInput);
+                  toast.success("Gemini API Key updated successfully.");
+                  setShowKeyModal(false);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
+              >
+                Save Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
